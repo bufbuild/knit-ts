@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package spec;
+
+enum TopLevel {
+  FIRST = 0;
+  SECOND = 1;
+}
+
+message EnumShell {
+  enum InsideMessage {
+    THIRD = 0;
+    FOURTH = 1;
+  }
+  optional InsideMessage optional_enum = 1;
+}

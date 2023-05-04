@@ -1,0 +1,10 @@
+# Ignore generated files in GitHub diffs by default
+**/*_pb.ts linguist-generated=true
+**/*_pb.js linguist-generated=true
+**/*_pb.d.ts linguist-generated=true
+**/*_knit.ts linguist-generated=true
+**/*_knit.js linguist-generated=true
+**/*_knit.d.ts linguist-generated=true
+**/*connect.ts linguist-generated=true
+**/*connect.js linguist-generated=true
+**/*connect.d.ts linguist-generated=true

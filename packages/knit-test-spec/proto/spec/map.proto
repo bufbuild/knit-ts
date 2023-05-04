@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package spec;
+
+message Map {
+  Keys keys = 1;
+  map<string, Map> message = 2;
+  map<string, MapEnum> enum = 3;
+}
+
+message Keys {
+  map<string, string> str = 1;
+  map<bool, string> bl = 2;
+  map<int32, string> i32 = 3;
+  map<int64, string> i64 = 4;
+  map<uint32, string> u32 = 5;
+  map<uint64, string> u64 = 6;
+  map<sint32, string> s32 = 7;
+  map<sint64, string> s64 = 8;
+  map<fixed32, string> f32 = 9;
+  map<fixed64, string> f64 = 10;
+  map<sfixed32, string> sf32 = 11;
+  map<sfixed64, string> sf64 = 12;
+}
+
+enum MapEnum {
+  MAP_ENUM_UNSPECIFIED = 0;
+  MAP_ENUM_FIRST = 1;
+}

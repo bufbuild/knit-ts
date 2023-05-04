@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package spec;
+
+message Scalar {
+  ScalarFields fields = 1;
+  ScalarRepeated repeated = 2;
+  ScalarMap map = 3;
+  ScalarOneof oneof = 4;
+}
+
+message ScalarFields {
+  string str = 1;
+  bool bl = 2;
+  int32 i32 = 3;
+  int64 i64 = 4;
+  uint32 u32 = 5;
+  uint64 u64 = 6;
+  sint32 s32 = 7;
+  sint64 s64 = 8;
+  fixed32 f32 = 9;
+  fixed64 f64 = 10;
+  sfixed32 sf32 = 11;
+  sfixed64 sf64 = 12;
+  bytes by = 13;
+  double db = 14;
+  float fl = 15;
+}
+
+message ScalarFieldsOptional {
+  optional string str = 1;
+  optional bool bl = 2;
+  optional int32 i32 = 3;
+  optional int64 i64 = 4;
+  optional uint32 u32 = 5;
+  optional uint64 u64 = 6;
+  optional sint32 s32 = 7;
+  optional sint64 s64 = 8;
+  optional fixed32 f32 = 9;
+  optional fixed64 f64 = 10;
+  optional sfixed32 sf32 = 11;
+  optional sfixed64 sf64 = 12;
+  optional bytes by = 13;
+  optional double db = 14;
+  optional float fl = 15;
+}
+
+message ScalarRepeated {
+  repeated string str = 1;
+  repeated bool bl = 2;
+  repeated int32 i32 = 3;
+  repeated int64 i64 = 4;
+  repeated uint32 u32 = 5;
+  repeated uint64 u64 = 6;
+  repeated sint32 s32 = 7;
+  repeated sint64 s64 = 8;
+  repeated fixed32 f32 = 9;
+  repeated fixed64 f64 = 10;
+  repeated sfixed32 sf32 = 11;
+  repeated sfixed64 sf64 = 12;
+  repeated bytes by = 13;
+  repeated double db = 14;
+  repeated float fl = 15;
+}
+
+message ScalarMap {
+  map<string, string> str = 1;
+  map<string, bool> bl = 2;
+  map<string, int32> i32 = 3;
+  map<string, int64> i64 = 4;
+  map<string, uint32> u32 = 5;
+  map<string, uint64> u64 = 6;
+  map<string, sint32> s32 = 7;
+  map<string, sint64> s64 = 8;
+  map<string, fixed32> f32 = 9;
+  map<string, fixed64> f64 = 10;
+  map<string, sfixed32> sf32 = 11;
+  map<string, sfixed64> sf64 = 12;
+  map<string, bytes> by = 13;
+  map<string, double> db = 14;
+  map<string, float> fl = 15;
+}
+
+message ScalarOneof {
+  oneof oneof_value {
+    string str = 1;
+    bool bl = 2;
+    int32 i32 = 3;
+    int64 i64 = 4;
+    uint32 u32 = 5;
+    uint64 u64 = 6;
+    sint32 s32 = 7;
+    sint64 s64 = 8;
+    fixed32 f32 = 9;
+    fixed64 f64 = 10;
+    sfixed32 sf32 = 11;
+    sfixed64 sf64 = 12;
+    bytes by = 13;
+    double db = 14;
+    float fl = 15;
+  }
+}

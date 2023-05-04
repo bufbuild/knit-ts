@@ -1,0 +1,20 @@
+{
+  "name": "@bufbuild/knit-test-spec",
+  "version": "0.0.0",
+  "description": "Contains the generated test data",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "buf:generate": "buf generate ./proto"
+  },
+  "peerDependencies": {
+    "@bufbuild/protobuf": "^1.2.0"
+  },
+  "devDependencies": {
+    "@bufbuild/protoc-gen-knit-ts": "workspace:*",
+    "@bufbuild/protoc-gen-es": "^1.2.0",
+    "@bufbuild/protoc-gen-connect-es": "^0.8.6",
+    "@bufbuild/protobuf": "^1.2.0",
+    "@bufbuild/buf": "^1.14.0"
+  }
+}

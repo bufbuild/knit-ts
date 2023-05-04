@@ -1,0 +1,9 @@
+# Defaults
+**/.git
+**/.svn
+**/.hg
+**/node_modules
+
+**/dist
+**/src/gen
+packages/knit-test-spec/spec/**

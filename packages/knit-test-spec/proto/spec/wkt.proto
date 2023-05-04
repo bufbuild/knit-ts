@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package spec;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message Wkt {
+  WktFields fields = 1;
+  WktOneof oneofs = 2;
+  WktMap maps = 3;
+  WktRepeated repeated = 4;
+}
+
+message WktFields {
+  google.protobuf.DoubleValue double_value = 1;
+  google.protobuf.BoolValue bool_value = 2;
+  google.protobuf.FloatValue float_value = 3;
+  google.protobuf.Int64Value int64_value = 4;
+  google.protobuf.UInt64Value uint64_value = 5;
+  google.protobuf.Int32Value int32_value = 6;
+  google.protobuf.UInt32Value uint32_value = 7;
+  google.protobuf.StringValue string_value = 8;
+  google.protobuf.BytesValue bytes_value = 9;
+  google.protobuf.Any any = 10;
+  google.protobuf.Duration duration = 11;
+  google.protobuf.Empty empty = 12;
+  google.protobuf.FieldMask field_mask = 13;
+  google.protobuf.Timestamp timestamp = 14;
+  google.protobuf.Struct struct = 15;
+  google.protobuf.ListValue list_value = 16;
+  google.protobuf.Value value = 17;
+  google.protobuf.NullValue null_value = 18;
+}
+
+message WktOneof {
+  oneof oneof_value {
+    google.protobuf.DoubleValue double_value = 1;
+    google.protobuf.BoolValue bool_value = 2;
+    google.protobuf.FloatValue float_value = 3;
+    google.protobuf.Int64Value int64_value = 4;
+    google.protobuf.UInt64Value uint64_value = 5;
+    google.protobuf.Int32Value int32_value = 6;
+    google.protobuf.UInt32Value uint32_value = 7;
+    google.protobuf.StringValue string_value = 8;
+    google.protobuf.BytesValue bytes_value = 9;
+    google.protobuf.Any any = 10;
+    google.protobuf.Duration duration = 11;
+    google.protobuf.Empty empty = 12;
+    google.protobuf.FieldMask field_mask = 13;
+    google.protobuf.Timestamp timestamp = 14;
+    google.protobuf.Struct struct = 15;
+    google.protobuf.ListValue list_value = 16;
+    google.protobuf.Value value = 17;
+    google.protobuf.NullValue null_value = 18;
+  }
+}
+
+message WktMap {
+  map<string, google.protobuf.DoubleValue> double_value = 1;
+  map<string, google.protobuf.BoolValue> bool_value = 2;
+  map<string, google.protobuf.FloatValue> float_value = 3;
+  map<string, google.protobuf.Int64Value> int64_value = 4;
+  map<string, google.protobuf.UInt64Value> uint64_value = 5;
+  map<string, google.protobuf.Int32Value> int32_value = 6;
+  map<string, google.protobuf.UInt32Value> uint32_value = 7;
+  map<string, google.protobuf.StringValue> string_value = 8;
+  map<string, google.protobuf.BytesValue> bytes_value = 9;
+  map<string, google.protobuf.Any> any = 10;
+  map<string, google.protobuf.Duration> duration = 11;
+  map<string, google.protobuf.Empty> empty = 12;
+  map<string, google.protobuf.FieldMask> field_mask = 13;
+  map<string, google.protobuf.Timestamp> timestamp = 14;
+  map<string, google.protobuf.Struct> struct = 15;
+  map<string, google.protobuf.ListValue> list_value = 16;
+  map<string, google.protobuf.Value> value = 17;
+  map<string, google.protobuf.NullValue> null_value = 18;
+}
+
+message WktRepeated {
+  repeated google.protobuf.DoubleValue double_value = 1;
+  repeated google.protobuf.BoolValue bool_value = 2;
+  repeated google.protobuf.FloatValue float_value = 3;
+  repeated google.protobuf.Int64Value int64_value = 4;
+  repeated google.protobuf.UInt64Value uint64_value = 5;
+  repeated google.protobuf.Int32Value int32_value = 6;
+  repeated google.protobuf.UInt32Value uint32_value = 7;
+  repeated google.protobuf.StringValue string_value = 8;
+  repeated google.protobuf.BytesValue bytes_value = 9;
+  repeated google.protobuf.Any any = 10;
+  repeated google.protobuf.Duration duration = 11;
+  repeated google.protobuf.Empty empty = 12;
+  repeated google.protobuf.FieldMask field_mask = 13;
+  repeated google.protobuf.Timestamp timestamp = 14;
+  repeated google.protobuf.Struct struct = 15;
+  repeated google.protobuf.ListValue list_value = 16;
+  repeated google.protobuf.Value value = 17;
+  repeated google.protobuf.NullValue null_value = 18;
+}
+
+service WktService {
+  rpc GetDoubleValue(google.protobuf.DoubleValue) returns (google.protobuf.DoubleValue);
+  rpc GetBoolValue(google.protobuf.BoolValue) returns (google.protobuf.BoolValue);
+  rpc GetFloatValue(google.protobuf.FloatValue) returns (google.protobuf.FloatValue);
+  rpc GetInt64Value(google.protobuf.Int64Value) returns (google.protobuf.Int64Value);
+  rpc GetUint64Value(google.protobuf.UInt64Value) returns (google.protobuf.UInt64Value);
+  rpc GetInt32Value(google.protobuf.Int32Value) returns (google.protobuf.Int32Value);
+  rpc GetUint32Value(google.protobuf.UInt32Value) returns (google.protobuf.UInt32Value);
+  rpc GetStringValue(google.protobuf.StringValue) returns (google.protobuf.StringValue);
+  rpc GetBytesValue(google.protobuf.BytesValue) returns (google.protobuf.BytesValue);
+  rpc GetAny(google.protobuf.Any) returns (google.protobuf.Any);
+  rpc GetDuration(google.protobuf.Duration) returns (google.protobuf.Duration);
+  rpc GetEmpty(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc GetFieldMask(google.protobuf.FieldMask) returns (google.protobuf.FieldMask);
+  rpc GetTimestamp(google.protobuf.Timestamp) returns (google.protobuf.Timestamp);
+  rpc GetStruct(google.protobuf.Struct) returns (google.protobuf.Struct);
+  rpc GetListValue(google.protobuf.ListValue) returns (google.protobuf.ListValue);
+  rpc GetValue(google.protobuf.Value) returns (google.protobuf.Value);
+}

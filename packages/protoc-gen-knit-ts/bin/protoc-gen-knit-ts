@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+const {runNodeJs} = require("@bufbuild/protoplugin");
+const {protocGenKnitTs} = require("../dist/cjs/index.js");
+
+runNodeJs(protocGenKnitTs);

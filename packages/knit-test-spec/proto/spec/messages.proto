@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package spec;
+
+message Message {
+  string id = 1;
+  message Inner {
+    optional Message mess = 1;
+    message WithinInner {
+      float fl = 1;
+    }
+  }
+  Inner inner = 2;
+  Inner.WithinInner within_inner = 3;
+  Message self = 4;
+  repeated Message selfs = 5;
+  map<string, Message> self_map = 6;
+}

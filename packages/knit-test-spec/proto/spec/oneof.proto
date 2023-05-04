@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package spec;
+
+message Oneof {
+  oneof oneof_value {
+    string scalar = 1;
+    OneofMessage message = 2;
+    OneofEnum enum = 3;
+  }
+}
+
+message OneofMessage {
+  string id = 1;
+}
+
+enum OneofEnum {
+  ONEOF_ENUM_ZERO = 0;
+  ONEOF_ENUM_TWO = 1;
+}

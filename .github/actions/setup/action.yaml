@@ -1,0 +1,27 @@
+name: Setup
+description: Sets up the environment for the rest of the workflow
+runs:
+  using: composite
+  steps:
+    - uses: bufbuild/buf-setup-action@v1    
+    - uses: pnpm/action-setup@v2
+      with:
+        run_install: false
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version-file: "package.json"
+        cache: "pnpm"
+        cache-dependency-path: "pnpm-lock.yaml"
+    - shell: bash
+      run: pnpm config set @buf:registry https://buf.build/gen/npm/v1
+    - name: pnpm install
+      shell: bash
+      run: pnpm install --frozen-lockfile
+    - name: Cache turbo build setup
+      uses: actions/cache@v3
+      with:
+        path: .turbo
+        key: ${{ runner.os }}-turbo-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-turbo-

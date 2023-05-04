@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package spec;
+
+import "buf/knit/v1alpha1/options.proto";
+import "spec/all.proto";
+
+service AllResolverService {
+  rpc GetAllRelSelf(GetAllRelSelfRequest) returns (GetAllRelSelfResponse) {
+    option (buf.knit.v1alpha1.relation).name = "rel_self";
+  }
+
+  rpc GetAllRelSelfParam(GetAllRelSelfParamRequest) returns (GetAllRelSelfParamResponse) {
+    option (buf.knit.v1alpha1.relation).name = "rel_self_param";   
+  }
+}
+
+message GetAllRelSelfRequest {
+  repeated All bases = 1;
+}
+
+message GetAllRelSelfResponse {
+  repeated AllResult values = 1;
+  message AllResult {
+    All rel_self = 1;
+  }
+}
+
+
+message GetAllRelSelfParamRequest {
+  repeated spec.All bases = 1;
+  string id = 2;
+}
+
+message GetAllRelSelfParamResponse {
+  repeated AllParamResult values = 1;
+  message AllParamResult {
+    All rel_self_param = 1;
+  }
+}

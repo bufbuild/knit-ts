@@ -1,0 +1,44 @@
+{
+  "name": "@bufbuild/knit",
+  "version": "0.0.1",
+  "description": "TypeScript client for Knit",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bufbuild/knit-ts.git",
+    "directory": "packages/knit"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf ./dist/* .turbo/*",
+    "lint": "eslint .",
+    "test": "NODE_OPTIONS=--experimental-vm-modules ../../node_modules/.bin/jest",
+    "test:watch": "pnpm run build:esm+types --watch & pnpm run test --watchAll",
+    "build": "tsup src/index.ts --dts --no-splitting --format esm,cjs --legacy-output --treeshake"
+  },
+  "dependencies": {
+    "@bufbuild/connect": "^0.8.6",
+    "@bufbuild/connect-web": "^0.8.6",
+    "@bufbuild/protobuf": "^1.2.0"
+  },
+  "devDependencies": {
+    "@buf/bufbuild_knit.bufbuild_connect-es": "0.8.6-20230504134654-ed776732e526.1",
+    "@buf/bufbuild_knit.bufbuild_es": "1.2.0-20230504134654-ed776732e526.1",
+    "@bufbuild/knit-test-spec": "workspace:*",
+    "@jest/globals": "^29.4.1",
+    "eslint-config-custom": "workspace:*",
+    "tsconfig": "workspace:*",
+    "tsup": "^6.7.0"
+  },
+  "files": [
+    "dist/**"
+  ]
+}

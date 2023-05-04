@@ -1,0 +1,25 @@
+name: ci
+on:
+  workflow_dispatch:
+  push:
+permissions:
+  contents: read
+jobs:
+  lint:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: lint
+        run: pnpm run lint
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: test
+        run: pnpm run test

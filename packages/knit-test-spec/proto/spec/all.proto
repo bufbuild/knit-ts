@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package spec;
+
+import "spec/enum.proto";
+import "spec/map.proto";
+import "spec/messages.proto";
+import "spec/oneof.proto";
+import "spec/scalars.proto";
+import "spec/wkt.proto";
+
+message All {
+  All self = 1;
+  Wkt wkt = 2;
+  Scalar scalars = 3;
+  Map map = 4;
+  Oneof oneof = 5;
+  Message message = 6;
+  TopLevel enum = 7;
+  EnumShell enum_shell = 8;
+}
+
+service AllService {
+  rpc GetAll(All) returns (All) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  rpc CreateAll(All) returns (All);
+  rpc StreamAll(All) returns (stream All);
+  rpc ClientAll(stream All) returns (All);
+  rpc BiDiAll(stream All) returns (stream All);
+}

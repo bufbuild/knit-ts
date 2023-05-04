@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package spec;
+
+message Proto2Message {
+  required int32 required_field = 1;
+  optional uint32 optional_field = 2;
+  optional Proto2Enum enum = 3;
+  optional Proto2Child child = 4;
+}
+
+enum Proto2Enum {
+  UNSPECIFIED = 1;
+  SOMETHING = 2;
+}
+
+message Proto2Child {
+  optional string id = 1;
+}

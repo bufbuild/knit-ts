@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package spec.sub;
+
+message SubMessage {}
+
+service SubService {
+  rpc SubMethod(SubMessage) returns (SubMessage);
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+
+  "pipeline": {
+    "buf:generate": {
+      "dependsOn": ["^build"],
+      "inputs": ["proto/**"],
+      "outputs": ["spec/**", "src/gen/**"]
+    },
+    "build": {
+      "dependsOn": ["^build", "buf:generate", "clean"],
+      "inputs": ["src/**"],
+      "outputs": ["dist/**/*"]
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": []
+    },
+    "lint": {
+      "outputs": []
+    },
+    "clean": {
+      "cache": false,
+      "outputs": []
+    },
+    "test:watch": {
+      "dependsOn": ["clean", "buf:generate"],
+      "persistent": true
+    }
+  },
+  "globalDependencies": [
+    "packages/eslint-config-custom/index.js",
+    "packages/tsconfig/*.json"
+  ]
+}
