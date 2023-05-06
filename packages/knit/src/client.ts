@@ -13,7 +13,11 @@
 // limitations under the License.
 
 import { createConnectTransport } from "@bufbuild/connect-web";
-import { createPromiseClient, type PromiseClient } from "@bufbuild/connect";
+import {
+  createPromiseClient,
+  type PromiseClient,
+  type Transport,
+} from "@bufbuild/connect";
 import type {
   DoQuery,
   DoSchema,
@@ -176,13 +180,25 @@ export interface Options {
  * @returns The Knit client see {@link Client}
  */
 export function createClient<S extends Schema>(options: Options): Client<S> {
-  const client = createPromiseClient(
-    KnitService,
+  return createClientWithTransport(
     createConnectTransport({
       baseUrl: options.baseUrl,
       credentials: options.credentials,
     })
   );
+}
+
+/**
+ * Creates a client with the given transport.
+ *
+ * Exported for testing.
+ *
+ * @internal
+ */
+export function createClientWithTransport<S extends Schema>(
+  transport: Transport
+): Client<S> {
+  const client = createPromiseClient(KnitService, transport);
   return {
     fetch: createFetch(client),
     do: createDo(client),
@@ -223,8 +239,7 @@ function createDo<S extends Schema>(
 function createListen<S extends Schema>(
   client: PromiseClient<typeof KnitService>
 ): Client<S>["listen"] {
-  // eslint-disable-next-line @typescript-eslint/require-await,require-yield
-  return async function* <Q extends Subset<Q, ListenQuery<S>>>(query: Q) {
+  return function <Q extends Subset<Q, ListenQuery<S>>>(query: Q) {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     if (requests.length !== 1) {
       throw new Error(
@@ -233,7 +248,10 @@ function createListen<S extends Schema>(
     }
     try {
       const responseIterable = client.listen({ request: requests[0] });
-      return makeResultIterable(oneofs[0], responseIterable);
+      return makeResultIterable(
+        oneofs[0],
+        responseIterable
+      ) as AsyncIterable<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
     } catch (reason) {
       throw knitErrorFromReason(reason);
     }
