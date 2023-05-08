@@ -1,6 +1,6 @@
 {
   "name": "@bufbuild/protoc-gen-knit-ts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TypeScript code generator for Knit",
   "license": "Apache-2.0",
   "repository": {
