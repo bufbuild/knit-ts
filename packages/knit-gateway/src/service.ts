@@ -29,21 +29,24 @@ import {
   Schema,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import {
+  createGateway,
   type Gateway,
   type UnaryAndServerStreamMethods,
-  createGateway,
 } from "./gateway.js";
 import {
   Value,
   MethodKind,
   MethodIdempotency,
-  type Message,
   type PartialMessage,
   type ServiceType,
+  type PlainMessage,
+  type AnyMessage,
+  type IMessageTypeRegistry,
 } from "@bufbuild/protobuf";
 import { computeSchema } from "./schema.js";
-import { applyMask } from "./mask.js";
+import { formatMessage } from "./json.js";
 import { makeOutboundHeader } from "./headers.js";
+import { stitch } from "./stitch.js";
 
 /**
  * Options accepted by {@link createKnitService}.
@@ -55,6 +58,10 @@ export interface CreateKnitServiceOptions<T extends readonly ServiceType[]> {
    * This can be overridden at the service/method level.
    */
   transport: Transport;
+  /**
+   * The type registry to use for encoding/decoding messages.
+   */
+  typeRegistry?: IMessageTypeRegistry;
   /**
    * The default timeout in millisecond for RPC calls.
    *
@@ -126,6 +133,7 @@ export function createKnitService<T extends readonly ServiceType[]>({
   transport,
   timeoutMs,
   services,
+  typeRegistry,
 }: CreateKnitServiceOptions<T>): ServiceImpl<typeof KnitService> {
   const gateway = createGateway({ transport, timeoutMs });
   for (const service of services) {
@@ -134,16 +142,32 @@ export function createKnitService<T extends readonly ServiceType[]>({
   return {
     async do({ requests }, { requestHeader }) {
       return new DoResponse({
-        responses: await handleUnary(gateway, requests, requestHeader),
+        responses: await handleUnary(
+          gateway,
+          requests,
+          requestHeader,
+          typeRegistry
+        ),
       });
     },
     async fetch({ requests }, { requestHeader }) {
       return new FetchResponse({
-        responses: await handleUnary(gateway, requests, requestHeader, true),
+        responses: await handleUnary(
+          gateway,
+          requests,
+          requestHeader,
+          typeRegistry,
+          true
+        ),
       });
     },
     async *listen({ request }, { requestHeader }) {
-      const iterable = await handleStream(gateway, request, requestHeader);
+      const iterable = await handleStream(
+        gateway,
+        request,
+        requestHeader,
+        typeRegistry
+      );
       for await (const response of iterable) {
         yield new ListenResponse({ response });
       }
@@ -155,13 +179,16 @@ async function handleUnary(
   { entryPoints, relations }: Gateway,
   requests: Request[],
   requestHeader: Headers,
+  typeRegistry?: IMessageTypeRegistry,
   forFetch?: boolean
 ): Promise<PartialMessage<Response>[]> {
+  // TODO: Create a typeRegistry for the schema and use that if
+  // typeRegistry is not provided. It is not sound, but it should be good enough.
   if (requests.length === 0) {
     throw new ConnectError(`No requests provided`, Code.InvalidArgument);
   }
   const outboundHeader = makeOutboundHeader(requestHeader);
-  let responses: Promise<PartialMessage<Response>>[] = [];
+  const results: Promise<PartialMessage<Response>>[] = [];
   for (const request of requests) {
     const entryPoint = entryPoints.get(request.method);
     if (entryPoint === undefined) {
@@ -190,27 +217,29 @@ async function handleUnary(
         relations
       )
     );
-    responses = [
-      ...responses,
-      entryPoint.transport
-        .unary(
+
+    results.push(
+      (async () => {
+        const { message } = await entryPoint.transport.unary(
           entryPoint.service,
           entryPoint.method,
           undefined, // TODO: Add abort signal if possible.
           entryPoint.timeoutMs,
           outboundHeader,
           entryPoint.method.I.fromJson(request.body?.toJson() ?? {})
-        )
-        .then(({ message }) => makeResponse(request, schema, message)),
-    ];
+        );
+        return makeResponse(request, schema, message, typeRegistry);
+      })()
+    );
   }
-  return await Promise.all(responses);
+  return await Promise.all(results);
 }
 
 async function handleStream(
   { entryPoints, relations }: Gateway,
   request: Request | undefined,
-  requestHeader: Headers
+  requestHeader: Headers,
+  typeRegistry?: IMessageTypeRegistry
 ): Promise<AsyncIterable<PartialMessage<Response>>> {
   if (request === undefined) {
     throw new ConnectError(`No request provided`, Code.InvalidArgument);
@@ -242,7 +271,7 @@ async function handleStream(
     message,
     async function* (messageIterable) {
       for await (const message of messageIterable) {
-        yield makeResponse(request, schema, message);
+        yield makeResponse(request, schema, message, typeRegistry);
       }
     },
     {
@@ -251,14 +280,21 @@ async function handleStream(
   );
 }
 
-function makeResponse(
+async function makeResponse(
   request: Request,
-  schema: Schema,
-  responseMessage: Message
-): PartialMessage<Response> {
+  schema: PlainMessage<Schema>,
+  responseMessage: AnyMessage,
+  typeRegistry?: IMessageTypeRegistry
+): Promise<PartialMessage<Response>> {
+  const [result, patches] = formatMessage(
+    responseMessage,
+    schema,
+    typeRegistry
+  );
+  await stitch(patches, typeRegistry);
   return {
     method: request.method,
-    body: Value.fromJson(applyMask(responseMessage.toJson(), schema)),
+    body: Value.fromJson(result),
     schema: schema,
   };
 }
