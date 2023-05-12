@@ -47,7 +47,7 @@ import {
   UInt64Value,
   Value,
 } from "@bufbuild/protobuf";
-import { Keys, Map } from "@bufbuild/knit-test-spec/spec/map_pb.js";
+import { Keys, Map as ProtoMap } from "@bufbuild/knit-test-spec/spec/map_pb.js";
 import { Message } from "@bufbuild/knit-test-spec/spec/messages_pb.js";
 
 describe("valid mask", () => {
@@ -206,7 +206,7 @@ describe("valid mask", () => {
     },
     {
       name: "Maps",
-      message: Map,
+      message: ProtoMap,
       mask: [
         {
           name: "message",
@@ -214,7 +214,7 @@ describe("valid mask", () => {
         },
       ],
       schema: {
-        name: Map.typeName,
+        name: ProtoMap.typeName,
         fields: [
           {
             name: "message",
@@ -223,7 +223,7 @@ describe("valid mask", () => {
                 case: "map",
                 value: {
                   key: Schema_Field_Type_ScalarType.STRING,
-                  value: messageElement(Map, [
+                  value: messageElement(ProtoMap, [
                     {
                       name: "enum",
                       type: {
@@ -327,7 +327,8 @@ describe("valid mask", () => {
           computeSchema(
             testCase.message,
             testCase.mask.map((m) => new MaskField(m)),
-            ""
+            "",
+            new Map()
           )
         )
       ).toEqual(new Schema(testCase.schema));
@@ -358,7 +359,8 @@ describe("invalid mask", () => {
         computeSchema(
           testCase.message,
           testCase.mask.map((m) => new MaskField(m)),
-          ""
+          "",
+          new Map()
         )
       ).toThrow();
     });
