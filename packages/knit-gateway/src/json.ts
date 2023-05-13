@@ -31,6 +31,7 @@ import type {
 import { wktSet } from "./wkt.js";
 import type { Relation } from "./gateway.js";
 import { Code, ConnectError } from "@bufbuild/connect";
+import type {} from "./schema.js";
 
 export interface Patch {
   base: AnyMessage;
@@ -62,23 +63,23 @@ export function formatMessage(
   const formattedObject: JsonObject = {};
   const patches: Patch[] = [];
   for (const field of schema.fields) {
-    const fieldInfo = type.fields.findJsonName(
-      field.jsonName === "" ? field.name : field.jsonName
-    );
-    if (fieldInfo === undefined) {
-      if (field.relation === undefined) {
-        // Shouldn't happen because schema is created from the message
-        throw new ConnectError(
-          `Field '${field.name}' not found for '${type.typeName}'`,
-          Code.InvalidArgument
-        );
-      }
+    if (field.relation !== undefined) {
       patches.push({
         base: message,
         field: field as Patch["field"],
         target: formattedObject,
       });
       continue;
+    }
+    const fieldInfo = type.fields.findJsonName(
+      field.jsonName === "" ? field.name : field.jsonName
+    );
+    if (fieldInfo === undefined) {
+      // Shouldn't happen because schema is created from the message
+      throw new ConnectError(
+        `Field '${field.name}' not found for '${type.typeName}'`,
+        Code.InvalidArgument
+      );
     }
     const [fieldValue, fieldPatches] = formatValue(
       message[field.name],
