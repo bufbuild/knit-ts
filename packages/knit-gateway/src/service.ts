@@ -209,15 +209,12 @@ async function handleUnary(
         Code.InvalidArgument
       );
     }
-    const schema = new Schema(
-      computeSchema(
-        entryPoint.method.O,
-        request.mask,
-        request.method,
-        relations
-      )
+    const schema = computeSchema(
+      entryPoint.method.O,
+      request.mask,
+      request.method,
+      relations
     );
-
     results.push(
       (async () => {
         const { message } = await entryPoint.transport.unary(
@@ -254,8 +251,11 @@ async function handleStream(
       Code.InvalidArgument
     );
   }
-  const schema = new Schema(
-    computeSchema(entryPoint.method.O, request.mask, request.method, relations)
+  const schema = computeSchema(
+    entryPoint.method.O,
+    request.mask,
+    request.method,
+    relations
   );
   const { message } = await entryPoint.transport.stream(
     entryPoint.service,
