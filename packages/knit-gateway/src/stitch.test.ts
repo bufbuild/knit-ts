@@ -9,6 +9,7 @@ import {
   Schema_Field,
   Schema_Field_Type,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import type {} from "./schema.js";
 
 test("stitch", async () => {
   const base = new All();
