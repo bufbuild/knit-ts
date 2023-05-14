@@ -135,6 +135,13 @@ export interface Options {
    * https://fetch.spec.whatwg.org/#concept-request-credentials-mode
    */
   credentials?: RequestCredentials;
+  /**
+   * The default headers to send with each request.
+   *
+   * Use this to set headers such as `Authorization` that
+   * are common to all requests.
+   */
+  headers?: HeadersInit;
 }
 
 /**
@@ -184,7 +191,8 @@ export function createClient<S extends Schema>(options: Options): Client<S> {
     createConnectTransport({
       baseUrl: options.baseUrl,
       credentials: options.credentials,
-    })
+    }),
+    options
   );
 }
 
@@ -196,23 +204,28 @@ export function createClient<S extends Schema>(options: Options): Client<S> {
  * @internal
  */
 export function createClientWithTransport<S extends Schema>(
-  transport: Transport
+  transport: Transport,
+  options: OptionalOptions
 ): Client<S> {
   const client = createPromiseClient(KnitService, transport);
   return {
-    fetch: createFetch(client),
-    do: createDo(client),
-    listen: createListen(client),
+    fetch: createFetch(client, options),
+    do: createDo(client, options),
+    listen: createListen(client, options),
   };
 }
 
 function createFetch<S extends Schema>(
-  client: PromiseClient<typeof KnitService>
+  client: KnitServiceClient,
+  options: OptionalOptions
 ): Client<S>["fetch"] {
   return async function <Q extends Subset<Q, FetchQuery<S>>>(query: Q) {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     try {
-      const { responses } = await client.fetch({ requests });
+      const { responses } = await client.fetch(
+        { requests },
+        { headers: options.headers }
+      );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return
       return makeResult(oneofs, responses) as any;
     } catch (reason) {
@@ -222,12 +235,16 @@ function createFetch<S extends Schema>(
 }
 
 function createDo<S extends Schema>(
-  client: PromiseClient<typeof KnitService>
+  client: KnitServiceClient,
+  options: OptionalOptions
 ): Client<S>["do"] {
   return async function <Q extends Subset<Q, DoQuery<S>>>(query: Q) {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     try {
-      const { responses } = await client.do({ requests });
+      const { responses } = await client.do(
+        { requests },
+        { headers: options.headers }
+      );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return
       return makeResult(oneofs, responses) as any;
     } catch (reason) {
@@ -237,7 +254,8 @@ function createDo<S extends Schema>(
 }
 
 function createListen<S extends Schema>(
-  client: PromiseClient<typeof KnitService>
+  client: KnitServiceClient,
+  options: OptionalOptions
 ): Client<S>["listen"] {
   return function <Q extends Subset<Q, ListenQuery<S>>>(query: Q) {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
@@ -247,7 +265,10 @@ function createListen<S extends Schema>(
       );
     }
     try {
-      const responseIterable = client.listen({ request: requests[0] });
+      const responseIterable = client.listen(
+        { request: requests[0] },
+        { headers: options.headers }
+      );
       return makeResultIterable(
         oneofs[0],
         responseIterable
@@ -257,3 +278,6 @@ function createListen<S extends Schema>(
     }
   };
 }
+
+type KnitServiceClient = PromiseClient<typeof KnitService>;
+type OptionalOptions = Omit<Options, "baseUrl" | "credentials">;
