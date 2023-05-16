@@ -18,14 +18,19 @@ import { makeOutboundHeader } from "./headers.js";
 
 describe("well known headers", () => {
   const headers = [
+    "Accept",
     "Connect",
+    "Connection",
     "Expect",
     "Host",
+    "Http2-Settings",
     "Keep-Alive",
     "Origin",
+    "Proxy-Connection",
     "TE",
     "Trailer",
     "Transfer-Encoding",
+    "Upgrade",
   ];
   for (const header of headers) {
     test(header, () => {
@@ -37,7 +42,7 @@ describe("well known headers", () => {
 });
 
 describe("well known prefix", () => {
-  const prefixes = [":", "accept-", "Connect-", "Content-", "IF-"];
+  const prefixes = [":", "accept-", "Connect-", "Content-", "IF-", "Grpc-"];
   for (const prefix of prefixes) {
     test(prefix, () => {
       const header = prefix + "-FOO";
