@@ -13,10 +13,14 @@
 // limitations under the License.
 
 import type { Transport } from "@bufbuild/connect";
-import {
-  MethodKind,
-  type ServiceType,
-  type MethodInfo,
+import { MethodKind } from "@bufbuild/protobuf";
+import type {
+  ServiceType,
+  MethodInfo,
+  AnyMessage,
+  FieldInfo,
+  MessageType,
+  PartialMessage,
 } from "@bufbuild/protobuf";
 
 /**
@@ -68,6 +72,13 @@ export interface Gateway {
    */
   readonly entryPoints: ReadonlyMap<string, EntryPoint>;
   /**
+   * The configured relations.
+   *
+   * The key is the fully qualified typeName of the base message.
+   * The value is a map with key being the relation name and value being the relation.
+   */
+  readonly relations: ReadonlyMap<string, ReadonlyMap<string, Relation>>;
+  /**
    * Add the service methods as entry points.
    */
   addService<S extends ServiceType>(
@@ -101,6 +112,39 @@ export interface EntryPoint {
 }
 
 /**
+ * Describes a Knit relation.
+ *
+ * @internal
+ */
+export interface Relation {
+  /**
+   * The message type of the base message.
+   */
+  base: MessageType;
+  /**
+   * The relation field info.
+   */
+  field: FieldInfo;
+  /**
+   * The message type of the params.
+   */
+  params?: MessageType;
+  /**
+   * The runtime to use for the relation.
+   *
+   * This is the runtime of the file it was defined in.
+   */
+  runtime: MessageType["runtime"];
+  /**
+   * The resolver to use for the relation.
+   */
+  resolver: (
+    bases: AnyMessage[],
+    params: PartialMessage<AnyMessage> | undefined
+  ) => Promise<unknown[]>;
+}
+
+/**
  * Returns the union of local names of unary and server streaming methods of a service.
  *
  * @internal
@@ -123,8 +167,10 @@ export function createGateway({
   timeoutMs,
 }: GatewayOptions): Gateway {
   const entryPoints = new Map<string, EntryPoint>();
+  const relations = new Map<string, Map<string, Relation>>();
   return {
     entryPoints,
+    relations,
     addService<S extends ServiceType>(
       service: S,
       options?: GatewayServiceOptions<S>

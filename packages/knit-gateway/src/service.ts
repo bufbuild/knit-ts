@@ -152,7 +152,7 @@ export function createKnitService<T extends readonly ServiceType[]>({
 }
 
 async function handleUnary(
-  { entryPoints }: Gateway,
+  { entryPoints, relations }: Gateway,
   requests: Request[],
   requestHeader: Headers,
   forFetch?: boolean
@@ -182,10 +182,13 @@ async function handleUnary(
         Code.InvalidArgument
       );
     }
-    const schema = computeSchema(
-      entryPoint.method.O,
-      request.mask,
-      request.method
+    const schema = new Schema(
+      computeSchema(
+        entryPoint.method.O,
+        request.mask,
+        request.method,
+        relations
+      )
     );
     responses = [
       ...responses,
@@ -205,7 +208,7 @@ async function handleUnary(
 }
 
 async function handleStream(
-  { entryPoints }: Gateway,
+  { entryPoints, relations }: Gateway,
   request: Request | undefined,
   requestHeader: Headers
 ): Promise<AsyncIterable<PartialMessage<Response>>> {
@@ -222,10 +225,8 @@ async function handleStream(
       Code.InvalidArgument
     );
   }
-  const schema = computeSchema(
-    entryPoint.method.O,
-    request.mask,
-    request.method
+  const schema = new Schema(
+    computeSchema(entryPoint.method.O, request.mask, request.method, relations)
   );
   const { message } = await entryPoint.transport.stream(
     entryPoint.service,
