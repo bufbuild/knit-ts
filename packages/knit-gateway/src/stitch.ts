@@ -38,18 +38,18 @@ export async function stitch(
 ) {
   while (patches.length > 0) {
     const batches = makeBatches(patches);
-    const resolves: Promise<Patch[][]>[] = [];
+    const resolves: Promise<Patch[]>[] = [];
     for (const batch of batches) {
       resolves.push(resolveBatch(batch, typeRegistry));
     }
-    patches = (await Promise.all(resolves)).flat(2);
+    patches = (await Promise.all(resolves)).flat();
   }
 }
 
 async function resolveBatch(
   { field, bases, formatTargets: targets }: Batch,
   typeRegistry?: IMessageTypeRegistry
-): Promise<Patch[][]> {
+): Promise<Patch[]> {
   const results = await field.relation.resolver(bases, field.params);
   if (results.length !== targets.length) {
     throw new ConnectError(
@@ -57,7 +57,7 @@ async function resolveBatch(
       Code.Internal
     );
   }
-  const patches: Patch[][] = [];
+  const patches: Patch[] = [];
   for (let i = 0; i < results.length; i++) {
     const target = targets[i];
     const result = results[i];
@@ -70,7 +70,7 @@ async function resolveBatch(
     );
     if (formattedResult === undefined) continue;
     target[field.name] = formattedResult;
-    patches.push(resultPatches);
+    patches.push(...resultPatches);
   }
   return patches;
 }

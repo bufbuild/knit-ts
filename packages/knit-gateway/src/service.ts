@@ -225,7 +225,7 @@ async function handleUnary(
           outboundHeader,
           entryPoint.method.I.fromJson(request.body?.toJson() ?? {})
         );
-        return makeResponse(request, schema, message, typeRegistry);
+        return await makeResponse(request, schema, message, typeRegistry);
       })()
     );
   }
@@ -271,7 +271,7 @@ async function handleStream(
     message,
     async function* (messageIterable) {
       for await (const message of messageIterable) {
-        yield makeResponse(request, schema, message, typeRegistry);
+        yield await makeResponse(request, schema, message, typeRegistry);
       }
     },
     {
