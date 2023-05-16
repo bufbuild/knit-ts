@@ -42,7 +42,7 @@ describe("well known headers", () => {
 });
 
 describe("well known prefix", () => {
-  const prefixes = [":", "accept-", "Connect-", "Content-", "IF-", "Grpc-"];
+  const prefixes = [":", "Accept-", "Connect-", "Content-", "If-", "Grpc-"];
   for (const prefix of prefixes) {
     test(prefix, () => {
       const header = prefix + "-FOO";
