@@ -13,14 +13,19 @@
 // limitations under the License.
 
 const forbiddenHeaders = new Set<string>([
+  "accept",
   "connect",
+  "connection",
   "expect",
   "host",
+  "http2-settings",
   "keep-alive",
   "origin",
+  "proxy-connection",
   "te",
   "trailer",
   "transfer-encoding",
+  "upgrade",
 ]);
 
 const forbiddenPrefixes = [
@@ -28,6 +33,7 @@ const forbiddenPrefixes = [
   "accept-",
   "connect-",
   "content-",
+  "grpc-",
   "if-",
 ] as const;
 
