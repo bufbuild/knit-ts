@@ -1,4 +1,4 @@
 {
   "extends": "tsconfig/library.json",
-  "files": ["src/index.ts"]
+  "files": ["src/index.ts", "src/json.ts"]
 }
