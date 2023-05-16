@@ -16,7 +16,11 @@ import { describe, test, expect } from "@jest/globals";
 import { type Equal, expectType } from "./jest/util";
 import { createGateway, type UnaryAndServerStreamMethods } from "./gateway.js";
 import type { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
-import { AllService } from "@bufbuild/knit-test-spec/spec/all_connect";
+import { AllService } from "@bufbuild/knit-test-spec/spec/all_connect.js";
+import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_connect.js";
+import { createRouterTransport } from "@bufbuild/connect";
+import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
+import type { AnyMessage } from "@bufbuild/protobuf";
 
 describe("types", () => {
   test("UnaryAndServerStreamMethods", () => {
@@ -28,9 +32,9 @@ describe("types", () => {
 
 describe("addService", () => {
   test("defaults to all supported methods", () => {
-    const router = createGateway({ transport: {} as any });
-    router.addService(AllService);
-    expect([...router.entryPoints.keys()].sort()).toEqual(
+    const gateway = createGateway({ transport: {} as any });
+    gateway.addService(AllService);
+    expect([...gateway.entryPoints.keys()].sort()).toEqual(
       [
         "spec.AllService.GetAll",
         "spec.AllService.CreateAll",
@@ -39,17 +43,53 @@ describe("addService", () => {
     );
   });
   test("respects methods option", () => {
-    const router = createGateway({ transport: {} as any });
-    router.addService(AllService, { methods: ["getAll"] });
-    expect([...router.entryPoints.keys()]).toEqual(["spec.AllService.GetAll"]);
+    const gateway = createGateway({ transport: {} as any });
+    gateway.addService(AllService, { methods: ["getAll"] });
+    expect([...gateway.entryPoints.keys()]).toEqual(["spec.AllService.GetAll"]);
   });
   test("respects transport override", () => {
-    const router = createGateway({ transport: { kind: "base" } as any });
-    router.addService(AllService, { transport: { kind: "override" } as any });
+    const gateway = createGateway({ transport: { kind: "base" } as any });
+    gateway.addService(AllService, { transport: { kind: "override" } as any });
     expect(
-      [...router.entryPoints.values()].map((v) => v.transport)
+      [...gateway.entryPoints.values()].map((v) => v.transport)
     ).toContainEqual({
       kind: "override",
     });
+  });
+});
+
+describe("addRelation", () => {
+  test("adds relation", async () => {
+    const gateway = createGateway({
+      transport: createRouterTransport(({ service }) => {
+        service(AllResolverService, {
+          getAllRelSelf: ({ bases }) => {
+            return {
+              values: bases.map((base) => ({
+                relSelf: base,
+              })),
+            };
+          },
+        });
+      }),
+    });
+    gateway.addRelation(AllResolverService, {
+      getAllRelSelf: {
+        name: "rel_self",
+      },
+    });
+    const base = new All({
+      scalars: {
+        fields: {
+          str: "foo",
+        },
+      },
+    });
+    const response = await gateway.relations
+      .get(All.typeName)
+      ?.get("rel_self")
+      ?.resolver([base], undefined);
+    expect(response).toHaveLength(1);
+    expect((response?.[0]! as AnyMessage).toJson()).toEqual(base.toJson());
   });
 });
