@@ -43,7 +43,7 @@ interface GatewayOptions {
 }
 
 /**
- * Options to configure a service using {@link Gateway}. See {@link Gateway.addService}
+ * Options to configure a service using {@link Gateway}. See {@link Gateway.service}
  */
 interface GatewayServiceOptions<S extends ServiceType> {
   /**
@@ -93,14 +93,14 @@ export interface Gateway {
   /**
    * Add the service methods as entry points.
    */
-  addService<S extends ServiceType>(
+  service<S extends ServiceType>(
     service: S,
     options?: GatewayServiceOptions<S>
   ): void;
   /**
    * Add relation(s) to the gateway.
    */
-  addRelation<S extends ServiceType>(
+  relation<S extends ServiceType>(
     service: S,
     methods: RelationMethodConfig<S>,
     options?: GatewayRelationOptions
@@ -191,7 +191,7 @@ export function createGateway({
   return {
     entryPoints,
     relations,
-    addService<S extends ServiceType>(
+    service<S extends ServiceType>(
       service: S,
       options?: GatewayServiceOptions<S>
     ) {
@@ -224,7 +224,7 @@ export function createGateway({
         });
       }
     },
-    addRelation<S extends ServiceType>(
+    relation<S extends ServiceType>(
       service: S,
       methods: RelationMethodConfig<S>,
       options?: GatewayRelationOptions

@@ -39,7 +39,9 @@ describe("unary", () => {
     transportSpy = transportSpyFn();
     service = createKnitService({
       transport: transportSpy as any,
-      services: [{ type: AllService }] as const,
+      configure({ service }) {
+        service(AllService);
+      },
     });
   });
   test("single request without mask", async () => {
@@ -80,7 +82,9 @@ describe("stream", () => {
     transportSpy = transportSpyFn();
     service = createKnitService({
       transport: transportSpy as any,
-      services: [{ type: AllService }] as const,
+      configure({ service }) {
+        service(AllService);
+      },
     });
   });
   test("stream without mask", async () => {
@@ -120,7 +124,9 @@ describe("stream", () => {
 describe("errors", () => {
   const service = createKnitService({
     transport: transportSpyFn() as any,
-    services: [{ type: AllService }] as const,
+    configure({ service }) {
+      service(AllService);
+    },
   });
   test("Fetch on non idempotent method", async () => {
     expect.hasAssertions();

@@ -14,4 +14,5 @@
 
 export { createKnitService } from "./service.js";
 
-export type { CreateKnitServiceOptions, ServiceOptions } from "./service.js";
+export type { CreateKnitServiceOptions } from "./service.js";
+export type { Gateway } from "./gateway.js";
