@@ -96,7 +96,7 @@ export interface Gateway {
   service<S extends ServiceType>(
     service: S,
     options?: GatewayServiceOptions<S>
-  ): void;
+  ): Gateway;
   /**
    * Add relation(s) to the gateway.
    */
@@ -104,7 +104,7 @@ export interface Gateway {
     service: S,
     methods: RelationMethodConfig<S>,
     options?: GatewayRelationOptions
-  ): void;
+  ): Gateway;
 }
 
 /**
@@ -223,6 +223,7 @@ export function createGateway({
           timeoutMs: options?.timeoutMs ?? timeoutMs,
         });
       }
+      return this;
     },
     relation<S extends ServiceType>(
       service: S,
@@ -310,6 +311,7 @@ export function createGateway({
           },
         });
       }
+      return this;
     },
   };
 }
