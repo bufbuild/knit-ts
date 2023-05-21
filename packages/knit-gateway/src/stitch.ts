@@ -20,12 +20,18 @@ import type {
   IMessageTypeRegistry,
 } from "@bufbuild/protobuf";
 import type { Relation } from "./gateway.js";
-import { formatValue, type Patch } from "./json.js";
+import {
+  formatValue,
+  type ErrorPatch,
+  type Patch,
+  formatError,
+} from "./json.js";
 import { Code, ConnectError } from "@bufbuild/connect";
 
 interface Batch {
   bases: AnyMessage[];
   formatTargets: JsonObject[];
+  errorPatches: (ErrorPatch | undefined)[];
   field: PlainMessage<Schema_Field> & { relation: Relation };
 }
 
@@ -34,38 +40,54 @@ interface Batch {
  */
 export async function stitch(
   patches: Patch[],
+  fallbackCatch: boolean,
   typeRegistry?: IMessageTypeRegistry
 ) {
   while (patches.length > 0) {
     const batches = makeBatches(patches);
     const resolves: Promise<Patch[]>[] = [];
     for (const batch of batches) {
-      resolves.push(resolveBatch(batch, typeRegistry));
+      resolves.push(resolveBatch(batch, fallbackCatch, typeRegistry));
     }
     patches = (await Promise.all(resolves)).flat();
   }
 }
 
 async function resolveBatch(
-  { field, bases, formatTargets: targets }: Batch,
+  { field, bases, formatTargets, errorPatches }: Batch,
+  fallbackCatch: boolean,
   typeRegistry?: IMessageTypeRegistry
 ): Promise<Patch[]> {
-  const results = await field.relation.resolver(bases, field.params);
-  if (results.length !== targets.length) {
+  let results: unknown[];
+  try {
+    results = await field.relation.resolver(bases, field.params);
+  } catch (err) {
+    const knitError = formatError(err, "", typeRegistry);
+    for (const errorPatch of errorPatches) {
+      if (errorPatch === undefined) {
+        throw knitError;
+      }
+      errorPatch.target[errorPatch.name] = knitError;
+    }
+    return [];
+  }
+  if (results.length !== formatTargets.length) {
     throw new ConnectError(
-      `resolver returned ${results.length} results, expected ${targets.length}`,
+      `resolver returned ${results.length} results, expected ${formatTargets.length}`,
       Code.Internal
     );
   }
   const patches: Patch[] = [];
   for (let i = 0; i < results.length; i++) {
-    const target = targets[i];
+    const target = formatTargets[i];
     const result = results[i];
     const [formattedResult, resultPatches] = formatValue(
       result,
       field.relation.field,
       field.relation.runtime,
       field.type?.value.value,
+      errorPatches[i],
+      fallbackCatch,
       typeRegistry
     );
     if (formattedResult === undefined) continue;
@@ -91,6 +113,7 @@ function makeBatches(patches: Patch[]) {
       batch = {
         bases: [],
         formatTargets: [],
+        errorPatches: [],
         field: patch.field,
       };
       relationPatches.set(patch.field.params, batch);
@@ -98,6 +121,7 @@ function makeBatches(patches: Patch[]) {
     }
     batch.bases.push(patch.base);
     batch.formatTargets.push(patch.target);
+    batch.errorPatches.push(patch.errorPatch);
   }
   return batches;
 }

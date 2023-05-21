@@ -49,6 +49,7 @@ declare module "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb
     params?: AnyMessage;
     relation?: Relation;
     path: string;
+    onError: MaskField["onError"];
   }
 }
 
@@ -81,6 +82,7 @@ function applyMask(
       ...schemaField,
       path: fieldPath,
       type: applyMaskToType(schemaField.type?.value, maskField.mask, fieldPath),
+      onError: maskField.onError,
     };
     if (schemaField.relation?.params !== undefined) {
       if (maskField.params === undefined) {
@@ -195,6 +197,7 @@ function computeMessageFields(
         protoField.jsonName !== protoField.localName ? protoField.jsonName : "",
       type: computeFieldType(protoField, relations),
       path: "",
+      onError: { case: undefined },
     });
   }
   for (const relation of relations.get(message.typeName)?.values() ?? []) {
@@ -204,6 +207,7 @@ function computeMessageFields(
       type: computeFieldType(relation.field, relations),
       path: "",
       relation: relation,
+      onError: { case: undefined },
     });
   }
   return fields;
