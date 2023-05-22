@@ -85,6 +85,8 @@ export type Query<T> =
   ? Query<V>
   : T extends keyof WktTypeTable
   ? ScalarQuery
+  : T extends Uint8Array
+  ? ScalarQuery
   : T extends RelationMarker<infer P, infer V>
   ? ( 
       P extends undefined
@@ -128,7 +130,9 @@ export type Parameter<T> =
   ? Alias<K, Parameter<V>>
   : T extends keyof WktTypeTable
   ? WktTypeTable[T]
-  : T extends AnyRecord
+  : T extends Uint8Array
+  ? Uint8Array
+  : T extends AnyRecord  
   ? {
     // Exclude the Knit relation fields
       [ K in keyof T as T[K] extends RelationMarker<unknown, unknown> | undefined ? never: K]?: Parameter<T[K]>;
@@ -175,6 +179,8 @@ export type Mask<Q, R, ES extends ErrorStrategy = ErrorStrategyThrow> =
   ? Mask<Q, V, ES>
   : R extends keyof WktTypeTable
   ? WktTypeTable[R]
+  : R extends Uint8Array
+  ? R
   : R extends RelationMarker<unknown, infer V>
   ? Mask<Q, V, ES> | ErrorMask<Q, ES>
   : R extends AnyRecord
