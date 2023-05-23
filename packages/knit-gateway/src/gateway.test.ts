@@ -30,10 +30,10 @@ describe("types", () => {
   });
 });
 
-describe("addService", () => {
+describe("service", () => {
   test("defaults to all supported methods", () => {
     const gateway = createGateway({ transport: {} as any });
-    gateway.addService(AllService);
+    gateway.service(AllService);
     expect([...gateway.entryPoints.keys()].sort()).toEqual(
       [
         "spec.AllService.GetAll",
@@ -44,12 +44,12 @@ describe("addService", () => {
   });
   test("respects methods option", () => {
     const gateway = createGateway({ transport: {} as any });
-    gateway.addService(AllService, { methods: ["getAll"] });
+    gateway.service(AllService, { methods: ["getAll"] });
     expect([...gateway.entryPoints.keys()]).toEqual(["spec.AllService.GetAll"]);
   });
   test("respects transport override", () => {
     const gateway = createGateway({ transport: { kind: "base" } as any });
-    gateway.addService(AllService, { transport: { kind: "override" } as any });
+    gateway.service(AllService, { transport: { kind: "override" } as any });
     expect(
       [...gateway.entryPoints.values()].map((v) => v.transport)
     ).toContainEqual({
@@ -58,7 +58,7 @@ describe("addService", () => {
   });
 });
 
-describe("addRelation", () => {
+describe("relation", () => {
   test("adds relation", async () => {
     const gateway = createGateway({
       transport: createRouterTransport(({ service }) => {
@@ -73,7 +73,7 @@ describe("addRelation", () => {
         });
       }),
     });
-    gateway.addRelation(AllResolverService, {
+    gateway.relation(AllResolverService, {
       getAllRelSelf: {
         name: "rel_self",
       },
