@@ -61,6 +61,12 @@ async function resolveBatch(
   let results: unknown[];
   try {
     results = await field.relation.resolver(bases, field.params);
+    if (results.length !== formatTargets.length) {
+      throw new ConnectError(
+        `resolver returned ${results.length} results, expected ${formatTargets.length}`,
+        Code.Internal
+      );
+    }
   } catch (err) {
     const knitError = formatError(err, "", typeRegistry);
     for (const errorPatch of errorPatches) {
@@ -70,12 +76,6 @@ async function resolveBatch(
       errorPatch.target[errorPatch.name] = knitError;
     }
     return [];
-  }
-  if (results.length !== formatTargets.length) {
-    throw new ConnectError(
-      `resolver returned ${results.length} results, expected ${formatTargets.length}`,
-      Code.Internal
-    );
   }
   const patches: Patch[] = [];
   for (let i = 0; i < results.length; i++) {

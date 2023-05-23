@@ -194,6 +194,8 @@ async function handleUnary(
   if (requests.length === 0) {
     throw new ConnectError(`No requests provided`, Code.InvalidArgument);
   }
+  // Fetch does not use catch as the fallback, but Do does.
+  const fallbackCatch = !forFetch;
   const outboundHeader = makeOutboundHeader(requestHeader);
   const results: Promise<PartialMessage<Response>>[] = [];
   for (const request of requests) {
@@ -236,7 +238,7 @@ async function handleUnary(
           );
           message = response.message;
         } catch (err) {
-          if (!shouldCatch(request.onError, !forFetch)) {
+          if (!shouldCatch(request.onError, fallbackCatch)) {
             throw err;
           }
           return {
@@ -251,7 +253,7 @@ async function handleUnary(
           request,
           schema,
           message,
-          !forFetch,
+          fallbackCatch,
           typeRegistry
         );
       })()
