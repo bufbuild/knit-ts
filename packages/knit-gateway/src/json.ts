@@ -12,34 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import type {
-  AnyMessage,
-  FieldInfo,
-  IMessageTypeRegistry,
-  JsonObject,
-  JsonValue,
-  MessageType,
-  PlainMessage,
+import {
+  Message,
+  type AnyMessage,
+  type FieldInfo,
+  type IMessageTypeRegistry,
+  type JsonObject,
+  type JsonValue,
+  type MessageType,
+  type PlainMessage,
+  protoBase64,
 } from "@bufbuild/protobuf";
-import type {
-  Schema,
-  Schema_Field,
-  Schema_Field_Type,
-  Schema_Field_Type_MapType,
-  Schema_Field_Type_RepeatedType,
+import {
+  Error_Code,
+  MaskField,
+  type Schema,
+  type Schema_Field,
+  type Schema_Field_Type,
+  type Schema_Field_Type_MapType,
+  type Schema_Field_Type_RepeatedType,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import { wktSet } from "./wkt.js";
 import type { Relation } from "./gateway.js";
-import { Code, ConnectError } from "@bufbuild/connect";
+import { Code, ConnectError, connectErrorFromReason } from "@bufbuild/connect";
 import type {} from "./schema.js";
 
 export interface Patch {
   base: AnyMessage;
   target: JsonObject;
+  errorPatch: ErrorPatch | undefined;
   field: PlainMessage<Schema_Field> & {
     relation: Relation;
     params?: AnyMessage;
   };
+}
+
+export interface ErrorPatch {
+  target: JsonObject;
+  // The name of the field to patch in the target
+  name: string;
 }
 
 /**
@@ -55,19 +66,30 @@ export interface Patch {
 export function formatMessage(
   message: AnyMessage,
   schema: PlainMessage<Schema>,
-  typeRegistry?: IMessageTypeRegistry
+  upstreamErrPatch: ErrorPatch | undefined,
+  fallbackCatch: boolean,
+  typeRegistry: IMessageTypeRegistry | undefined
 ): [JsonValue, Patch[]] {
   const type = message.getType();
-  if (wktSet.has(type.typeName))
-    return [message.toJson({ typeRegistry: typeRegistry }), []];
+  if (wktSet.has(type.typeName)) {
+    return [message.toJson({ typeRegistry }), []];
+  }
   const formattedObject: JsonObject = {};
   const patches: Patch[] = [];
   for (const field of schema.fields) {
     if (field.relation !== undefined) {
+      let errorPatch = upstreamErrPatch;
+      if (shouldCatch(field.onError, fallbackCatch)) {
+        errorPatch = {
+          target: formattedObject,
+          name: field.name,
+        };
+      }
       patches.push({
         base: message,
         field: field as Patch["field"],
         target: formattedObject,
+        errorPatch: errorPatch,
       });
       continue;
     }
@@ -86,6 +108,8 @@ export function formatMessage(
       fieldInfo,
       type.runtime,
       field.type?.value.value,
+      upstreamErrPatch,
+      fallbackCatch,
       typeRegistry
     );
     if (fieldValue === undefined) continue;
@@ -100,7 +124,9 @@ export function formatValue(
   fieldInfo: FieldInfo,
   runtime: MessageType["runtime"],
   schemaType: PlainMessage<Schema_Field_Type>["value"]["value"],
-  typeRegistry?: IMessageTypeRegistry
+  upstreamErrPatch: ErrorPatch | undefined,
+  fallbackCatch: boolean,
+  typeRegistry: IMessageTypeRegistry | undefined
 ): [JsonValue | undefined, Patch[]] {
   if (fieldInfo.kind === "map") {
     const formattedValue: JsonObject = {};
@@ -111,6 +137,8 @@ export function formatValue(
         fieldInfo.V,
         runtime,
         (schemaType as PlainMessage<Schema_Field_Type_MapType>).value.value,
+        upstreamErrPatch,
+        fallbackCatch,
         typeRegistry
       );
       formattedValue[k] = elementValue ?? null;
@@ -128,6 +156,8 @@ export function formatValue(
         runtime,
         (schemaType as PlainMessage<Schema_Field_Type_RepeatedType>).element
           .value,
+        upstreamErrPatch,
+        fallbackCatch,
         typeRegistry
       );
       formattedValue.push(elementValue ?? null);
@@ -135,7 +165,51 @@ export function formatValue(
     }
     return [formattedValue, patches];
   }
-  return formatSingular(value, fieldInfo, runtime, schemaType, typeRegistry);
+  return formatSingular(
+    value,
+    fieldInfo,
+    runtime,
+    schemaType,
+    upstreamErrPatch,
+    fallbackCatch,
+    typeRegistry
+  );
+}
+
+export function formatError(
+  rawErr: unknown,
+  path: string,
+  typeRegistry?: IMessageTypeRegistry
+): JsonValue {
+  if (typeof rawErr === "object" && rawErr !== null && "[@error]" in rawErr) {
+    return rawErr as JsonValue;
+  }
+  const connectErr = connectErrorFromReason(rawErr);
+  const details: JsonValue[] = [];
+  for (const detail of connectErr.details) {
+    let type: string, value: string, debug: JsonValue | null;
+    if (detail instanceof Message) {
+      type = detail.getType().typeName;
+      value = protoBase64.enc(detail.toBinary());
+      debug = detail.toJson({ typeRegistry });
+    } else {
+      type = detail.type;
+      value = protoBase64.enc(detail.value);
+      debug = detail.debug ?? null;
+    }
+    details.push({
+      type: type,
+      value: value,
+      debug: debug,
+    });
+  }
+  return {
+    "[@error]": {},
+    code: Error_Code[connectErr.code],
+    message: connectErr.message,
+    details: details,
+    path: path,
+  };
 }
 
 function formatSingular(
@@ -143,7 +217,9 @@ function formatSingular(
   type: (FieldInfo & { kind: "map" })["V"],
   runtime: MessageType["runtime"],
   schemaType: PlainMessage<Schema_Field_Type>["value"]["value"],
-  typeRegistry?: IMessageTypeRegistry
+  upstreamErrPatch: ErrorPatch | undefined,
+  fallbackCatch: boolean,
+  typeRegistry: IMessageTypeRegistry | undefined
 ): [JsonValue | undefined, Patch[]] {
   switch (type.kind) {
     case "scalar":
@@ -161,7 +237,18 @@ function formatSingular(
       return formatMessage(
         value as AnyMessage,
         schemaType as PlainMessage<Schema>,
+        upstreamErrPatch,
+        fallbackCatch,
         typeRegistry
       );
   }
+}
+
+export function shouldCatch(
+  onError: PlainMessage<MaskField>["onError"],
+  fallbackCatch: boolean
+) {
+  return (
+    onError.case === "catch" || (fallbackCatch && onError.case !== "throw")
+  );
 }

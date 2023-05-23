@@ -46,6 +46,7 @@ import type { Value, Struct } from "./wkt/struct.js";
 import type { Any } from "./wkt/any.js";
 import { FieldMask } from "./wkt/field_mask.js";
 import type { KnitError } from "./error.js";
+import type { ScalarFields } from "@bufbuild/knit-test-spec/spec/scalars_knit.js";
 
 describe("wkt", () => {
   const [
@@ -364,6 +365,70 @@ describe("wkt", () => {
         value: [{}],
       } satisfies Parameter<Wkt["repeated"]>;
     });
+  });
+});
+
+describe("scalars", () => {
+  test("query", () => {
+    const query = {
+      str: {},
+      bl: {},
+      i32: {},
+      i64: {},
+      u32: {},
+      u64: {},
+      s32: {},
+      s64: {},
+      f32: {},
+      f64: {},
+      sf32: {},
+      sf64: {},
+      by: {},
+      db: {},
+      fl: {},
+    } satisfies Query<ScalarFields>;
+    type Actual = Mask<typeof query, ScalarFields>;
+    type Expected = {
+      str: string;
+      bl: boolean;
+      i32: number;
+      i64: bigint;
+      u32: number;
+      u64: bigint;
+      s32: number;
+      s64: bigint;
+      f32: number;
+      f64: bigint;
+      sf32: number;
+      sf64: bigint;
+      by: Uint8Array;
+      db: number;
+      fl: number;
+    };
+    type Diff = DeepDiff<Actual, Expected>;
+    expectType<Equal<Diff, never>>(true);
+  });
+  test("params", () => {
+    type Actual = Parameter<ScalarFields>;
+    type Expected = {
+      str?: string;
+      bl?: boolean;
+      i32?: number;
+      i64?: bigint;
+      u32?: number;
+      u64?: bigint;
+      s32?: number;
+      s64?: bigint;
+      f32?: number;
+      f64?: bigint;
+      sf32?: number;
+      sf64?: bigint;
+      by?: Uint8Array;
+      db?: number;
+      fl?: number;
+    };
+    type Diff = DeepDiff<Actual, Expected>;
+    expectType<Equal<Diff, never>>(true);
   });
 });
 

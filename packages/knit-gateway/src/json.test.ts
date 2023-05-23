@@ -391,7 +391,13 @@ describe("valid", () => {
   for (const testCase of testCases) {
     test(testCase.name, () => {
       expect(
-        formatMessage(testCase.i, new Schema(testCase.schema), typeRegistry)[0]
+        formatMessage(
+          testCase.i,
+          new Schema(testCase.schema),
+          undefined,
+          false,
+          typeRegistry
+        )[0]
       ).toEqual(testCase.o);
     });
   }
