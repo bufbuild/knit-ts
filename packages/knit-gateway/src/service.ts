@@ -42,9 +42,15 @@ import {
   type PlainMessage,
   type AnyMessage,
   type IMessageTypeRegistry,
+  type JsonValue,
 } from "@bufbuild/protobuf";
 import { computeSchema } from "./schema.js";
-import { formatMessage } from "./json.js";
+import {
+  formatError,
+  formatMessage,
+  type ErrorPatch,
+  shouldCatch,
+} from "./json.js";
 import { makeOutboundHeader } from "./headers.js";
 import { stitch } from "./stitch.js";
 
@@ -146,6 +152,7 @@ export function createKnitService<T extends readonly ServiceType[]>({
           gateway,
           requests,
           requestHeader,
+          false,
           typeRegistry
         ),
       });
@@ -156,8 +163,8 @@ export function createKnitService<T extends readonly ServiceType[]>({
           gateway,
           requests,
           requestHeader,
-          typeRegistry,
-          true
+          true,
+          typeRegistry
         ),
       });
     },
@@ -179,14 +186,16 @@ async function handleUnary(
   { entryPoints, relations }: Gateway,
   requests: Request[],
   requestHeader: Headers,
-  typeRegistry?: IMessageTypeRegistry,
-  forFetch?: boolean
+  forFetch: boolean,
+  typeRegistry: IMessageTypeRegistry | undefined
 ): Promise<PartialMessage<Response>[]> {
   // TODO: Create a typeRegistry for the schema and use that if
   // typeRegistry is not provided. It is not sound, but it should be good enough.
   if (requests.length === 0) {
     throw new ConnectError(`No requests provided`, Code.InvalidArgument);
   }
+  // Fetch does not use catch as the fallback, but Do does.
+  const fallbackCatch = !forFetch;
   const outboundHeader = makeOutboundHeader(requestHeader);
   const results: Promise<PartialMessage<Response>>[] = [];
   for (const request of requests) {
@@ -201,7 +210,7 @@ async function handleUnary(
       );
     }
     if (
-      forFetch === true &&
+      forFetch &&
       entryPoint.method.idempotency !== MethodIdempotency.NoSideEffects
     ) {
       throw new ConnectError(
@@ -217,15 +226,36 @@ async function handleUnary(
     );
     results.push(
       (async () => {
-        const { message } = await entryPoint.transport.unary(
-          entryPoint.service,
-          entryPoint.method,
-          undefined, // TODO: Add abort signal if possible.
-          entryPoint.timeoutMs,
-          outboundHeader,
-          entryPoint.method.I.fromJson(request.body?.toJson() ?? {})
+        let message: AnyMessage;
+        try {
+          const response = await entryPoint.transport.unary(
+            entryPoint.service,
+            entryPoint.method,
+            undefined, // TODO: Add abort signal if possible.
+            entryPoint.timeoutMs,
+            outboundHeader,
+            entryPoint.method.I.fromJson(request.body?.toJson() ?? {})
+          );
+          message = response.message;
+        } catch (err) {
+          if (!shouldCatch(request.onError, fallbackCatch)) {
+            throw err;
+          }
+          return {
+            body: Value.fromJson(
+              formatError(err, request.method, typeRegistry)
+            ),
+            method: request.method,
+            schema: schema,
+          };
+        }
+        return await makeResponse(
+          request,
+          schema,
+          message,
+          fallbackCatch,
+          typeRegistry
         );
-        return await makeResponse(request, schema, message, typeRegistry);
       })()
     );
   }
@@ -271,7 +301,7 @@ async function handleStream(
     message,
     async function* (messageIterable) {
       for await (const message of messageIterable) {
-        yield await makeResponse(request, schema, message, typeRegistry);
+        yield await makeResponse(request, schema, message, false, typeRegistry);
       }
     },
     {
@@ -284,17 +314,28 @@ async function makeResponse(
   request: Request,
   schema: PlainMessage<Schema>,
   responseMessage: AnyMessage,
-  typeRegistry?: IMessageTypeRegistry
+  fallbackCatch: boolean,
+  typeRegistry: IMessageTypeRegistry | undefined
 ): Promise<PartialMessage<Response>> {
+  const target: { body?: JsonValue } = {};
+  let errorPatch: ErrorPatch | undefined = undefined;
+  if (shouldCatch(request.onError, fallbackCatch)) {
+    errorPatch = {
+      target: target,
+      name: "body",
+    };
+  }
   const [result, patches] = formatMessage(
     responseMessage,
     schema,
+    errorPatch,
+    fallbackCatch,
     typeRegistry
   );
-  await stitch(patches, typeRegistry);
+  await stitch(patches, fallbackCatch, typeRegistry);
   return {
     method: request.method,
-    body: Value.fromJson(result),
+    body: Value.fromJson(target.body ?? result),
     schema: schema,
   };
 }

@@ -34,6 +34,7 @@ test("stitch", async () => {
     jsonName: "",
     relation: relation,
     params: new All(params),
+    onError: { case: undefined },
     type: {
       value: {
         case: "message",
@@ -58,16 +59,18 @@ test("stitch", async () => {
   const patch = {
     base: base,
     target: target,
+    errorPatch: undefined,
     field: {
       name: localName,
       relation: relation,
       path: localName,
       jsonName: "",
       type: type,
+      onError: { case: undefined },
       params: new All(params),
     },
   } satisfies Patch;
-  await stitch([patch]);
+  await stitch([patch], false);
   expect(target).toEqual({
     [localName]: {
       [localName]: {},
