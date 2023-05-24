@@ -22,6 +22,7 @@ test("stitch", async () => {
     field: relationFieldInfo,
     base: All,
     runtime: proto3,
+    method: "",
     resolver: async (bases, gotParams) => {
       expect((gotParams as AnyMessage).toJson()).toEqual(params);
       return Array(bases.length).fill(new All({}));
@@ -33,6 +34,7 @@ test("stitch", async () => {
     path: localName + "." + localName,
     jsonName: "",
     relation: relation,
+    operations: [],
     params: new All(params),
     onError: { case: undefined },
     type: {
@@ -66,11 +68,12 @@ test("stitch", async () => {
       path: localName,
       jsonName: "",
       type: type,
+      operations: [],
       onError: { case: undefined },
       params: new All(params),
     },
   } satisfies Patch;
-  await stitch([patch], false);
+  await stitch([patch], false, undefined, {});
   expect(target).toEqual({
     [localName]: {
       [localName]: {},

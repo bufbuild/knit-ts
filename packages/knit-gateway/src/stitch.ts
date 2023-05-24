@@ -19,7 +19,7 @@ import type {
   PlainMessage,
   IMessageTypeRegistry,
 } from "@bufbuild/protobuf";
-import type { Relation } from "./gateway.js";
+import type { Relation, ResolverContext } from "./gateway.js";
 import {
   formatValue,
   type ErrorPatch,
@@ -27,12 +27,16 @@ import {
   formatError,
 } from "./json.js";
 import { Code, ConnectError } from "@bufbuild/connect";
+import { makeResolverHeaders } from "./headers.js";
 
 interface Batch {
   bases: AnyMessage[];
   formatTargets: JsonObject[];
   errorPatches: (ErrorPatch | undefined)[];
-  field: PlainMessage<Schema_Field> & { relation: Relation };
+  field: PlainMessage<Schema_Field> & {
+    relation: Relation;
+    operations: string[];
+  };
 }
 
 /**
@@ -41,13 +45,14 @@ interface Batch {
 export async function stitch(
   patches: Patch[],
   fallbackCatch: boolean,
-  typeRegistry?: IMessageTypeRegistry
+  typeRegistry: IMessageTypeRegistry | undefined,
+  context: ResolverContext
 ) {
   while (patches.length > 0) {
     const batches = makeBatches(patches);
     const resolves: Promise<Patch[]>[] = [];
     for (const batch of batches) {
-      resolves.push(resolveBatch(batch, fallbackCatch, typeRegistry));
+      resolves.push(resolveBatch(batch, fallbackCatch, typeRegistry, context));
     }
     patches = (await Promise.all(resolves)).flat();
   }
@@ -56,11 +61,17 @@ export async function stitch(
 async function resolveBatch(
   { field, bases, formatTargets, errorPatches }: Batch,
   fallbackCatch: boolean,
-  typeRegistry?: IMessageTypeRegistry
+  typeRegistry: IMessageTypeRegistry | undefined,
+  context: ResolverContext
 ): Promise<Patch[]> {
   let results: unknown[];
   try {
-    results = await field.relation.resolver(bases, field.params);
+    const headers = new Headers(context.headers);
+    headers.set("Knit-Operations", field.operations.join(","));
+    results = await field.relation.resolver(bases, field.params, {
+      ...context,
+      headers: makeResolverHeaders(context.headers, field.operations),
+    });
     if (results.length !== formatTargets.length) {
       throw new ConnectError(
         `resolver returned ${results.length} results, expected ${formatTargets.length}`,

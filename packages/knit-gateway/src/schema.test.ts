@@ -329,7 +329,8 @@ describe("valid mask", () => {
             testCase.mask.map((m) => new MaskField(m)),
             "",
             new Map(),
-            new Map()
+            new Map(),
+            []
           )
         )
       ).toEqual(new Schema(testCase.schema));
@@ -362,7 +363,8 @@ describe("invalid mask", () => {
           testCase.mask.map((m) => new MaskField(m)),
           "",
           new Map(),
-          new Map()
+          new Map(),
+          []
         )
       ).toThrow();
     });

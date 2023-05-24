@@ -44,6 +44,7 @@ export interface Patch {
   field: PlainMessage<Schema_Field> & {
     relation: Relation;
     params?: AnyMessage;
+    operations: string[];
   };
 }
 

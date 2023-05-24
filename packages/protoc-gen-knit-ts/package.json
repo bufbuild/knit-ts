@@ -32,7 +32,7 @@
     }
   },
   "devDependencies": {
-    "@buf/bufbuild_knit.bufbuild_es": "1.2.0-20230504134654-ed776732e526.1",
+    "@buf/bufbuild_knit.bufbuild_es": "1.2.0-20230504140941-3dc602456973.1",
     "@bufbuild/protobuf": "^1.2.0",
     "esbuild": "^0.17.18",
     "eslint-config-custom": "workspace:*",

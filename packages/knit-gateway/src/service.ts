@@ -15,11 +15,12 @@
 import {
   Code,
   ConnectError,
+  type HandlerContext,
   type ServiceImpl,
   type Transport,
 } from "@bufbuild/connect";
 import { createAsyncIterable, pipe } from "@bufbuild/connect/protocol";
-import type { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
+import { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import {
   DoResponse,
   FetchResponse,
@@ -28,7 +29,11 @@ import {
   Response,
   Schema,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
-import { createGateway, type Gateway } from "./gateway.js";
+import {
+  createGateway,
+  type Gateway,
+  type ResolverContext,
+} from "./gateway.js";
 import {
   Value,
   MethodKind,
@@ -48,6 +53,11 @@ import {
 } from "./json.js";
 import { makeOutboundHeader } from "./headers.js";
 import { stitch } from "./stitch.js";
+import { min } from "./util.js";
+
+const doOperation = `${KnitService.typeName}.${KnitService.methods.do.name}`;
+const fetchOperation = `${KnitService.typeName}.${KnitService.methods.fetch.name}`;
+const listenOperation = `${KnitService.typeName}.${KnitService.methods.listen.name}`;
 
 /**
  * Options accepted by {@link createKnitService}.
@@ -115,35 +125,35 @@ export function createKnitService({
   configure(gateway);
   const schemaCache = new Map<string, PlainMessage<Schema>>();
   return {
-    async do({ requests }, { requestHeader }) {
+    async do({ requests }, context) {
       return new DoResponse({
         responses: await handleUnary(
           gateway,
           requests,
-          requestHeader,
+          context,
           false,
           typeRegistry,
           schemaCache
         ),
       });
     },
-    async fetch({ requests }, { requestHeader }) {
+    async fetch({ requests }, context) {
       return new FetchResponse({
         responses: await handleUnary(
           gateway,
           requests,
-          requestHeader,
+          context,
           true,
           typeRegistry,
           schemaCache
         ),
       });
     },
-    async *listen({ request }, { requestHeader }) {
+    async *listen({ request }, context) {
       const iterable = await handleStream(
         gateway,
         request,
-        requestHeader,
+        context,
         typeRegistry,
         schemaCache
       );
@@ -157,7 +167,7 @@ export function createKnitService({
 async function handleUnary(
   { entryPoints, relations }: Gateway,
   requests: Request[],
-  requestHeader: Headers,
+  context: HandlerContext,
   forFetch: boolean,
   typeRegistry: IMessageTypeRegistry | undefined,
   schemaCache: Map<string, PlainMessage<Schema>>
@@ -169,7 +179,7 @@ async function handleUnary(
   }
   // Fetch does not use catch as the fallback, but Do does.
   const fallbackCatch = !forFetch;
-  const outboundHeader = makeOutboundHeader(requestHeader);
+  const headers = makeOutboundHeader(context.requestHeader);
   const results: Promise<PartialMessage<Response>>[] = [];
   for (const request of requests) {
     const entryPoint = entryPoints.get(request.method);
@@ -196,7 +206,11 @@ async function handleUnary(
       request.mask,
       request.method,
       relations,
-      schemaCache
+      schemaCache,
+      [
+        forFetch ? fetchOperation : doOperation,
+        `${entryPoint.service.typeName}.${entryPoint.method.name}`,
+      ]
     );
     results.push(
       (async () => {
@@ -205,9 +219,9 @@ async function handleUnary(
           const response = await entryPoint.transport.unary(
             entryPoint.service,
             entryPoint.method,
-            undefined, // TODO: Add abort signal if possible.
-            entryPoint.timeoutMs,
-            outboundHeader,
+            context.signal,
+            min(context.timeoutMs(), entryPoint.timeoutMs),
+            headers,
             entryPoint.method.I.fromJson(request.body?.toJson() ?? {})
           );
           message = response.message;
@@ -228,7 +242,8 @@ async function handleUnary(
           schema,
           message,
           fallbackCatch,
-          typeRegistry
+          typeRegistry,
+          { headers, signal: context.signal, timeoutMs: context.timeoutMs() }
         );
       })()
     );
@@ -239,7 +254,7 @@ async function handleUnary(
 async function handleStream(
   { entryPoints, relations }: Gateway,
   request: Request | undefined,
-  requestHeader: Headers,
+  context: HandlerContext,
   typeRegistry: IMessageTypeRegistry | undefined,
   schemaCache: Map<string, PlainMessage<Schema>>
 ): Promise<AsyncIterable<PartialMessage<Response>>> {
@@ -261,14 +276,19 @@ async function handleStream(
     request.mask,
     request.method,
     relations,
-    schemaCache
+    schemaCache,
+    [
+      listenOperation,
+      `${entryPoint.service.typeName}.${entryPoint.method.name}`,
+    ]
   );
+  const headers = makeOutboundHeader(context.requestHeader);
   const { message } = await entryPoint.transport.stream(
     entryPoint.service,
     entryPoint.method,
-    undefined, // TODO: Add abort signal if possible.
-    entryPoint.timeoutMs,
-    makeOutboundHeader(requestHeader),
+    context.signal,
+    min(context.timeoutMs(), entryPoint.timeoutMs),
+    headers,
     createAsyncIterable([
       entryPoint.method.I.fromJson(request.body?.toJson() ?? {}),
     ])
@@ -283,7 +303,8 @@ async function handleStream(
           schema,
           message,
           false,
-          typeRegistry
+          typeRegistry,
+          { headers, signal: context.signal, timeoutMs: context.timeoutMs() }
         );
         if (schemaSent) {
           delete response.schema;
@@ -304,7 +325,8 @@ async function makeResponse(
   schema: PlainMessage<Schema>,
   responseMessage: AnyMessage,
   fallbackCatch: boolean,
-  typeRegistry: IMessageTypeRegistry | undefined
+  typeRegistry: IMessageTypeRegistry | undefined,
+  context: ResolverContext
 ): Promise<PartialMessage<Response>> {
   const target: { body?: JsonValue } = {};
   let errorPatch: ErrorPatch | undefined = undefined;
@@ -321,7 +343,7 @@ async function makeResponse(
     fallbackCatch,
     typeRegistry
   );
-  await stitch(patches, fallbackCatch, typeRegistry);
+  await stitch(patches, fallbackCatch, typeRegistry, context);
   return {
     method: request.method,
     body: Value.fromJson(target.body ?? result),
