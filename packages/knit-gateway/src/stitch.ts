@@ -71,7 +71,7 @@ async function resolveBatch(
     const knitError = formatError(err, "", typeRegistry);
     for (const errorPatch of errorPatches) {
       if (errorPatch === undefined) {
-        throw knitError;
+        throw err;
       }
       errorPatch.target[errorPatch.name] = knitError;
     }
