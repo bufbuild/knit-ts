@@ -91,9 +91,20 @@ function applyMask(
           Code.InvalidArgument
         );
       }
-      field.params = schemaField.relation.params.fromJson(
-        maskField.params.toJson()
-      );
+      try {
+        field.params = schemaField.relation.params.fromJson(
+          maskField.params.toJson()
+        );
+      } catch (err) {
+        // Must be invalid json
+        throw new ConnectError(
+          `Invalid params passed at ${fieldPath}`,
+          Code.InvalidArgument,
+          undefined,
+          undefined,
+          err
+        );
+      }
     }
     fields.push(field);
     localNameTable.set(maskField.name, field);

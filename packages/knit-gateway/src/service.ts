@@ -268,8 +268,21 @@ async function handleStream(
   return pipe(
     message,
     async function* (messageIterable) {
+      let schemaSent = false;
       for await (const message of messageIterable) {
-        yield await makeResponse(request, schema, message, false, typeRegistry);
+        const response = await makeResponse(
+          request,
+          schema,
+          message,
+          false,
+          typeRegistry
+        );
+        if (schemaSent) {
+          delete response.schema;
+        } else {
+          schemaSent = true;
+        }
+        yield response;
       }
     },
     {
