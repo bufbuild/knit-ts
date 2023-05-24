@@ -57,9 +57,14 @@ export function computeSchema(
   message: MessageType,
   mask: MaskField[],
   path: string,
-  relations: RelationsMap
+  relations: RelationsMap,
+  schemaCache: Map<string, PlainSchema>
 ): PlainSchema {
-  return applyMask(getMessageSchema(message, relations), mask, path);
+  return applyMask(
+    getMessageSchema(message, relations, schemaCache),
+    mask,
+    path
+  );
 }
 
 function applyMask(
@@ -91,9 +96,20 @@ function applyMask(
           Code.InvalidArgument
         );
       }
-      field.params = schemaField.relation.params.fromJson(
-        maskField.params.toJson()
-      );
+      try {
+        field.params = schemaField.relation.params.fromJson(
+          maskField.params.toJson()
+        );
+      } catch (err) {
+        // Must be invalid json
+        throw new ConnectError(
+          `Invalid params passed at ${fieldPath}`,
+          Code.InvalidArgument,
+          undefined,
+          undefined,
+          err
+        );
+      }
     }
     fields.push(field);
     localNameTable.set(maskField.name, field);
@@ -158,13 +174,12 @@ function applyMaskToType(
   return { value: type };
 }
 
-const messageToSchemaTable = new Map<string, PlainSchema>();
-
 function getMessageSchema(
   message: MessageType,
-  relations: RelationsMap
+  relations: RelationsMap,
+  schemaCache: Map<string, PlainSchema>
 ): PlainSchema {
-  let schema = messageToSchemaTable.get(message.typeName);
+  let schema = schemaCache.get(message.typeName);
   if (schema !== undefined) {
     return schema;
   }
@@ -175,8 +190,8 @@ function getMessageSchema(
   };
   // To handle recursive types, we need to add the schema to the table before
   // computing the fields.
-  messageToSchemaTable.set(message.typeName, schema);
-  const fields = computeMessageFields(message, relations);
+  schemaCache.set(message.typeName, schema);
+  const fields = computeMessageFields(message, relations, schemaCache);
   schema.fields = fields;
   schema.localNameTable = new Map(fields.map((f) => [f.name, f]));
   return schema;
@@ -184,7 +199,8 @@ function getMessageSchema(
 
 function computeMessageFields(
   message: MessageType,
-  relations: RelationsMap
+  relations: RelationsMap,
+  schemaCache: Map<string, PlainSchema>
 ): PlainSchemaField[] {
   if (wktSet.has(message.typeName)) {
     return [];
@@ -195,7 +211,7 @@ function computeMessageFields(
       name: protoField.localName,
       jsonName:
         protoField.jsonName !== protoField.localName ? protoField.jsonName : "",
-      type: computeFieldType(protoField, relations),
+      type: computeFieldType(protoField, relations, schemaCache),
       path: "",
       onError: { case: undefined },
     });
@@ -204,7 +220,7 @@ function computeMessageFields(
     fields.push({
       name: relation.field.localName,
       jsonName: "",
-      type: computeFieldType(relation.field, relations),
+      type: computeFieldType(relation.field, relations, schemaCache),
       path: "",
       relation: relation,
       onError: { case: undefined },
@@ -215,13 +231,14 @@ function computeMessageFields(
 
 function computeFieldType(
   protoField: FieldInfo,
-  relations: RelationsMap
+  relations: RelationsMap,
+  schemaCache: Map<string, PlainSchema>
 ): PlainSchemaFieldType {
   if (protoField.kind === "map") {
-    return computeMapType(protoField, relations);
+    return computeMapType(protoField, relations, schemaCache);
   }
   if (protoField.repeated) {
-    return computeRepeatedType(protoField, relations);
+    return computeRepeatedType(protoField, relations, schemaCache);
   }
   switch (protoField.kind) {
     case "enum":
@@ -233,7 +250,7 @@ function computeFieldType(
       return {
         value: {
           case: "message",
-          value: getMessageSchema(protoField.T, relations),
+          value: getMessageSchema(protoField.T, relations, schemaCache),
         },
       };
   }
@@ -243,7 +260,8 @@ function computeRepeatedType(
   protoField: FieldInfo & { readonly repeated: boolean } & {
     kind: "scalar" | "enum" | "message";
   },
-  relations: RelationsMap
+  relations: RelationsMap,
+  schemaCache: Map<string, PlainSchema>
 ): PlainSchemaFieldType {
   return {
     value: {
@@ -253,7 +271,7 @@ function computeRepeatedType(
           protoField.kind === "message"
             ? {
                 case: "message",
-                value: getMessageSchema(protoField.T, relations),
+                value: getMessageSchema(protoField.T, relations, schemaCache),
               }
             : {
                 case: "scalar",
@@ -266,7 +284,8 @@ function computeRepeatedType(
 
 function computeMapType(
   protoField: FieldInfo & { kind: "map" },
-  relations: RelationsMap
+  relations: RelationsMap,
+  schemaCache: Map<string, PlainSchema>
 ): PlainSchemaFieldType {
   return {
     value: {
@@ -277,7 +296,7 @@ function computeMapType(
           protoField.V.kind === "message"
             ? {
                 case: "message",
-                value: getMessageSchema(protoField.V.T, relations),
+                value: getMessageSchema(protoField.V.T, relations, schemaCache),
               }
             : {
                 case: "scalar",

@@ -113,6 +113,7 @@ export function createKnitService({
 }: CreateKnitServiceOptions): ServiceImpl<typeof KnitService> {
   const gateway = createGateway({ transport, timeoutMs });
   configure(gateway);
+  const schemaCache = new Map<string, PlainMessage<Schema>>();
   return {
     async do({ requests }, { requestHeader }) {
       return new DoResponse({
@@ -121,7 +122,8 @@ export function createKnitService({
           requests,
           requestHeader,
           false,
-          typeRegistry
+          typeRegistry,
+          schemaCache
         ),
       });
     },
@@ -132,7 +134,8 @@ export function createKnitService({
           requests,
           requestHeader,
           true,
-          typeRegistry
+          typeRegistry,
+          schemaCache
         ),
       });
     },
@@ -141,7 +144,8 @@ export function createKnitService({
         gateway,
         request,
         requestHeader,
-        typeRegistry
+        typeRegistry,
+        schemaCache
       );
       for await (const response of iterable) {
         yield new ListenResponse({ response });
@@ -155,7 +159,8 @@ async function handleUnary(
   requests: Request[],
   requestHeader: Headers,
   forFetch: boolean,
-  typeRegistry: IMessageTypeRegistry | undefined
+  typeRegistry: IMessageTypeRegistry | undefined,
+  schemaCache: Map<string, PlainMessage<Schema>>
 ): Promise<PartialMessage<Response>[]> {
   // TODO: Create a typeRegistry for the schema and use that if
   // typeRegistry is not provided. It is not sound, but it should be good enough.
@@ -190,7 +195,8 @@ async function handleUnary(
       entryPoint.method.O,
       request.mask,
       request.method,
-      relations
+      relations,
+      schemaCache
     );
     results.push(
       (async () => {
@@ -234,7 +240,8 @@ async function handleStream(
   { entryPoints, relations }: Gateway,
   request: Request | undefined,
   requestHeader: Headers,
-  typeRegistry?: IMessageTypeRegistry
+  typeRegistry: IMessageTypeRegistry | undefined,
+  schemaCache: Map<string, PlainMessage<Schema>>
 ): Promise<AsyncIterable<PartialMessage<Response>>> {
   if (request === undefined) {
     throw new ConnectError(`No request provided`, Code.InvalidArgument);
@@ -253,7 +260,8 @@ async function handleStream(
     entryPoint.method.O,
     request.mask,
     request.method,
-    relations
+    relations,
+    schemaCache
   );
   const { message } = await entryPoint.transport.stream(
     entryPoint.service,
@@ -268,8 +276,21 @@ async function handleStream(
   return pipe(
     message,
     async function* (messageIterable) {
+      let schemaSent = false;
       for await (const message of messageIterable) {
-        yield await makeResponse(request, schema, message, false, typeRegistry);
+        const response = await makeResponse(
+          request,
+          schema,
+          message,
+          false,
+          typeRegistry
+        );
+        if (schemaSent) {
+          delete response.schema;
+        } else {
+          schemaSent = true;
+        }
+        yield response;
       }
     },
     {

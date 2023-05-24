@@ -328,6 +328,7 @@ describe("valid mask", () => {
             testCase.message,
             testCase.mask.map((m) => new MaskField(m)),
             "",
+            new Map(),
             new Map()
           )
         )
@@ -360,6 +361,7 @@ describe("invalid mask", () => {
           testCase.message,
           testCase.mask.map((m) => new MaskField(m)),
           "",
+          new Map(),
           new Map()
         )
       ).toThrow();
