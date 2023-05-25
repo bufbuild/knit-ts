@@ -82,37 +82,6 @@ importers:
         specifier: ^6.7.0
         version: 6.7.0(typescript@5.0.4)
 
-  packages/knit-gateway:
-    dependencies:
-      '@bufbuild/connect':
-        specifier: ^0.9.0
-        version: 0.9.0(@bufbuild/protobuf@1.2.0)
-      '@bufbuild/protobuf':
-        specifier: ^1.2.0
-        version: 1.2.0
-    devDependencies:
-      '@buf/bufbuild_knit.bufbuild_connect-es':
-        specifier: 0.9.0-20230504140941-3dc602456973.1
-        version: 0.9.0-20230504140941-3dc602456973.1(@bufbuild/connect@0.9.0)(@bufbuild/protobuf@1.2.0)
-      '@buf/bufbuild_knit.bufbuild_es':
-        specifier: 1.2.0-20230504140941-3dc602456973.1
-        version: 1.2.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.2.0)
-      '@bufbuild/knit-test-spec':
-        specifier: workspace:*
-        version: link:../knit-test-spec
-      '@jest/globals':
-        specifier: ^29.4.1
-        version: 29.4.2
-      eslint-config-custom:
-        specifier: workspace:*
-        version: link:../eslint-config-custom
-      tsconfig:
-        specifier: workspace:*
-        version: link:../tsconfig
-      tsup:
-        specifier: ^6.7.0
-        version: 6.7.0(typescript@5.0.4)
-
   packages/knit-test-spec:
     devDependencies:
       '@bufbuild/buf':

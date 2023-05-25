@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import { describe, test, expect } from "@jest/globals";
-import { type Equal, expectType } from "./jest/util";
+import { expectType } from "../jest/util.js";
+import type { Equal } from "../utils/types.js";
 import { createGateway, type UnaryAndServerStreamMethods } from "./gateway.js";
 import type { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import { AllService } from "@bufbuild/knit-test-spec/spec/all_connect.js";

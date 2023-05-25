@@ -1,0 +1,21 @@
+{
+  "sideEffects": false,
+  "type": "commonjs",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "require": "./index.js"
+    },
+    "./gateway": {
+      "types": "./gateway/index.d.ts",
+      "require": "./gateway/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "gateway": ["./gateway/index.d.ts"]
+    }
+  }
+}
