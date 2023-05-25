@@ -48,6 +48,7 @@ declare module "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb
   interface Schema_Field {
     params?: AnyMessage;
     relation?: Relation;
+    operations: string[];
     path: string;
     onError: MaskField["onError"];
   }
@@ -58,19 +59,22 @@ export function computeSchema(
   mask: MaskField[],
   path: string,
   relations: RelationsMap,
-  schemaCache: Map<string, PlainSchema>
+  schemaCache: Map<string, PlainSchema>,
+  operations: string[]
 ): PlainSchema {
   return applyMask(
     getMessageSchema(message, relations, schemaCache),
     mask,
-    path
+    path,
+    operations
   );
 }
 
 function applyMask(
   schema: PlainSchema,
   mask: MaskField[],
-  path: string
+  path: string,
+  operations: string[]
 ): PlainSchema {
   const fields: PlainSchemaField[] = [];
   const localNameTable = new Map<string, PlainSchemaField>();
@@ -83,10 +87,20 @@ function applyMask(
         Code.InvalidArgument
       );
     }
+    const fieldOperations =
+      schemaField.relation !== undefined
+        ? [...operations, schemaField.relation.method]
+        : operations;
     const field = {
       ...schemaField,
       path: fieldPath,
-      type: applyMaskToType(schemaField.type?.value, maskField.mask, fieldPath),
+      type: applyMaskToType(
+        schemaField.type?.value,
+        maskField.mask,
+        fieldPath,
+        fieldOperations
+      ),
+      operations: fieldOperations,
       onError: maskField.onError,
     };
     if (schemaField.relation?.params !== undefined) {
@@ -124,7 +138,8 @@ function applyMask(
 function applyMaskToType(
   type: PlainSchemaFieldType["value"] | undefined,
   mask: MaskField[],
-  path: string
+  path: string,
+  operations: string[]
 ): PlainSchemaFieldType {
   switch (type?.case) {
     case "map":
@@ -136,7 +151,12 @@ function applyMaskToType(
               key: type.value.key,
               value: {
                 case: "message",
-                value: applyMask(type.value.value.value, mask, path),
+                value: applyMask(
+                  type.value.value.value,
+                  mask,
+                  path,
+                  operations
+                ),
               },
             },
           },
@@ -147,7 +167,7 @@ function applyMaskToType(
       return {
         value: {
           case: "message",
-          value: applyMask(type.value, mask, path),
+          value: applyMask(type.value, mask, path, operations),
         },
       };
     case "repeated":
@@ -158,7 +178,12 @@ function applyMaskToType(
             value: {
               element: {
                 case: "message",
-                value: applyMask(type.value.element.value, mask, path),
+                value: applyMask(
+                  type.value.element.value,
+                  mask,
+                  path,
+                  operations
+                ),
               },
             },
           },
@@ -214,6 +239,7 @@ function computeMessageFields(
       type: computeFieldType(protoField, relations, schemaCache),
       path: "",
       onError: { case: undefined },
+      operations: [],
     });
   }
   for (const relation of relations.get(message.typeName)?.values() ?? []) {
@@ -224,6 +250,7 @@ function computeMessageFields(
       path: "",
       relation: relation,
       onError: { case: undefined },
+      operations: [],
     });
   }
   return fields;

@@ -60,20 +60,28 @@ describe("success", () => {
   const knitClient = createKnitClient(
     createRouterTransport(({ service }) => {
       service(AllService, {
-        async getAll(request) {
+        async getAll(request, { requestHeader }) {
+          expectCustomHeader(requestHeader);
           return request;
         },
-        async createAll(request) {
+        async createAll(request, { requestHeader }) {
+          expectCustomHeader(requestHeader);
           return request;
         },
-        async *streamAll(request) {
+        async *streamAll(request, { requestHeader }) {
+          expectCustomHeader(requestHeader);
           for (let i = 0; i < 5; i++) {
             yield request;
           }
         },
       });
       service(AllResolverService, {
-        async getAllRelSelfParam(request) {
+        async getAllRelSelfParam(request, { requestHeader }) {
+          expectCustomHeader(requestHeader);
+          expectOperation(
+            requestHeader,
+            `${AllResolverService.typeName}.${AllResolverService.methods.getAllRelSelfParam.name}`
+          );
           return {
             values: request.bases.map((base) => ({
               relSelfParam: base,
@@ -429,7 +437,7 @@ describe("errors", () => {
         },
       });
       service(AllResolverService, {
-        async getAllRelSelfParam(request) {
+        async getAllRelSelfParam() {
           throw new ConnectError("Relation error", Code.FailedPrecondition);
         },
       });
@@ -956,19 +964,56 @@ describe("errors", () => {
 });
 
 function createKnitClient(transport: Transport) {
-  const knitTransport = createRouterTransport(({ service }) => {
-    service(
-      KnitService,
-      createKnitService({
-        transport: transport,
-        configure({ service, relation }) {
-          service(AllService);
-          relation(AllResolverService, {
-            getAllRelSelfParam: { name: "rel_self_param" },
-          });
-        },
-      })
-    );
-  });
+  const knitTransport = createRouterTransport(
+    ({ service }) => {
+      service(
+        KnitService,
+        createKnitService({
+          transport: transport,
+          configure({ service, relation }) {
+            service(AllService);
+            relation(AllResolverService, {
+              getAllRelSelfParam: { name: "rel_self_param" },
+            });
+          },
+        })
+      );
+    },
+    {
+      transport: {
+        interceptors: [
+          (next) => {
+            return (req) => {
+              req.header.set("Custom-Header", "Custom-Value");
+              return next(req);
+            };
+          },
+        ],
+      },
+    }
+  );
   return createPromiseClient(KnitService, knitTransport);
+}
+
+function expectCustomHeader(headers: Headers) {
+  expect(headers.get("Custom-Header")).toEqual("Custom-Value");
+}
+
+function expectOperation(headers: Headers, operation: string) {
+  // Multiple headers with same key are combined into one by joining them using `, `
+  const operations = headers.get("Knit-Operations")?.split(", ");
+  try {
+    expect(operations?.[operations?.length - 1]).toEqual(operation);
+    expect(operations?.[0]).toMatch(
+      /buf\.knit\.gateway\.v1alpha1\.KnitService\.(Fetch)|(Do)|(Listen)/
+    );
+  } catch (err) {
+    throw new ConnectError(
+      `operation validation failed: ${operations?.join(",")}`,
+      Code.FailedPrecondition,
+      undefined,
+      undefined,
+      err
+    );
+  }
 }

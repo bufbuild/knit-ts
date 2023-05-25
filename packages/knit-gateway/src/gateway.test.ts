@@ -88,7 +88,7 @@ describe("relation", () => {
     const response = await gateway.relations
       .get(All.typeName)
       ?.get("rel_self")
-      ?.resolver([base], undefined);
+      ?.resolver([base], undefined, {});
     expect(response).toHaveLength(1);
     expect((response?.[0]! as AnyMessage).toJson()).toEqual(base.toJson());
   });

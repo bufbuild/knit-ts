@@ -23,6 +23,7 @@ import type {
   PartialMessage,
 } from "@bufbuild/protobuf";
 import type { RelationConfig } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/v1alpha1/options_pb.js";
+import { min } from "./util";
 
 /**
  * Options to configure {@link Gateway}
@@ -150,6 +151,10 @@ export interface Relation {
    */
   params?: MessageType;
   /**
+   * The fully-qualified rpc method that resolves the relation.
+   */
+  method: string;
+  /**
    * The runtime to use for the relation.
    *
    * This is the runtime of the file it was defined in.
@@ -160,8 +165,29 @@ export interface Relation {
    */
   resolver: (
     bases: AnyMessage[],
-    params: PartialMessage<AnyMessage> | undefined
+    params: PartialMessage<AnyMessage> | undefined,
+    context: ResolverContext
   ) => Promise<unknown[]>;
+}
+
+/**
+ * The context passed to a resolver
+ *
+ * @internal
+ */
+export interface ResolverContext {
+  /**
+   * The headers to use for the call.
+   */
+  headers?: Headers;
+  /**
+   * The abort signal to use for the call.
+   */
+  signal?: AbortSignal;
+  /**
+   * The timeout in millisecond to use for the call.
+   */
+  timeoutMs?: number;
 }
 
 /**
@@ -286,20 +312,21 @@ export function createGateway({
             methodInfo.I.fields.list().filter((f) => f.no !== 1)
           );
         }
+        const resolverTransport = options?.transport ?? transport;
+        const resolverTimeoutMs = options?.timeoutMs ?? timeoutMs;
         baseRelations.set(config.name, {
           base,
           field,
           runtime: shell.runtime,
           params,
-          resolver: async (bases, params) => {
-            const resolverTransport = options?.transport ?? transport;
-            const resolverTimeoutMs = options?.timeoutMs ?? timeoutMs;
+          method: `${service.typeName}.${methodInfo.name}`,
+          resolver: async (bases, params, { headers, signal, timeoutMs }) => {
             const response = await resolverTransport.unary(
               service,
               methodInfo,
-              undefined, // TODO: add cancelation support
-              resolverTimeoutMs,
-              undefined, // TODO: propagate headers
+              signal,
+              min(timeoutMs, resolverTimeoutMs),
+              headers,
               {
                 bases,
                 ...params,

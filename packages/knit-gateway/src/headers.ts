@@ -37,6 +37,8 @@ const forbiddenPrefixes = [
   "if-",
 ] as const;
 
+const operationsHeaderKey = "Knit-Operations";
+
 export function makeOutboundHeader(
   requestHeader: Headers | HeadersInit
 ): Headers {
@@ -52,4 +54,16 @@ export function makeOutboundHeader(
     outboundHeader.set(k, v);
   });
   return outboundHeader;
+}
+
+export function makeResolverHeaders(
+  baseHeaders: Headers | undefined,
+  operations: string[]
+) {
+  const headers = new Headers(baseHeaders);
+  headers.delete(operationsHeaderKey);
+  for (const operation of operations) {
+    headers.append(operationsHeaderKey, operation);
+  }
+  return headers;
 }
