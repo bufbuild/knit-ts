@@ -49,13 +49,13 @@ const sharedOptions = {
   dts: true,
   clean: true,
   treeshake: true,
-  legacyOutput: true, // Outputs `.js` instead of `.cjs` and `.mjs`.
   entry: ["./src/index.ts", "./src/gateway/index.ts"],
 } satisfies Options;
 
 const cjsOptions = {
   ...sharedOptions,
   format: "cjs",
+  legacyOutput: true, // Outputs `.js` instead of `.cjs`.
   outDir: "./dist/cjs",
   onSuccess: async () =>
     writeFileSync("./dist/cjs/package.json", JSON.stringify(cjsPackageJson)),
