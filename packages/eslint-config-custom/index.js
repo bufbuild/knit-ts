@@ -22,7 +22,7 @@ module.exports = {
   ignorePatterns: [
     "dist/**",
     "node_modules/**",
-    "src/**.test.ts",
+    "src/**/*.test.ts",
     "jest.config.js",
   ],
   parser: "@typescript-eslint/parser",

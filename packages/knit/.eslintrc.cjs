@@ -16,5 +16,5 @@
 module.exports = {
   root: true,
   extends: ["custom"],
-  ignorePatterns: ["src/jest/*.ts"],
+  ignorePatterns: ["src/jest/*.ts", "tsup.config.ts", "gateway.js"],
 };

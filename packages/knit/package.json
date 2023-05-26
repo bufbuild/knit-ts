@@ -10,11 +10,24 @@
   },
   "sideEffects": false,
   "type": "module",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
-      "require": "./dist/index.js"
+      "require": "./dist/cjs/index.js"
+    },
+    "./gateway": {
+      "import": "./dist/esm/gateway/index.js",
+      "require": "./dist/cjs/gateway/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "gateway": [
+        "./dist/esm/gateway/index.d.ts",
+        "./dist/cjs/gateway/index.d.ts"
+      ]
     }
   },
   "scripts": {
@@ -22,7 +35,9 @@
     "lint": "eslint .",
     "test": "NODE_OPTIONS=--experimental-vm-modules ../../node_modules/.bin/jest",
     "test:watch": "pnpm run build:esm+types --watch & pnpm run test --watchAll",
-    "build": "tsup src/index.ts --dts --no-splitting --format esm,cjs --legacy-output --treeshake"
+    "build:esm": "tsup --format esm",
+    "build:cjs": "tsup --format cjs",
+    "build": "pnpm run build:esm && pnpm run build:cjs"
   },
   "dependencies": {
     "@bufbuild/connect": "^0.9.0",
