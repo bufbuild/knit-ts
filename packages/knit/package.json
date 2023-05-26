@@ -35,8 +35,8 @@
     "lint": "eslint .",
     "test": "NODE_OPTIONS=--experimental-vm-modules ../../node_modules/.bin/jest",
     "test:watch": "pnpm run build:esm+types --watch & pnpm run test --watchAll",
-    "build:esm": "tsup src/index.ts src/gateway/index.ts --dts --no-splitting --legacy-output --clean --treeshake --outDir ./dist/esm --format esm && cp package.esm.json ./dist/esm/package.json",
-    "build:cjs": "tsup src/index.ts src/gateway/index.ts --dts --no-splitting --legacy-output --treeshake --outDir ./dist/cjs --format cjs && cp package.cjs.json ./dist/cjs/package.json",
+    "build:esm": "tsup --format esm",
+    "build:cjs": "tsup --format cjs",
     "build": "pnpm run build:esm && pnpm run build:cjs"
   },
   "dependencies": {
