@@ -1,6 +1,6 @@
 import { describe, expect, test } from "@jest/globals";
 import { createClientWithTransport } from "./client.js";
-import { createRouterTransport } from "@bufbuild/connect";
+import { type HandlerContext, createRouterTransport } from "@bufbuild/connect";
 import type { AllService } from "@bufbuild/knit-test-spec/spec/all_knit.js";
 import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
 import { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
@@ -64,9 +64,15 @@ describe("client", () => {
   const response = {
     scalars: { fields: { str: "response" } },
   };
-  const unary = ({ requests }: FetchRequest): PartialMessage<FetchResponse> => {
+  const headerKey = "Authorization";
+  const headerValue = "some-token";
+  const unary = (
+    { requests }: FetchRequest,
+    { requestHeader }: HandlerContext
+  ): PartialMessage<FetchResponse> => {
     expect(requests).toHaveLength(1);
     expect(requests[0].body?.toJson()).toEqual(request);
+    expect(requestHeader.get(headerKey)).toEqual(headerValue);
     return {
       responses: [
         {
@@ -82,7 +88,11 @@ describe("client", () => {
       service(KnitService, {
         fetch: unary,
         do: unary,
-        async *listen({ request: actualRequest }) {
+        async *listen(
+          { request: actualRequest },
+          { requestHeader }: HandlerContext
+        ) {
+          expect(requestHeader.get(headerKey)).toEqual(headerValue);
           expect(actualRequest?.body?.toJson()).toEqual(request);
           for (let i = 0; i < 5; i++) {
             yield {
@@ -95,7 +105,8 @@ describe("client", () => {
           }
         },
       });
-    })
+    }),
+    { headers: { [headerKey]: headerValue } }
   );
   const allQuery = {
     scalars: {
