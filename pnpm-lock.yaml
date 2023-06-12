@@ -73,8 +73,8 @@ importers:
         specifier: workspace:*
         version: link:../knit-test-spec
       '@jest/globals':
-        specifier: ^29.4.1
-        version: 29.4.2
+        specifier: ^29.5.0
+        version: 29.5.0
       eslint-config-custom:
         specifier: workspace:*
         version: link:../eslint-config-custom
@@ -470,7 +470,7 @@ packages:
     dev: true
 
   /@buf/bufbuild_knit.bufbuild_connect-es@0.9.0-20230504140941-3dc602456973.1(@bufbuild/connect@0.9.0)(@bufbuild/protobuf@1.2.0):
-    resolution: {registry: https://buf.build/gen/npm/v1/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_connect-es/-/bufbuild_knit.bufbuild_connect-es-0.9.0-20230504140941-3dc602456973.1.tgz}
+    resolution: {registry: https://registry.npmjs.org/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_connect-es/-/bufbuild_knit.bufbuild_connect-es-0.9.0-20230504140941-3dc602456973.1.tgz}
     peerDependencies:
       '@bufbuild/connect': ^0.9.0
     dependencies:
@@ -481,7 +481,7 @@ packages:
     dev: true
 
   /@buf/bufbuild_knit.bufbuild_es@1.2.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.2.0):
-    resolution: {registry: https://buf.build/gen/npm/v1/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-1.2.0-20230504140941-3dc602456973.1.tgz}
+    resolution: {registry: https://registry.npmjs.org/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-1.2.0-20230504140941-3dc602456973.1.tgz}
     peerDependencies:
       '@bufbuild/protobuf': ^1.2.0
     dependencies:
@@ -984,18 +984,6 @@ packages:
       jest-util: 29.5.0
     dev: true
 
-  /@jest/globals@29.4.2:
-    resolution: {integrity: sha512-zCk70YGPzKnz/I9BNFDPlK+EuJLk21ur/NozVh6JVM86/YYZtZHqxFFQ62O9MWq7uf3vIZnvNA0BzzrtxD9iyg==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    dependencies:
-      '@jest/environment': 29.5.0
-      '@jest/expect': 29.5.0
-      '@jest/types': 29.5.0
-      jest-mock: 29.5.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /@jest/globals@29.5.0:
     resolution: {integrity: sha512-S02y0qMWGihdzNbUiqSAiKSpSozSuHX5UYc7QbnHP+D9Lyw8DgGGCinrN9uSuHPeKgSSzvPom2q1nAtBvUsvPQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -1043,13 +1031,6 @@ packages:
       v8-to-istanbul: 9.0.1
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /@jest/schemas@29.4.2:
-    resolution: {integrity: sha512-ZrGzGfh31NtdVH8tn0mgJw4khQuNHiKqdzJAFbCaERbyCP9tHlxWuL/mnMu8P7e/+k4puWjI1NOzi/sFsjce/g==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    dependencies:
-      '@sinclair/typebox': 0.25.21
     dev: true
 
   /@jest/schemas@29.4.3:
@@ -1109,18 +1090,6 @@ packages:
       write-file-atomic: 4.0.2
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /@jest/types@29.4.2:
-    resolution: {integrity: sha512-CKlngyGP0fwlgC1BRUtPZSiWLBhyS9dKwKmyGxk8Z6M82LBEGB2aLQSg+U1MyLsU+M7UjnlLllBM2BLWKVm/Uw==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    dependencies:
-      '@jest/schemas': 29.4.2
-      '@types/istanbul-lib-coverage': 2.0.4
-      '@types/istanbul-reports': 3.0.1
-      '@types/node': 20.2.4
-      '@types/yargs': 17.0.22
-      chalk: 4.1.2
     dev: true
 
   /@jest/types@29.5.0:
@@ -2741,7 +2710,7 @@ packages:
     resolution: {integrity: sha512-wKnm6XpJgzMUSRFB7YF48CuwdzuDIHenVuoIb1PLuJ6F+uErZsuDkU+EiExkChf6473XcawBrSfDSnXl+/YG4g==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      '@jest/types': 29.4.2
+      '@jest/types': 29.5.0
       '@types/node': 20.2.4
       chalk: 4.1.2
       ci-info: 3.7.1
