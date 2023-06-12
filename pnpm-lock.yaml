@@ -41,8 +41,8 @@ importers:
         specifier: ^8.8.0
         version: 8.8.0(eslint@8.39.0)
       eslint-config-turbo:
-        specifier: ^1.9.3
-        version: 1.9.3(eslint@8.39.0)
+        specifier: ^1.10.3
+        version: 1.10.3(eslint@8.39.0)
       eslint-plugin-notice:
         specifier: ^0.9.10
         version: 0.9.10(eslint@8.39.0)
@@ -470,7 +470,7 @@ packages:
     dev: true
 
   /@buf/bufbuild_knit.bufbuild_connect-es@0.9.0-20230504140941-3dc602456973.1(@bufbuild/connect@0.9.0)(@bufbuild/protobuf@1.2.0):
-    resolution: {registry: https://buf.build/gen/npm/v1/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_connect-es/-/bufbuild_knit.bufbuild_connect-es-0.9.0-20230504140941-3dc602456973.1.tgz}
+    resolution: {registry: https://registry.npmjs.org/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_connect-es/-/bufbuild_knit.bufbuild_connect-es-0.9.0-20230504140941-3dc602456973.1.tgz}
     peerDependencies:
       '@bufbuild/connect': ^0.9.0
     dependencies:
@@ -481,7 +481,7 @@ packages:
     dev: true
 
   /@buf/bufbuild_knit.bufbuild_es@1.2.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.2.0):
-    resolution: {registry: https://buf.build/gen/npm/v1/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-1.2.0-20230504140941-3dc602456973.1.tgz}
+    resolution: {registry: https://registry.npmjs.org/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-1.2.0-20230504140941-3dc602456973.1.tgz}
     peerDependencies:
       '@bufbuild/protobuf': ^1.2.0
     dependencies:
@@ -1887,13 +1887,13 @@ packages:
       eslint: 8.39.0
     dev: false
 
-  /eslint-config-turbo@1.9.3(eslint@8.39.0):
-    resolution: {integrity: sha512-QG6jxFQkrGSpQqlFKefPdtgUfr20EbU0s4tGGIuGFOcPuJEdsY6VYZpZUxNJvmMcTGqPgMyOPjAFBKhy/DPHLA==}
+  /eslint-config-turbo@1.10.3(eslint@8.39.0):
+    resolution: {integrity: sha512-ggzPfTJfMsMS383oZ4zfTP1zQvyMyiigOQJRUnLt1nqII6SKkTzdKZdwmXRDHU24KFwUfEFtT6c8vnm2VhL0uQ==}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
       eslint: 8.39.0
-      eslint-plugin-turbo: 1.9.3(eslint@8.39.0)
+      eslint-plugin-turbo: 1.10.3(eslint@8.39.0)
     dev: false
 
   /eslint-plugin-notice@0.9.10(eslint@8.39.0):
@@ -1907,8 +1907,8 @@ packages:
       metric-lcs: 0.1.2
     dev: false
 
-  /eslint-plugin-turbo@1.9.3(eslint@8.39.0):
-    resolution: {integrity: sha512-ZsRtksdzk3v+z5/I/K4E50E4lfZ7oYmLX395gkrUMBz4/spJlYbr+GC8hP9oVNLj9s5Pvnm9rLv/zoj5PVYaVw==}
+  /eslint-plugin-turbo@1.10.3(eslint@8.39.0):
+    resolution: {integrity: sha512-g3Mnnk7el1FqxHfqbE/MayLvCsYjA/vKmAnUj66kV4AlM7p/EZqdt42NMcMSKtDVEm0w+utQkkzWG2Xsa0Pd/g==}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
