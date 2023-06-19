@@ -57,8 +57,8 @@ importers:
         specifier: ^0.9.0
         version: 0.9.0(@bufbuild/protobuf@1.2.0)
       '@bufbuild/connect-web':
-        specifier: ^0.9.0
-        version: 0.9.0(@bufbuild/protobuf@1.2.0)
+        specifier: ^0.10.0
+        version: 0.10.0(@bufbuild/protobuf@1.2.0)
       '@bufbuild/protobuf':
         specifier: ^1.2.0
         version: 1.2.0
@@ -470,7 +470,7 @@ packages:
     dev: true
 
   /@buf/bufbuild_knit.bufbuild_connect-es@0.9.0-20230504140941-3dc602456973.1(@bufbuild/connect@0.9.0)(@bufbuild/protobuf@1.2.0):
-    resolution: {registry: https://buf.build/gen/npm/v1/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_connect-es/-/bufbuild_knit.bufbuild_connect-es-0.9.0-20230504140941-3dc602456973.1.tgz}
+    resolution: {registry: https://registry.npmjs.org/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_connect-es/-/bufbuild_knit.bufbuild_connect-es-0.9.0-20230504140941-3dc602456973.1.tgz}
     peerDependencies:
       '@bufbuild/connect': ^0.9.0
     dependencies:
@@ -481,7 +481,7 @@ packages:
     dev: true
 
   /@buf/bufbuild_knit.bufbuild_es@1.2.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.2.0):
-    resolution: {registry: https://buf.build/gen/npm/v1/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-1.2.0-20230504140941-3dc602456973.1.tgz}
+    resolution: {registry: https://registry.npmjs.org/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-1.2.0-20230504140941-3dc602456973.1.tgz}
     peerDependencies:
       '@bufbuild/protobuf': ^1.2.0
     dependencies:
@@ -556,12 +556,20 @@ packages:
       '@bufbuild/buf-win32-x64': 1.14.0
     dev: true
 
-  /@bufbuild/connect-web@0.9.0(@bufbuild/protobuf@1.2.0):
-    resolution: {integrity: sha512-WyYWjPRWceUc/1d5n8oA1NcCni2ND6qj8iXd1Hqy6qkCyo2n/FUSSe3oQuoXYZ9KCUI+5qexHz46n2jtzmFDiQ==}
+  /@bufbuild/connect-web@0.10.0(@bufbuild/protobuf@1.2.0):
+    resolution: {integrity: sha512-tPk7mpUNL/MZ9krx9P7LqvRIGDAC22JHZEvbuhKr7uf75EDBvr5dsgIqpBXK1VRlZ6mz4MtNheTzcAbxoyYq+Q==}
     peerDependencies:
-      '@bufbuild/protobuf': ^1.2.0
+      '@bufbuild/protobuf': ^1.2.1
     dependencies:
-      '@bufbuild/connect': 0.9.0(@bufbuild/protobuf@1.2.0)
+      '@bufbuild/connect': 0.10.0(@bufbuild/protobuf@1.2.0)
+      '@bufbuild/protobuf': 1.2.0
+    dev: false
+
+  /@bufbuild/connect@0.10.0(@bufbuild/protobuf@1.2.0):
+    resolution: {integrity: sha512-psNHc7R0DDZ2Dl/HVPw1MF5hGMTEjnRROPSqs9YPCjy+ztCNF97wPOUH3S4Qud2nNw9Hn+vqZd+Y4v9G5J+d1A==}
+    peerDependencies:
+      '@bufbuild/protobuf': ^1.2.1
+    dependencies:
       '@bufbuild/protobuf': 1.2.0
     dev: false
 
