@@ -23,7 +23,7 @@ import {
 import { decodeMessage, format } from "./json.js";
 import { isOneofQuery } from "./oneof.js";
 import { KnitError, knitErrorFromReason } from "./error.js";
-import { Code } from "@bufbuild/connect";
+import { Code } from "@connectrpc/connect";
 
 /**
  * @internal

@@ -1,9 +1,12 @@
 import { describe, expect, test } from "@jest/globals";
 import { createClientWithTransport } from "./client.js";
-import { type HandlerContext, createRouterTransport } from "@bufbuild/connect";
+import {
+  type HandlerContext,
+  createRouterTransport,
+} from "@connectrpc/connect";
 import type { AllService } from "@bufbuild/knit-test-spec/spec/all_knit.js";
 import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
-import { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
+import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import { type PartialMessage, Value } from "@bufbuild/protobuf";
 import {
   FetchRequest,

@@ -18,9 +18,9 @@ import {
   type HandlerContext,
   type ServiceImpl,
   type Transport,
-} from "@bufbuild/connect";
-import { createAsyncIterable, pipe } from "@bufbuild/connect/protocol";
-import { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
+} from "@connectrpc/connect";
+import { createAsyncIterable, pipe } from "@connectrpc/connect/protocol";
+import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import {
   DoResponse,
   FetchResponse,
@@ -97,7 +97,7 @@ export interface CreateKnitServiceOptions {
 }
 
 /**
- * Creates the handler for {@link KnitService} that can be used with {@link @bufbuild/connect#ConnectRouter}.
+ * Creates the handler for {@link KnitService} that can be used with {@link @connectrpc/connect#ConnectRouter}.
  *
  * @example
  * ```ts

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Code, connectErrorFromReason } from "@bufbuild/connect";
+import { Code, connectErrorFromReason } from "@connectrpc/connect";
 import type { Client } from "./client.js"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { type JsonValue, Message } from "@bufbuild/protobuf";
 

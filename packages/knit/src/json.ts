@@ -37,7 +37,7 @@ import {
   Timestamp as TimestampPb,
   FieldMask as FieldMaskPb,
 } from "@bufbuild/protobuf";
-import { Code } from "@bufbuild/connect";
+import { Code } from "@connectrpc/connect";
 import { KnitError } from "./error.js";
 
 /**

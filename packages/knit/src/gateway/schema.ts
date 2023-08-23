@@ -16,7 +16,7 @@ import {
   Schema,
   Schema_Field_Type_ScalarType,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
-import { Code, ConnectError } from "@bufbuild/connect";
+import { Code, ConnectError } from "@connectrpc/connect";
 import { ScalarType } from "@bufbuild/protobuf";
 import { wktSet } from "./wkt.js";
 import type {

@@ -26,7 +26,7 @@ import {
   type Patch,
   formatError,
 } from "./json.js";
-import { Code, ConnectError } from "@bufbuild/connect";
+import { Code, ConnectError } from "@connectrpc/connect";
 import { makeResolverHeaders } from "./headers.js";
 
 interface Batch {

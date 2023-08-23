@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { createConnectTransport } from "@bufbuild/connect-web";
+import { createConnectTransport } from "@connectrpc/connect-web";
 import {
   createPromiseClient,
   type PromiseClient,
   type Transport,
-} from "@bufbuild/connect";
+} from "@connectrpc/connect";
 import type {
   DoQuery,
   DoSchema,
@@ -32,7 +32,7 @@ import type {
 } from "./schema.js";
 
 import type { Subset } from "./utils/types.js";
-import { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
+import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import {
   makeRequests,
   makeResult,

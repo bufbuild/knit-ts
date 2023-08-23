@@ -34,7 +34,11 @@ import {
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import { wktSet } from "./wkt.js";
 import type { Relation } from "./gateway.js";
-import { Code, ConnectError, connectErrorFromReason } from "@bufbuild/connect";
+import {
+  Code,
+  ConnectError,
+  connectErrorFromReason,
+} from "@connectrpc/connect";
 import type {} from "./schema.js";
 
 export interface Patch {

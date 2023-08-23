@@ -18,14 +18,14 @@ import {
   type Transport,
   createPromiseClient,
   createRouterTransport,
-} from "@bufbuild/connect";
+} from "@connectrpc/connect";
 import { describe, expect, test } from "@jest/globals";
 import { createKnitService } from "./service.js";
 import { AllService } from "@bufbuild/knit-test-spec/spec/all_connect.js";
 import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_connect.js";
 import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
 import { Value } from "@bufbuild/protobuf";
-import { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
+import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import { ListenResponse } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 
 const sharedRequest = {
