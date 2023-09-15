@@ -15,7 +15,7 @@
 /**
  * This is a simple library that provides an intuitive Typescript client for Knit.
  * Knit is a novel way for declarative data fetching from Protobuf APIs. It is
- * built on top of {@link https://connect.build/  | Connect}.
+ * built on top of {@link https://connectrpc.com/  | Connect}.
  *
  * Checkout the {@link https://github.com/bufbuild/knit/tree/main/docs | docs} to know more.
  *
