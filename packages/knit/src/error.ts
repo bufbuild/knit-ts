@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Code, connectErrorFromReason } from "@bufbuild/connect";
+import { Code, ConnectError } from "@connectrpc/connect";
 import type { Client } from "./client.js"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { type JsonValue, Message } from "@bufbuild/protobuf";
 
@@ -38,7 +38,7 @@ export class KnitError {
     public code: Code,
     public message: string,
     public details: ErrorDetail[],
-    public path: string
+    public path: string,
   ) {}
 }
 
@@ -53,7 +53,7 @@ export function knitErrorFromReason(reason: unknown) {
   if (reason instanceof KnitError) {
     return reason;
   }
-  const connectErr = connectErrorFromReason(reason);
+  const connectErr = ConnectError.from(reason);
   const details: ErrorDetail[] = [];
   for (const detail of connectErr.details) {
     if (detail instanceof Message) {
@@ -74,6 +74,6 @@ export function knitErrorFromReason(reason: unknown) {
     connectErr.code as unknown as Code,
     connectErr.message,
     details,
-    ""
+    "",
   );
 }

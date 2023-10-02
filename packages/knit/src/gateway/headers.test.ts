@@ -35,7 +35,7 @@ describe("well known headers", () => {
   for (const header of headers) {
     test(header, () => {
       expect(
-        makeOutboundHeader(new Headers({ [header]: "foo" })).has(header)
+        makeOutboundHeader(new Headers({ [header]: "foo" })).has(header),
       ).toBeFalsy();
     });
   }
@@ -47,7 +47,7 @@ describe("well known prefix", () => {
     test(prefix, () => {
       const header = prefix + "-FOO";
       expect(
-        makeOutboundHeader(new Headers({ [header]: "foo" })).has(header)
+        makeOutboundHeader(new Headers({ [header]: "foo" })).has(header),
       ).toBeFalsy();
     });
   }
@@ -56,7 +56,7 @@ describe("well known prefix", () => {
 test("Allow", () => {
   expect(
     makeOutboundHeader(new Headers({ Authorization: "foo" })).get(
-      "Authorization"
-    )
+      "Authorization",
+    ),
   ).toEqual("foo");
 });

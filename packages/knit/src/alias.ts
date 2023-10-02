@@ -76,7 +76,7 @@ export function alias<K extends string, V>(k: K, v: V): Alias<K, V> {
  * @internal
  */
 export function getAlias(
-  v: object
+  v: object,
 ): { alias: string; value: unknown } | undefined {
   if (!(aliasSymbol in v && "value" in v)) {
     return undefined;

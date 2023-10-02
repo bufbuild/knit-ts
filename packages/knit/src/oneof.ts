@@ -140,7 +140,7 @@ export function isOneofQuery(v: object) {
  * @internal
  */
 export function getOneof(
-  v: object
+  v: object,
 ): { case: string; value: unknown } | undefined {
   if (!(oneOfSymbol in v && v[oneOfSymbol] === "result")) {
     return undefined;

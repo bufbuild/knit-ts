@@ -57,16 +57,16 @@ describe("valid mask", () => {
         case: "scalar",
         value: type,
       },
-    } as const);
+    }) as const;
   const messageElement = (
     type: MessageType,
-    fields?: PartialMessage<Schema_Field>[]
+    fields?: PartialMessage<Schema_Field>[],
   ) => message(type, fields).value;
   const scalarElement = (type: Schema_Field_Type_ScalarType) =>
     scalar(type).value;
   const message = (
     type: MessageType,
-    fields?: PartialMessage<Schema_Field>[]
+    fields?: PartialMessage<Schema_Field>[],
   ) =>
     ({
       value: {
@@ -76,7 +76,7 @@ describe("valid mask", () => {
           fields: fields,
         } satisfies PartialMessage<Schema>,
       },
-    } as const);
+    }) as const;
   const testCases: {
     name: string;
     message: MessageType;
@@ -232,7 +232,7 @@ describe("valid mask", () => {
                           value: {
                             key: Schema_Field_Type_ScalarType.STRING,
                             value: scalarElement(
-                              Schema_Field_Type_ScalarType.ENUM
+                              Schema_Field_Type_ScalarType.ENUM,
                             ),
                           },
                         },
@@ -249,7 +249,7 @@ describe("valid mask", () => {
                               value: {
                                 key: Schema_Field_Type_ScalarType.STRING,
                                 value: scalarElement(
-                                  Schema_Field_Type_ScalarType.STRING
+                                  Schema_Field_Type_ScalarType.STRING,
                                 ),
                               },
                             },
@@ -282,7 +282,7 @@ describe("valid mask", () => {
                     case: "repeated",
                     value: {
                       element: scalarElement(
-                        Schema_Field_Type_ScalarType.STRING
+                        Schema_Field_Type_ScalarType.STRING,
                       ),
                     },
                   },
@@ -330,9 +330,9 @@ describe("valid mask", () => {
             "",
             new Map(),
             new Map(),
-            []
-          )
-        )
+            [],
+          ),
+        ),
       ).toEqual(new Schema(testCase.schema));
     });
   }
@@ -364,8 +364,8 @@ describe("invalid mask", () => {
           "",
           new Map(),
           new Map(),
-          []
-        )
+          [],
+        ),
       ).toThrow();
     });
   }

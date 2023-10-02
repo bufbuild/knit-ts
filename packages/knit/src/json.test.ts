@@ -373,7 +373,7 @@ describe("decode", () => {
               },
             ],
           }),
-          ""
+          "",
         );
         expect(result).toStrictEqual({ key: [testCase.o] });
       });
@@ -399,7 +399,7 @@ describe("decode", () => {
               },
             ],
           }),
-          ""
+          "",
         );
         expect(result).toStrictEqual({ key: { mapKey: testCase.o } });
       });
@@ -442,7 +442,7 @@ describe("decode", () => {
               },
             ],
           }),
-          ""
+          "",
         );
         expect(result).toStrictEqual({
           key: { key: testCase.o, customJson: testCase.o },
@@ -477,7 +477,7 @@ describe("decode", () => {
               },
             ],
           }),
-          ""
+          "",
         );
         expect(result).toStrictEqual({
           key: { oneofKey: makeOneof({ key: testCase.o }) },
@@ -678,7 +678,7 @@ describe("decode", () => {
               },
             ],
           }),
-          ""
+          "",
         );
         expect(result).toStrictEqual({ key: [testCase.o] });
       });
@@ -704,7 +704,7 @@ describe("decode", () => {
               },
             ],
           }),
-          ""
+          "",
         );
         expect(result).toStrictEqual({ key: { mapKey: testCase.o } });
       });
@@ -747,7 +747,7 @@ describe("decode", () => {
               },
             ],
           }),
-          ""
+          "",
         );
         expect(result).toStrictEqual({
           key: { key: testCase.o, customJson: testCase.o },
@@ -782,7 +782,7 @@ describe("decode", () => {
               },
             ],
           }),
-          ""
+          "",
         );
         expect(result).toStrictEqual({
           key: { oneofKey: makeOneof({ key: testCase.o }) },
@@ -809,7 +809,7 @@ describe("decode", () => {
       new Schema({
         name: "google.protobuf.BoolValue",
       }),
-      ""
+      "",
     );
     expect(result).toBeInstanceOf(KnitError);
     expect(result).toHaveProperty("code", Error_Code.INVALID_ARGUMENT);
