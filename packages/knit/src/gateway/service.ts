@@ -18,9 +18,8 @@ import {
   type HandlerContext,
   type ServiceImpl,
   type Transport,
-} from "@bufbuild/connect";
-import { createAsyncIterable, pipe } from "@bufbuild/connect/protocol";
-import { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
+} from "@connectrpc/connect";
+import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import {
   DoResponse,
   FetchResponse,
@@ -133,7 +132,7 @@ export function createKnitService({
           context,
           false,
           typeRegistry,
-          schemaCache
+          schemaCache,
         ),
       });
     },
@@ -145,7 +144,7 @@ export function createKnitService({
           context,
           true,
           typeRegistry,
-          schemaCache
+          schemaCache,
         ),
       });
     },
@@ -155,7 +154,7 @@ export function createKnitService({
         request,
         context,
         typeRegistry,
-        schemaCache
+        schemaCache,
       );
       for await (const response of iterable) {
         yield new ListenResponse({ response });
@@ -170,7 +169,7 @@ async function handleUnary(
   context: HandlerContext,
   forFetch: boolean,
   typeRegistry: IMessageTypeRegistry | undefined,
-  schemaCache: Map<string, PlainMessage<Schema>>
+  schemaCache: Map<string, PlainMessage<Schema>>,
 ): Promise<PartialMessage<Response>[]> {
   // TODO: Create a typeRegistry for the schema and use that if
   // typeRegistry is not provided. It is not sound, but it should be good enough.
@@ -189,7 +188,7 @@ async function handleUnary(
     if (entryPoint.method.kind !== MethodKind.Unary) {
       throw new ConnectError(
         `Only unary methods in "Fetch"/"Do"`,
-        Code.InvalidArgument
+        Code.InvalidArgument,
       );
     }
     if (
@@ -198,7 +197,7 @@ async function handleUnary(
     ) {
       throw new ConnectError(
         `Only methods with idempotency_level set to NO_SIDE_EFFECTS are allowed in "Fetch"`,
-        Code.InvalidArgument
+        Code.InvalidArgument,
       );
     }
     const schema = computeSchema(
@@ -210,7 +209,7 @@ async function handleUnary(
       [
         forFetch ? fetchOperation : doOperation,
         `${entryPoint.service.typeName}.${entryPoint.method.name}`,
-      ]
+      ],
     );
     results.push(
       (async () => {
@@ -222,7 +221,7 @@ async function handleUnary(
             context.signal,
             min(context.timeoutMs(), entryPoint.timeoutMs),
             headers,
-            entryPoint.method.I.fromJson(request.body?.toJson() ?? {})
+            entryPoint.method.I.fromJson(request.body?.toJson() ?? {}),
           );
           message = response.message;
         } catch (err) {
@@ -231,7 +230,7 @@ async function handleUnary(
           }
           return {
             body: Value.fromJson(
-              formatError(err, request.method, typeRegistry)
+              formatError(err, request.method, typeRegistry),
             ),
             method: request.method,
             schema: schema,
@@ -243,9 +242,9 @@ async function handleUnary(
           message,
           fallbackCatch,
           typeRegistry,
-          { headers, signal: context.signal, timeoutMs: context.timeoutMs() }
+          { headers, signal: context.signal, timeoutMs: context.timeoutMs() },
         );
-      })()
+      })(),
     );
   }
   return await Promise.all(results);
@@ -256,7 +255,7 @@ async function handleStream(
   request: Request | undefined,
   context: HandlerContext,
   typeRegistry: IMessageTypeRegistry | undefined,
-  schemaCache: Map<string, PlainMessage<Schema>>
+  schemaCache: Map<string, PlainMessage<Schema>>,
 ): Promise<AsyncIterable<PartialMessage<Response>>> {
   if (request === undefined) {
     throw new ConnectError(`No request provided`, Code.InvalidArgument);
@@ -268,7 +267,7 @@ async function handleStream(
   if (entryPoint.method.kind !== MethodKind.ServerStreaming) {
     throw new ConnectError(
       `Only server streaming endpoints are allowed in "Listen"`,
-      Code.InvalidArgument
+      Code.InvalidArgument,
     );
   }
   const schema = computeSchema(
@@ -280,44 +279,40 @@ async function handleStream(
     [
       listenOperation,
       `${entryPoint.service.typeName}.${entryPoint.method.name}`,
-    ]
+    ],
   );
   const headers = makeOutboundHeader(context.requestHeader);
-  const { message } = await entryPoint.transport.stream(
+  const { message: messageIt } = await entryPoint.transport.stream(
     entryPoint.service,
     entryPoint.method,
     context.signal,
     min(context.timeoutMs(), entryPoint.timeoutMs),
     headers,
-    createAsyncIterable([
-      entryPoint.method.I.fromJson(request.body?.toJson() ?? {}),
-    ])
+    (async function* () {
+      // eslint-disable-line @typescript-eslint/require-await
+      yield entryPoint.method.I.fromJson(request.body?.toJson() ?? {});
+    })(),
   );
-  return pipe(
-    message,
-    async function* (messageIterable) {
-      let schemaSent = false;
-      for await (const message of messageIterable) {
-        const response = await makeResponse(
-          request,
-          schema,
-          message,
-          false,
-          typeRegistry,
-          { headers, signal: context.signal, timeoutMs: context.timeoutMs() }
-        );
-        if (schemaSent) {
-          delete response.schema;
-        } else {
-          schemaSent = true;
-        }
-        yield response;
+  return (async function* () {
+    // TODO: Abort the stream when this function is complete.
+    let schemaSent = false;
+    for await (const message of messageIt) {
+      const response = await makeResponse(
+        request,
+        schema,
+        message,
+        false,
+        typeRegistry,
+        { headers, signal: context.signal, timeoutMs: context.timeoutMs() },
+      );
+      if (schemaSent) {
+        delete response.schema;
+      } else {
+        schemaSent = true;
       }
-    },
-    {
-      propagateDownStreamError: true,
+      yield response;
     }
-  );
+  })();
 }
 
 async function makeResponse(
@@ -326,7 +321,7 @@ async function makeResponse(
   responseMessage: AnyMessage,
   fallbackCatch: boolean,
   typeRegistry: IMessageTypeRegistry | undefined,
-  context: ResolverContext
+  context: ResolverContext,
 ): Promise<PartialMessage<Response>> {
   const target: { body?: JsonValue } = {};
   let errorPatch: ErrorPatch | undefined = undefined;
@@ -341,7 +336,7 @@ async function makeResponse(
     schema,
     errorPatch,
     fallbackCatch,
-    typeRegistry
+    typeRegistry,
   );
   await stitch(patches, fallbackCatch, typeRegistry, context);
   return {

@@ -16,10 +16,10 @@ import { describe, test, expect } from "@jest/globals";
 import { expectType } from "../jest/util.js";
 import type { Equal } from "../utils/types.js";
 import { createGateway, type UnaryAndServerStreamMethods } from "./gateway.js";
-import type { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
+import type { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import { AllService } from "@bufbuild/knit-test-spec/spec/all_connect.js";
 import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_connect.js";
-import { createRouterTransport } from "@bufbuild/connect";
+import { createRouterTransport } from "@connectrpc/connect";
 import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
 import type { AnyMessage } from "@bufbuild/protobuf";
 
@@ -40,7 +40,7 @@ describe("service", () => {
         "spec.AllService.GetAll",
         "spec.AllService.CreateAll",
         "spec.AllService.StreamAll",
-      ].sort()
+      ].sort(),
     );
   });
   test("respects methods option", () => {
@@ -52,7 +52,7 @@ describe("service", () => {
     const gateway = createGateway({ transport: { kind: "base" } as any });
     gateway.service(AllService, { transport: { kind: "override" } as any });
     expect(
-      [...gateway.entryPoints.values()].map((v) => v.transport)
+      [...gateway.entryPoints.values()].map((v) => v.transport),
     ).toContainEqual({
       kind: "override",
     });

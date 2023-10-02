@@ -86,7 +86,7 @@ export default defineConfig((options) => {
       return { ...esmOptions, ...options };
     default:
       throw new Error(
-        `Unexpected build format ${options.format} must be either cjs or esm`
+        `Unexpected build format ${options.format} must be either cjs or esm`,
       );
   }
 });

@@ -50,7 +50,7 @@ export class Timestamp {
 
   toDate(): Date {
     return new Date(
-      Number(this.seconds) * 1000 + Math.ceil(this.nanos / 1000000)
+      Number(this.seconds) * 1000 + Math.ceil(this.nanos / 1000000),
     );
   }
 

@@ -18,14 +18,14 @@ import {
   type Transport,
   createPromiseClient,
   createRouterTransport,
-} from "@bufbuild/connect";
+} from "@connectrpc/connect";
 import { describe, expect, test } from "@jest/globals";
 import { createKnitService } from "./service.js";
 import { AllService } from "@bufbuild/knit-test-spec/spec/all_connect.js";
 import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_connect.js";
 import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
 import { Value } from "@bufbuild/protobuf";
-import { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
+import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import { ListenResponse } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 
 const sharedRequest = {
@@ -36,7 +36,7 @@ const sharedRequest = {
           str: "foo",
         },
       },
-    }).toJson()
+    }).toJson(),
   ),
   mask: [
     {
@@ -80,7 +80,7 @@ describe("success", () => {
           expectCustomHeader(requestHeader);
           expectOperation(
             requestHeader,
-            `${AllResolverService.typeName}.${AllResolverService.methods.getAllRelSelfParam.name}`
+            `${AllResolverService.typeName}.${AllResolverService.methods.getAllRelSelfParam.name}`,
           );
           return {
             values: request.bases.map((base) => ({
@@ -89,7 +89,7 @@ describe("success", () => {
           };
         },
       });
-    })
+    }),
   );
   test("fetch", async () => {
     const response = await knitClient.fetch({
@@ -441,7 +441,7 @@ describe("errors", () => {
           throw new ConnectError("Relation error", Code.FailedPrecondition);
         },
       });
-    })
+    }),
   );
   describe("fetch", () => {
     test("default", async () => {
@@ -453,9 +453,9 @@ describe("errors", () => {
               ...sharedRequest,
             },
           ],
-        })
+        }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"[failed_precondition] Relation error"`
+        `"[failed_precondition] Relation error"`,
       );
     });
     test("catch-source", async () => {
@@ -775,9 +775,9 @@ describe("errors", () => {
               onError: { case: "throw", value: {} },
             },
           ],
-        })
+        }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"[failed_precondition] Relation error"`
+        `"[failed_precondition] Relation error"`,
       );
     });
   });
@@ -794,7 +794,7 @@ describe("errors", () => {
           expect(next).toBe(true); // This must never be called.
         }
       }).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"[failed_precondition] Relation error"`
+        `"[failed_precondition] Relation error"`,
       );
     });
     test("catch-source", async () => {
@@ -976,7 +976,7 @@ function createKnitClient(transport: Transport) {
               getAllRelSelfParam: { name: "rel_self_param" },
             });
           },
-        })
+        }),
       );
     },
     {
@@ -990,7 +990,7 @@ function createKnitClient(transport: Transport) {
           },
         ],
       },
-    }
+    },
   );
   return createPromiseClient(KnitService, knitTransport);
 }
@@ -1005,7 +1005,7 @@ function expectOperation(headers: Headers, operation: string) {
   try {
     expect(operations?.[operations?.length - 1]).toEqual(operation);
     expect(operations?.[0]).toMatch(
-      /buf\.knit\.gateway\.v1alpha1\.KnitService\.(Fetch)|(Do)|(Listen)/
+      /buf\.knit\.gateway\.v1alpha1\.KnitService\.(Fetch)|(Do)|(Listen)/,
     );
   } catch (err) {
     throw new ConnectError(
@@ -1013,7 +1013,7 @@ function expectOperation(headers: Headers, operation: string) {
       Code.FailedPrecondition,
       undefined,
       undefined,
-      err
+      err,
     );
   }
 }

@@ -23,7 +23,7 @@ import {
 import { decodeMessage, format } from "./json.js";
 import { isOneofQuery } from "./oneof.js";
 import { KnitError, knitErrorFromReason } from "./error.js";
-import { Code } from "@bufbuild/connect";
+import { Code } from "@connectrpc/connect";
 
 /**
  * @internal
@@ -37,7 +37,7 @@ export type AnyQuery = {
  * @internal
  */
 export function makeRequests(
-  query: AnyQuery
+  query: AnyQuery,
 ): [PartialMessage<Request>[], Record<string, string>[]] {
   const requests: PartialMessage<Request>[] = [];
   const oneofs: Record<string, string>[] = [];
@@ -45,7 +45,7 @@ export function makeRequests(
     for (const [method, request] of Object.entries(methods)) {
       const [maskField, oneofTable] = makeMaskField(
         request,
-        service + "." + method
+        service + "." + method,
       );
       requests.push({
         method: service + "." + capitalize(method),
@@ -61,7 +61,7 @@ export function makeRequests(
 
 function makeMaskField(
   value: AnyQuery,
-  path: string
+  path: string,
 ): [PartialMessage<MaskField>, Record<string, string>] {
   let params: PartialMessage<Value> | undefined = undefined;
   let onError: PartialMessage<MaskField>["onError"] = undefined;
@@ -109,7 +109,7 @@ function makeMaskField(
  */
 export function makeResult(
   oneofs: Record<string, string>[],
-  responses: Response[]
+  responses: Response[],
 ) {
   const result: { [k: string]: { [k: string]: unknown } } = {};
   for (let i = 0; i < responses.length; i++) {
@@ -126,7 +126,7 @@ export function makeResult(
       oneofs[i],
       response.body?.toJson(),
       response.schema,
-      service + "." + method
+      service + "." + method,
     );
   }
   return result;
@@ -138,7 +138,7 @@ export function makeResult(
  */
 export async function* makeResultIterable(
   oneofs: Record<string, string>,
-  response: AsyncIterable<ListenResponse>
+  response: AsyncIterable<ListenResponse>,
 ) {
   let schema: Schema | undefined = undefined;
   try {

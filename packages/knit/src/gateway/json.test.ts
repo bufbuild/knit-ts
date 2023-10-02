@@ -64,7 +64,7 @@ describe("valid", () => {
         case: "scalar",
         value: type,
       },
-    } as const);
+    }) as const;
   const scalarElement = (type: Schema_Field_Type_ScalarType) =>
     scalar(type).value;
   const message = (typeName: string, fields: PartialMessage<Schema_Field>[]) =>
@@ -76,10 +76,10 @@ describe("valid", () => {
           fields: fields,
         } satisfies PartialMessage<Schema>,
       },
-    } as const);
+    }) as const;
   const messageElement = (
     typeName: string,
-    fields: PartialMessage<Schema_Field>[]
+    fields: PartialMessage<Schema_Field>[],
   ) => message(typeName, fields).value;
   const testCases: {
     name: string;
@@ -339,7 +339,7 @@ describe("valid", () => {
                         case: "repeated",
                         value: {
                           element: scalarElement(
-                            Schema_Field_Type_ScalarType.UINT32
+                            Schema_Field_Type_ScalarType.UINT32,
                           ),
                         },
                       },
@@ -369,7 +369,7 @@ describe("valid", () => {
                                 {
                                   name: "id",
                                   type: scalar(
-                                    Schema_Field_Type_ScalarType.STRING
+                                    Schema_Field_Type_ScalarType.STRING,
                                   ),
                                 },
                               ]),
@@ -396,8 +396,8 @@ describe("valid", () => {
           new Schema(testCase.schema),
           undefined,
           false,
-          typeRegistry
-        )[0]
+          typeRegistry,
+        )[0],
       ).toEqual(testCase.o);
     });
   }
