@@ -9,14 +9,15 @@
     "directory": "packages/knit"
   },
   "sideEffects": false,
+  "type": "module",
   "scripts": {
     "clean": "rm -rf ./dist/* .turbo/*",
     "lint": "eslint .",
     "attw": "attw --pack",
     "test": "NODE_OPTIONS=--experimental-vm-modules ../../node_modules/.bin/jest",
     "test:watch": "pnpm run build:esm+types --watch & pnpm run test --watchAll",
-    "build:esm": "tsup --format esm && mv ./dist/esm/index.d.mts ./dist/esm/index.d.ts && mv ./dist/esm/gateway/index.d.mts ./dist/esm/gateway/index.d.ts",
-    "build:cjs": "tsup --format cjs",
+    "build:esm": "tsup --format esm",
+    "build:cjs": "tsup --format cjs && mv ./dist/cjs/index.d.cts ./dist/cjs/index.d.ts && mv ./dist/cjs/gateway/index.d.cts ./dist/cjs/gateway/index.d.ts",
     "build": "pnpm run build:esm && pnpm run build:cjs"
   },
   "main": "./dist/cjs/index.js",
