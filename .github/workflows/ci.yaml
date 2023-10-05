@@ -13,7 +13,7 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
       - name: lint
-        run: pnpm run lint      
+        run: pnpm run lint
   test:
     runs-on: ubuntu-20.04
     steps:
