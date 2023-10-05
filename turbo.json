@@ -12,6 +12,11 @@
       "inputs": ["src/**"],
       "outputs": ["dist/**/*"]
     },
+    "attw": {
+      "dependsOn": ["build"],
+      "inputs": ["dist/", "package.json"],
+      "outputs": []
+    },
     "test": {
       "dependsOn": ["build"],
       "outputs": []
