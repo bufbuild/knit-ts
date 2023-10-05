@@ -15,7 +15,7 @@
     "attw": "attw --pack",
     "test": "NODE_OPTIONS=--experimental-vm-modules ../../node_modules/.bin/jest",
     "test:watch": "pnpm run build:esm+types --watch & pnpm run test --watchAll",
-    "build:esm": "tsup --format esm",
+    "build:esm": "tsup --format esm && mv ./dist/esm/index.d.mts ./dist/esm/index.d.ts && mv ./dist/esm/gateway/index.d.mts ./dist/esm/gateway/index.d.ts",
     "build:cjs": "tsup --format cjs",
     "build": "pnpm run build:esm && pnpm run build:cjs"
   },
@@ -23,7 +23,7 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/esm/index.d.mts",
+        "types": "./dist/esm/index.d.ts",
         "default": "./dist/esm/index.js"
       },
       "require": {
@@ -33,7 +33,7 @@
     },
     "./gateway": {
       "import": {
-        "types": "./dist/esm/gateway/index.d.mts",
+        "types": "./dist/esm/gateway/index.d.ts",
         "default": "./dist/esm/gateway/index.js"
       },
       "require": {
