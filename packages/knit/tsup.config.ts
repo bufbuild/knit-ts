@@ -3,45 +3,11 @@ import { writeFileSync } from "fs";
 
 const cjsPackageJson = {
   type: "commonjs",
-  main: "./index.js",
-  types: "./index.d.ts",
-  exports: {
-    ".": {
-      types: "./index.d.ts",
-      require: "./index.js",
-    },
-    "./gateway": {
-      types: "./gateway/index.d.ts",
-      require: "./gateway/index.js",
-    },
-  },
-  typesVersions: {
-    "*": {
-      gateway: ["./gateway/index.d.ts"],
-    },
-  },
 };
 
 const esmPackageJson = {
-  sideEffects: false,
   type: "module",
-  types: "./index.d.ts",
-  module: "./index.js",
-  exports: {
-    ".": {
-      types: "./index.d.ts",
-      import: "./index.js",
-    },
-    "./gateway": {
-      types: "./gateway/index.d.ts",
-      import: "./gateway/index.js",
-    },
-  },
-  typesVersions: {
-    "*": {
-      gateway: ["./gateway/index.d.ts"],
-    },
-  },
+  sideEffects: false,
 };
 
 const sharedOptions = {
@@ -50,12 +16,17 @@ const sharedOptions = {
   clean: true,
   treeshake: true,
   entry: ["./src/index.ts", "./src/gateway/index.ts"],
+  outExtension() {
+    return {
+      js: ".js",
+      dts: ".d.ts",
+    };
+  },
 } satisfies Options;
 
 const cjsOptions = {
   ...sharedOptions,
   format: "cjs",
-  legacyOutput: true, // Outputs `.js` instead of `.cjs`.
   outDir: "./dist/cjs",
   onSuccess: async () =>
     writeFileSync("./dist/cjs/package.json", JSON.stringify(cjsPackageJson)),

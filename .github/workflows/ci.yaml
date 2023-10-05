@@ -23,3 +23,5 @@ jobs:
         uses: ./.github/actions/setup
       - name: test
         run: pnpm run test
+      - name: attw
+        run: pnpm run attw
