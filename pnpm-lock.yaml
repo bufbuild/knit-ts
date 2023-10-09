@@ -1,16 +1,12 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
     devDependencies:
       '@arethetypeswrong/cli':
-        specifier: ^0.11.0
-        version: 0.11.0
+        specifier: ^0.12.1
+        version: 0.12.1
       '@types/node':
         specifier: ^20.8.0
         version: 20.8.0
@@ -153,11 +149,11 @@ packages:
     resolution: {integrity: sha512-hL80MHK3b++pEp6K23+Nl5r5D1F19DRagp2ruCBIv4McyCiLKq67vUNvEQY1aGCAKNZ8GxV23n5MhOm7RwO8Pg==}
     dev: true
 
-  /@arethetypeswrong/cli@0.11.0:
-    resolution: {integrity: sha512-0GxlV58x8DaiWRUx0JWc3glr8iGsjK+KATuubH8qRqjw4aIGB8BBQ8Bv2Bvs9DfGuojBgbVWhOTe8+3BepYZ6Q==}
+  /@arethetypeswrong/cli@0.12.1:
+    resolution: {integrity: sha512-5nA91oqi8GPv9NkxgcjdpyKSMJ0WCcX8YYcxlZS5XBqY6cau0pMt5S0CXU3QGgl9qDryrok1QaM1xtUUhBKTAA==}
     hasBin: true
     dependencies:
-      '@arethetypeswrong/core': 0.10.2
+      '@arethetypeswrong/core': 0.12.1
       chalk: 4.1.2
       cli-table3: 0.6.3
       commander: 10.0.1
@@ -169,8 +165,8 @@ packages:
       - encoding
     dev: true
 
-  /@arethetypeswrong/core@0.10.2:
-    resolution: {integrity: sha512-jL1MPpZKuMkm0EbZn1OLgdTO5hci7g79EUSELEnATdFyTgbPUxJwTXi1Kdont/BG05BZCcxZnOQgYO/whVmwdA==}
+  /@arethetypeswrong/core@0.12.1:
+    resolution: {integrity: sha512-1XCwz+IRSptRu1Y48D462vu3de8sLFrtXaXkgthIZ8+iRhEBIZtu+q7MwrfR3hWbYIgUsBj2WugtIgaPAdX9FA==}
     dependencies:
       '@andrewbranch/untar.js': 1.0.2
       fetch-ponyfill: 7.1.0
@@ -515,7 +511,7 @@ packages:
     dev: true
 
   /@buf/bufbuild_knit.bufbuild_es@1.3.1-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.3.1):
-    resolution: {registry: https://buf.build/gen/npm/v1/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-1.3.1-20230504140941-3dc602456973.1.tgz}
+    resolution: {registry: https://registry.npmjs.org/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-1.3.1-20230504140941-3dc602456973.1.tgz}
     peerDependencies:
       '@bufbuild/protobuf': ^1.3.1
     dependencies:
@@ -523,7 +519,7 @@ packages:
     dev: true
 
   /@buf/bufbuild_knit.connectrpc_es@1.0.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.3.1)(@connectrpc/connect@1.0.0):
-    resolution: {registry: https://buf.build/gen/npm/v1/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.connectrpc_es/-/bufbuild_knit.connectrpc_es-1.0.0-20230504140941-3dc602456973.1.tgz}
+    resolution: {registry: https://registry.npmjs.org/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.connectrpc_es/-/bufbuild_knit.connectrpc_es-1.0.0-20230504140941-3dc602456973.1.tgz}
     peerDependencies:
       '@connectrpc/connect': ^1.0.0
     dependencies:
@@ -4191,3 +4187,7 @@ packages:
   /yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
