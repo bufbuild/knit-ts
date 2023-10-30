@@ -97,14 +97,14 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1
       '@bufbuild/protoc-gen-es':
-        specifier: ^1.3.1
-        version: 1.3.1(@bufbuild/protobuf@1.3.1)
+        specifier: ^1.4.1
+        version: 1.4.1(@bufbuild/protobuf@1.3.1)
       '@bufbuild/protoc-gen-knit-ts':
         specifier: workspace:*
         version: link:../protoc-gen-knit-ts
       '@connectrpc/protoc-gen-connect-es':
         specifier: ^1.0.0
-        version: 1.0.0(@bufbuild/protoc-gen-es@1.3.1)
+        version: 1.0.0(@bufbuild/protoc-gen-es@1.4.1)
 
   packages/protoc-gen-knit-ts:
     dependencies:
@@ -602,18 +602,22 @@ packages:
   /@bufbuild/protobuf@1.3.1:
     resolution: {integrity: sha512-BUyJWutgP2S8K/1NphOJokuwDckXS4qI2T1pGZAlkFdZchWae3jm6fCdkcGbLlM1QLOcNFFePd+7Feo4BYGrJQ==}
 
-  /@bufbuild/protoc-gen-es@1.3.1(@bufbuild/protobuf@1.3.1):
-    resolution: {integrity: sha512-Eyk4T1Wh56WhS6RqC7nfYE9a2egejDAzOl5vv8emzSNfHKm6eGrwTiuE+ottg+G6SmC1hNr3NFbvNJJkI+5aSA==}
+  /@bufbuild/protobuf@1.4.1:
+    resolution: {integrity: sha512-4dthhwBGD9nlpY35ic8dMQC5R0dsND2b2xyeVO3qf+hBk8m7Y9dUs+SmMh6rqO2pGLUTKHefGXLDW+z19hBPdQ==}
+    dev: true
+
+  /@bufbuild/protoc-gen-es@1.4.1(@bufbuild/protobuf@1.3.1):
+    resolution: {integrity: sha512-YPEFzLl/RslDJXZoqI505YutOsYGIz1zGrYTltTrdgk0EZkDSAQfq6/Yu36mPkUSypHEaRSoDlrlcpthIwA19w==}
     engines: {node: '>=14'}
     hasBin: true
     peerDependencies:
-      '@bufbuild/protobuf': 1.3.1
+      '@bufbuild/protobuf': 1.4.1
     peerDependenciesMeta:
       '@bufbuild/protobuf':
         optional: true
     dependencies:
       '@bufbuild/protobuf': 1.3.1
-      '@bufbuild/protoplugin': 1.3.1
+      '@bufbuild/protoplugin': 1.4.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -626,6 +630,16 @@ packages:
       typescript: 4.5.2
     transitivePeerDependencies:
       - supports-color
+
+  /@bufbuild/protoplugin@1.4.1:
+    resolution: {integrity: sha512-URC4/O5MsM94W7ed8NJMw1mUaFAKr5y0B67PMjhBdhVcDi6p8be76wz9+xW6/B6dMzlO+SpnicFYc9fEhLcQIw==}
+    dependencies:
+      '@bufbuild/protobuf': 1.4.1
+      '@typescript/vfs': 1.4.0
+      typescript: 4.5.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /@colors/colors@1.5.0:
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -651,7 +665,7 @@ packages:
     dependencies:
       '@bufbuild/protobuf': 1.3.1
 
-  /@connectrpc/protoc-gen-connect-es@1.0.0(@bufbuild/protoc-gen-es@1.3.1):
+  /@connectrpc/protoc-gen-connect-es@1.0.0(@bufbuild/protoc-gen-es@1.4.1):
     resolution: {integrity: sha512-IE01AKpp7pXA7qIAuaXa9+2OtvoNaAAypxWu7R8MTx7alNURz2Wdao4cUn7dWltZxb3apKO9Aemqufv/1TsZAQ==}
     engines: {node: '>=16.0.0'}
     hasBin: true
@@ -665,7 +679,7 @@ packages:
         optional: true
     dependencies:
       '@bufbuild/protobuf': 1.3.1
-      '@bufbuild/protoc-gen-es': 1.3.1(@bufbuild/protobuf@1.3.1)
+      '@bufbuild/protoc-gen-es': 1.4.1(@bufbuild/protobuf@1.3.1)
       '@bufbuild/protoplugin': 1.3.1
     transitivePeerDependencies:
       - supports-color
