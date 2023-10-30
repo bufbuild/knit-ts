@@ -60,18 +60,18 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1
       '@connectrpc/connect':
-        specifier: ^1.0.0
-        version: 1.0.0(@bufbuild/protobuf@1.3.1)
+        specifier: ^1.1.3
+        version: 1.1.3(@bufbuild/protobuf@1.3.1)
       '@connectrpc/connect-web':
         specifier: ^1.0.0
-        version: 1.0.0(@bufbuild/protobuf@1.3.1)(@connectrpc/connect@1.0.0)
+        version: 1.0.0(@bufbuild/protobuf@1.3.1)(@connectrpc/connect@1.1.3)
     devDependencies:
       '@buf/bufbuild_knit.bufbuild_es':
         specifier: 1.3.1-20230504140941-3dc602456973.1
         version: 1.3.1-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.3.1)
       '@buf/bufbuild_knit.connectrpc_es':
         specifier: 1.0.0-20230504140941-3dc602456973.1
-        version: 1.0.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.3.1)(@connectrpc/connect@1.0.0)
+        version: 1.0.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.3.1)(@connectrpc/connect@1.1.3)
       '@bufbuild/knit-test-spec':
         specifier: workspace:*
         version: link:../knit-test-spec
@@ -520,13 +520,13 @@ packages:
       '@bufbuild/protobuf': 1.3.1
     dev: true
 
-  /@buf/bufbuild_knit.connectrpc_es@1.0.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.3.1)(@connectrpc/connect@1.0.0):
+  /@buf/bufbuild_knit.connectrpc_es@1.0.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.3.1)(@connectrpc/connect@1.1.3):
     resolution: {registry: https://registry.npmjs.org/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.connectrpc_es/-/bufbuild_knit.connectrpc_es-1.0.0-20230504140941-3dc602456973.1.tgz}
     peerDependencies:
       '@connectrpc/connect': ^1.0.0
     dependencies:
       '@buf/bufbuild_knit.bufbuild_es': 1.3.1-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.3.1)
-      '@connectrpc/connect': 1.0.0(@bufbuild/protobuf@1.3.1)
+      '@connectrpc/connect': 1.1.3(@bufbuild/protobuf@1.3.1)
     transitivePeerDependencies:
       - '@bufbuild/protobuf'
     dev: true
@@ -634,20 +634,20 @@ packages:
     dev: true
     optional: true
 
-  /@connectrpc/connect-web@1.0.0(@bufbuild/protobuf@1.3.1)(@connectrpc/connect@1.0.0):
+  /@connectrpc/connect-web@1.0.0(@bufbuild/protobuf@1.3.1)(@connectrpc/connect@1.1.3):
     resolution: {integrity: sha512-QMoq/KoZG2ZUAJptXqQtFVoZY9avX+11JDFrb+2P7rVOzHifupBPNTp4LJjTPciuUhpNwMCNnNXdddAh/+N2aw==}
     peerDependencies:
       '@bufbuild/protobuf': ^1.2.1
       '@connectrpc/connect': 1.0.0
     dependencies:
       '@bufbuild/protobuf': 1.3.1
-      '@connectrpc/connect': 1.0.0(@bufbuild/protobuf@1.3.1)
+      '@connectrpc/connect': 1.1.3(@bufbuild/protobuf@1.3.1)
     dev: false
 
-  /@connectrpc/connect@1.0.0(@bufbuild/protobuf@1.3.1):
-    resolution: {integrity: sha512-eqrCpSoAK8OHlKN3t3BbMGAzLT3rbl8XEgyazDokm5lyhYc68UcxN8ChfWjFzVpXOCMYaEAR/0NV64UOAEko9w==}
+  /@connectrpc/connect@1.1.3(@bufbuild/protobuf@1.3.1):
+    resolution: {integrity: sha512-AXkbsLQe2Nm7VuoN5nqp05GEb9mPa/f5oFzDqTbHME4i8TghTrlY03uefbhuAq4wjsnfDnmuxHZvn6ndlgXmbg==}
     peerDependencies:
-      '@bufbuild/protobuf': ^1.2.1
+      '@bufbuild/protobuf': ^1.3.3
     dependencies:
       '@bufbuild/protobuf': 1.3.1
 
