@@ -15,6 +15,6 @@
     "@bufbuild/protobuf": "^1.5.0",
     "@bufbuild/protoc-gen-es": "^1.5.0",
     "@bufbuild/protoc-gen-knit-ts": "workspace:*",
-    "@connectrpc/protoc-gen-connect-es": "^1.0.0"
+    "@connectrpc/protoc-gen-connect-es": "^1.1.3"
   }
 }
