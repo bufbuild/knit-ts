@@ -43,7 +43,7 @@ export function makeOutboundHeader(
   requestHeader: Headers | HeadersInit,
 ): Headers {
   const outboundHeader = new Headers();
-  new Headers(requestHeader).forEach((v, k) => {
+  new Headers(requestHeader).forEach((v: string, k: string) => {
     const lowerK = k.toLowerCase();
     if (forbiddenHeaders.has(lowerK)) {
       return;
