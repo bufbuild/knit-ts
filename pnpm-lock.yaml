@@ -109,8 +109,8 @@ importers:
   packages/protoc-gen-knit-ts:
     dependencies:
       '@bufbuild/protoplugin':
-        specifier: ^1.3.1
-        version: 1.3.1
+        specifier: ^1.5.0
+        version: 1.5.0
     devDependencies:
       '@buf/bufbuild_knit.bufbuild_es':
         specifier: 1.3.1-20230504140941-3dc602456973.1
@@ -597,6 +597,7 @@ packages:
 
   /@bufbuild/protobuf@1.3.1:
     resolution: {integrity: sha512-BUyJWutgP2S8K/1NphOJokuwDckXS4qI2T1pGZAlkFdZchWae3jm6fCdkcGbLlM1QLOcNFFePd+7Feo4BYGrJQ==}
+    dev: true
 
   /@bufbuild/protobuf@1.5.0:
     resolution: {integrity: sha512-0Jg+B7Vl8YGCi7c3iZ8/38iTbZrwdU7or6QZlsA9lhSrhumaXOTMsGO8gqwDuus/THEkTiY3Uxn+PEJwgsLt0w==}
@@ -621,6 +622,16 @@ packages:
     resolution: {integrity: sha512-85mSp1FJzjF9uyhzlAS19KNS0CkGUq7dHonRplaTErbuhdBdAVGBPs5SVQpFlYD5j0nMHob8hKsnfA4g8QlrhQ==}
     dependencies:
       '@bufbuild/protobuf': 1.3.1
+      '@typescript/vfs': 1.4.0
+      typescript: 4.5.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@bufbuild/protoplugin@1.5.0:
+    resolution: {integrity: sha512-b07uxUfWUHm91PrN7dMMSmO+2RH21kPo+EhczGDR3PDh2t80e4XCZhf3Z/6SM/+ajhVpbl/WNK+z645jsSnGPg==}
+    dependencies:
+      '@bufbuild/protobuf': 1.5.0
       '@typescript/vfs': 1.4.0
       typescript: 4.5.2
     transitivePeerDependencies:
@@ -665,7 +676,7 @@ packages:
     dependencies:
       '@bufbuild/protobuf': 1.5.0
       '@bufbuild/protoc-gen-es': 1.3.1(@bufbuild/protobuf@1.5.0)
-      '@bufbuild/protoplugin': 1.3.1
+      '@bufbuild/protoplugin': 1.5.0
     transitivePeerDependencies:
       - supports-color
     dev: true
