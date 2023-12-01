@@ -509,7 +509,7 @@ packages:
     dev: true
 
   /@buf/bufbuild_knit.bufbuild_es@1.3.1-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.5.0):
-    resolution: {registry: https://registry.npmjs.org/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-1.3.1-20230504140941-3dc602456973.1.tgz}
+    resolution: {registry: https://buf.build/gen/npm/v1, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-1.3.1-20230504140941-3dc602456973.1.tgz}
     peerDependencies:
       '@bufbuild/protobuf': ^1.3.1
     dependencies:
@@ -517,7 +517,7 @@ packages:
     dev: true
 
   /@buf/bufbuild_knit.connectrpc_es@1.0.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@1.5.0)(@connectrpc/connect@1.0.0):
-    resolution: {registry: https://registry.npmjs.org/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.connectrpc_es/-/bufbuild_knit.connectrpc_es-1.0.0-20230504140941-3dc602456973.1.tgz}
+    resolution: {registry: https://buf.build/gen/npm/v1, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.connectrpc_es/-/bufbuild_knit.connectrpc_es-1.0.0-20230504140941-3dc602456973.1.tgz}
     peerDependencies:
       '@connectrpc/connect': ^1.0.0
     dependencies:
