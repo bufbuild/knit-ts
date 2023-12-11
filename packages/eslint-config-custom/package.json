@@ -9,7 +9,7 @@
     "eslint-plugin-notice": "^0.9.10",
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-config-turbo": "^1.10.16"
+    "eslint-config-turbo": "^1.11.1"
   },
   "devDependencies": {
     "typescript": "^5.3.2"
