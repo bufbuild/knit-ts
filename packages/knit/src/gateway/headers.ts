@@ -40,10 +40,10 @@ const forbiddenPrefixes = [
 const operationsHeaderKey = "Knit-Operations";
 
 export function makeOutboundHeader(
-  requestHeader: Headers | HeadersInit
+  requestHeader: Headers | HeadersInit,
 ): Headers {
   const outboundHeader = new Headers();
-  new Headers(requestHeader).forEach((v, k) => {
+  new Headers(requestHeader).forEach((v: string, k: string) => {
     const lowerK = k.toLowerCase();
     if (forbiddenHeaders.has(lowerK)) {
       return;
@@ -58,7 +58,7 @@ export function makeOutboundHeader(
 
 export function makeResolverHeaders(
   baseHeaders: Headers | undefined,
-  operations: string[]
+  operations: string[],
 ) {
   const headers = new Headers(baseHeaders);
   headers.delete(operationsHeaderKey);

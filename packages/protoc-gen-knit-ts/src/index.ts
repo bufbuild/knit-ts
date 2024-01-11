@@ -83,7 +83,7 @@ function generateService(g: GeneratedFile, service: DescService) {
         localName(method),
         ": ",
         getMethodType(g, method),
-        ";"
+        ";",
       );
     }
     g.print(indent(2), "};");
@@ -132,7 +132,7 @@ function generateMessage(g: GeneratedFile, message: DescMessage) {
           localName(member),
           propertyModifier,
           getFieldType(member, g.import),
-          ";"
+          ";",
         );
         break;
       case "oneof":
@@ -144,7 +144,7 @@ function generateMessage(g: GeneratedFile, message: DescMessage) {
             localName(field),
             ": ",
             getFieldType(field, g.import),
-            ";"
+            ";",
           );
         }
         g.print(indent(2), "};");
@@ -172,7 +172,7 @@ function generateRelations(g: GeneratedFile, service: DescService) {
 function generateRelation(
   g: GeneratedFile,
   method: DescMethod,
-  config: RelationConfig
+  config: RelationConfig,
 ) {
   if (config.name === "") {
     throw new Error(`${method.name}: relation name is empty`);
@@ -181,20 +181,20 @@ function generateRelation(
   const shellMessage = getRepeatedMessage(method.output, 1, "values");
   if (shellMessage.fields.length !== 1) {
     throw new Error(
-      `${method.name}: relation must have exactly one field, found ${shellMessage.fields.length}`
+      `${method.name}: relation must have exactly one field, found ${shellMessage.fields.length}`,
     );
   }
   const field = shellMessage.fields[0];
   if (field.number !== 1) {
     throw new Error(
-      `${method.name}: relation ${field.name} must have tag 1, found ${field.number}`
+      `${method.name}: relation ${field.name} must have tag 1, found ${field.number}`,
     );
   }
   const base = makeImportSymbol(g.import, baseMessage);
   g.print(
     'declare module "',
     makeImportPathRelative(getImportPath(shellMessage.file), base.from),
-    '" {'
+    '" {',
   );
   g.print(indent(1), "export interface ", base, "{");
   const valueType = [localName(shellMessage), '["', localName(field), '"]'];
@@ -223,7 +223,7 @@ function generateEnum(g: GeneratedFile, _enum: DescEnum) {
 
 function getFieldType(
   field: DescField,
-  importFn: GeneratedFile["import"]
+  importFn: GeneratedFile["import"],
 ): Printable {
   let type: Printable = "unknown";
   switch (field.fieldKind) {
@@ -269,7 +269,7 @@ function getFieldType(
 
 function getTypeOfMessage(
   importFn: GeneratedFile["import"],
-  message: DescMessage
+  message: DescMessage,
 ): Printable {
   if (wktSet.has(message.typeName)) {
     return ['"', "@wkt/", message.name, '"'];
@@ -279,7 +279,7 @@ function getTypeOfMessage(
 
 function getTypeOfEnum(
   importFn: GeneratedFile["import"],
-  enumDesc: DescEnum
+  enumDesc: DescEnum,
 ): Printable {
   if (wktSet.has(enumDesc.typeName)) {
     // Must be google.protobuf.NullValue
@@ -297,7 +297,7 @@ function getRepeatedMessage(message: DescMessage, tag: number, name: string) {
     if (field.number !== tag) continue;
     if (field.name !== name) {
       throw new Error(
-        `${message.name}: field with ${tag} must be named '${name}', found '${field.name}'`
+        `${message.name}: field with ${tag} must be named '${name}', found '${field.name}'`,
       );
     }
     if (!field.repeated) {
@@ -309,7 +309,7 @@ function getRepeatedMessage(message: DescMessage, tag: number, name: string) {
     return field.message;
   }
   throw new Error(
-    `${message.name}: relation must have a '${name}' field with tag ${tag}`
+    `${message.name}: relation must have a '${name}' field with tag ${tag}`,
   );
 }
 
@@ -373,7 +373,7 @@ function indent(multiplier: number) {
 
 function makeImportSymbol(
   importFn: GeneratedFile["import"],
-  desc: DescMessage | DescEnum
+  desc: DescMessage | DescEnum,
 ): ImportSymbol {
   return importFn(localName(desc), getImportPath(desc.file)).toTypeOnly();
 }

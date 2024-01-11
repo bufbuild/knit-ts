@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { createConnectTransport } from "@bufbuild/connect-web";
+import { createConnectTransport } from "@connectrpc/connect-web";
 import {
   createPromiseClient,
   type PromiseClient,
   type Transport,
-} from "@bufbuild/connect";
+} from "@connectrpc/connect";
 import type {
   DoQuery,
   DoSchema,
@@ -32,7 +32,7 @@ import type {
 } from "./schema.js";
 
 import type { Subset } from "./utils/types.js";
-import { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
+import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import {
   makeRequests,
   makeResult,
@@ -84,7 +84,7 @@ export interface Client<S extends Schema> {
    * @param query The query to fetch.
    */
   fetch<Q extends Subset<Q, FetchQuery<S>>>(
-    query: Q
+    query: Q,
   ): Promise<Mask<Q, FetchSchema<S>, ErrorStrategyThrow>>;
   /**
    * Similar to {@link Client.fetch | fetch } but uses `POST`. Should be used with state changing
@@ -96,7 +96,7 @@ export interface Client<S extends Schema> {
    * @param query The query to execute.
    */
   do<Q extends Subset<Q, DoQuery<S>>>(
-    query: Q
+    query: Q,
   ): Promise<Mask<Q, DoSchema<S>, ErrorStrategyCatch>>;
   /**
    * Similar to {@link Client.fetch} but works on server streaming methods.
@@ -107,7 +107,7 @@ export interface Client<S extends Schema> {
    * @returns An {@link AsyncIterable} of the expected result of the query.
    */
   listen<Q extends Subset<Q, ListenQuery<S>>>(
-    query: Q
+    query: Q,
   ): AsyncIterable<Mask<Q, ListenSchema<S>, ErrorStrategyThrow>>;
 }
 
@@ -192,7 +192,7 @@ export function createClient<S extends Schema>(options: Options): Client<S> {
       baseUrl: options.baseUrl,
       credentials: options.credentials,
     }),
-    options
+    options,
   );
 }
 
@@ -205,7 +205,7 @@ export function createClient<S extends Schema>(options: Options): Client<S> {
  */
 export function createClientWithTransport<S extends Schema>(
   transport: Transport,
-  options: OptionalOptions
+  options: OptionalOptions,
 ): Client<S> {
   const client = createPromiseClient(KnitService, transport);
   return {
@@ -217,14 +217,14 @@ export function createClientWithTransport<S extends Schema>(
 
 function createFetch<S extends Schema>(
   client: KnitServiceClient,
-  options: OptionalOptions
+  options: OptionalOptions,
 ): Client<S>["fetch"] {
   return async function <Q extends Subset<Q, FetchQuery<S>>>(query: Q) {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     try {
       const { responses } = await client.fetch(
         { requests },
-        { headers: options.headers }
+        { headers: options.headers },
       );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return
       return makeResult(oneofs, responses) as any;
@@ -236,14 +236,14 @@ function createFetch<S extends Schema>(
 
 function createDo<S extends Schema>(
   client: KnitServiceClient,
-  options: OptionalOptions
+  options: OptionalOptions,
 ): Client<S>["do"] {
   return async function <Q extends Subset<Q, DoQuery<S>>>(query: Q) {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     try {
       const { responses } = await client.do(
         { requests },
-        { headers: options.headers }
+        { headers: options.headers },
       );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return
       return makeResult(oneofs, responses) as any;
@@ -255,23 +255,23 @@ function createDo<S extends Schema>(
 
 function createListen<S extends Schema>(
   client: KnitServiceClient,
-  options: OptionalOptions
+  options: OptionalOptions,
 ): Client<S>["listen"] {
   return function <Q extends Subset<Q, ListenQuery<S>>>(query: Q) {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     if (requests.length !== 1) {
       throw new Error(
-        `listen only accepts one request, got: ${requests.length}`
+        `listen only accepts one request, got: ${requests.length}`,
       );
     }
     try {
       const responseIterable = client.listen(
         { request: requests[0] },
-        { headers: options.headers }
+        { headers: options.headers },
       );
       return makeResultIterable(
         oneofs[0],
-        responseIterable
+        responseIterable,
       ) as AsyncIterable<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
     } catch (reason) {
       throw knitErrorFromReason(reason);

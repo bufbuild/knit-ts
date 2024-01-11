@@ -1,9 +1,12 @@
 import { describe, expect, test } from "@jest/globals";
 import { createClientWithTransport } from "./client.js";
-import { type HandlerContext, createRouterTransport } from "@bufbuild/connect";
+import {
+  type HandlerContext,
+  createRouterTransport,
+} from "@connectrpc/connect";
 import type { AllService } from "@bufbuild/knit-test-spec/spec/all_knit.js";
 import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
-import { KnitService } from "@buf/bufbuild_knit.bufbuild_connect-es/buf/knit/gateway/v1alpha1/knit_connect.js";
+import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import { type PartialMessage, Value } from "@bufbuild/protobuf";
 import {
   FetchRequest,
@@ -68,7 +71,7 @@ describe("client", () => {
   const headerValue = "some-token";
   const unary = (
     { requests }: FetchRequest,
-    { requestHeader }: HandlerContext
+    { requestHeader }: HandlerContext,
   ): PartialMessage<FetchResponse> => {
     expect(requests).toHaveLength(1);
     expect(requests[0].body?.toJson()).toEqual(request);
@@ -90,7 +93,7 @@ describe("client", () => {
         do: unary,
         async *listen(
           { request: actualRequest },
-          { requestHeader }: HandlerContext
+          { requestHeader }: HandlerContext,
         ) {
           expect(requestHeader.get(headerKey)).toEqual(headerValue);
           expect(actualRequest?.body?.toJson()).toEqual(request);
@@ -106,7 +109,7 @@ describe("client", () => {
         },
       });
     }),
-    { headers: { [headerKey]: headerValue } }
+    { headers: { [headerKey]: headerValue } },
   );
   const allQuery = {
     scalars: {

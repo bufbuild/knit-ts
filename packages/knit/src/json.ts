@@ -37,7 +37,7 @@ import {
   Timestamp as TimestampPb,
   FieldMask as FieldMaskPb,
 } from "@bufbuild/protobuf";
-import { Code } from "@bufbuild/connect";
+import { Code } from "@connectrpc/connect";
 import { KnitError } from "./error.js";
 
 /**
@@ -119,7 +119,7 @@ export function decodeMessage(
   oneofTable: Record<string, string>,
   data: JsonValue | undefined,
   schema: Schema | undefined,
-  path: string
+  path: string,
 ) {
   if (schema === undefined) {
     throw missingTypeInfoErr(path);
@@ -134,7 +134,7 @@ export function decodeMessage(
   if (schema.name in wktDecodersTable) {
     return wktDecodersTable[schema.name as keyof typeof wktDecodersTable](
       data,
-      path
+      path,
     );
   }
   // Assert that this is a json object and not a primitive or array.
@@ -146,7 +146,7 @@ export function decodeMessage(
       oneofTable,
       data[field.jsonName !== "" ? field.jsonName : field.name],
       field.type?.value,
-      fieldPath
+      fieldPath,
     );
     if (value === undefined) {
       continue;
@@ -168,7 +168,7 @@ function decodeField(
   oneofTable: Record<string, string>,
   data: JsonValue | undefined,
   type: Schema_Field_Type["value"] | undefined,
-  path: string
+  path: string,
 ): unknown {
   if (type === undefined || type.case === undefined) {
     throw missingTypeInfoErr(path);
@@ -189,7 +189,7 @@ function decodeMap(
   oneofTable: Record<string, string>,
   data: JsonValue | undefined,
   type: Schema_Field_Type_MapType,
-  path: string
+  path: string,
 ) {
   if (data === undefined || data === null) return {};
   if (isError(data)) {
@@ -221,7 +221,7 @@ function decodeRepeated(
   oneofTable: Record<string, string>,
   data: JsonValue | undefined,
   type: Schema_Field_Type_RepeatedType,
-  path: string
+  path: string,
 ) {
   if (data === undefined || data === null) {
     return [];
@@ -255,7 +255,7 @@ function decodeRepeated(
 function decodeScalar(
   data: JsonValue | undefined,
   type: Schema_Field_Type_ScalarType,
-  path: string
+  path: string,
 ) {
   if (type === Schema_Field_Type_ScalarType.NULL && data === null) {
     return null;
@@ -408,7 +408,7 @@ function decodeError(data: JsonObject) {
       value: detail.value,
       debug: detail.debug?.toJson(),
     })),
-    error.path
+    error.path,
   );
 }
 
@@ -418,7 +418,7 @@ function isError(data: NonNullable<JsonValue>): data is JsonObject {
 
 function assertJsonObject(
   data: JsonValue,
-  path: string
+  path: string,
 ): asserts data is JsonObject {
   if (data === null) {
     throw parseError("object", "null", "message", path);
@@ -438,7 +438,7 @@ function assertJsonObject(
 
 function assertJsonArray(
   data: JsonValue,
-  path: string
+  path: string,
 ): asserts data is JsonValue[] {
   if (!(data instanceof Array)) {
     throw parseError("Array", typeof data, "ListValue", path);
@@ -449,10 +449,10 @@ function parseError(
   expectedWireType: string,
   gotWireType: string,
   fieldType: string,
-  path: string
+  path: string,
 ) {
   return new Error(
-    `expected ${expectedWireType} for ${fieldType} field '${path}' got ${gotWireType}`
+    `expected ${expectedWireType} for ${fieldType} field '${path}' got ${gotWireType}`,
   );
 }
 

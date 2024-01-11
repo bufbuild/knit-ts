@@ -1,6 +1,6 @@
 {
   "name": "@bufbuild/knit",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "TypeScript client for Knit",
   "license": "Apache-2.0",
   "repository": {
@@ -10,48 +10,59 @@
   },
   "sideEffects": false,
   "type": "module",
+  "scripts": {
+    "clean": "rm -rf ./dist/* .turbo/*",
+    "lint": "eslint .",
+    "attw": "attw --pack",
+    "test": "NODE_OPTIONS=--experimental-vm-modules ../../node_modules/.bin/jest",
+    "test:watch": "pnpm run build:esm+types --watch & pnpm run test --watchAll",
+    "build:esm": "tsup --format esm",
+    "build:cjs": "tsup --format cjs && mv ./dist/cjs/index.d.cts ./dist/cjs/index.d.ts && mv ./dist/cjs/gateway/index.d.cts ./dist/cjs/gateway/index.d.ts",
+    "build": "pnpm run build:esm && pnpm run build:cjs"
+  },
   "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     },
     "./gateway": {
-      "import": "./dist/esm/gateway/index.js",
-      "require": "./dist/cjs/gateway/index.js"
+      "import": {
+        "types": "./dist/esm/gateway/index.d.ts",
+        "default": "./dist/esm/gateway/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/gateway/index.d.ts",
+        "default": "./dist/cjs/gateway/index.js"
+      }
     }
   },
   "typesVersions": {
     "*": {
       "gateway": [
-        "./dist/esm/gateway/index.d.ts",
         "./dist/cjs/gateway/index.d.ts"
       ]
     }
   },
-  "scripts": {
-    "clean": "rm -rf ./dist/* .turbo/*",
-    "lint": "eslint .",
-    "test": "NODE_OPTIONS=--experimental-vm-modules ../../node_modules/.bin/jest",
-    "test:watch": "pnpm run build:esm+types --watch & pnpm run test --watchAll",
-    "build:esm": "tsup --format esm",
-    "build:cjs": "tsup --format cjs",
-    "build": "pnpm run build:esm && pnpm run build:cjs"
-  },
   "dependencies": {
-    "@bufbuild/connect": "^0.9.0",
-    "@bufbuild/connect-web": "^0.9.0",
-    "@bufbuild/protobuf": "^1.2.0"
+    "@bufbuild/protobuf": "^1.5.0",
+    "@connectrpc/connect": "^1.1.3",
+    "@connectrpc/connect-web": "^1.1.3"
   },
   "devDependencies": {
-    "@buf/bufbuild_knit.bufbuild_connect-es": "0.9.0-20230504140941-3dc602456973.1",
-    "@buf/bufbuild_knit.bufbuild_es": "1.2.0-20230504140941-3dc602456973.1",
+    "@buf/bufbuild_knit.connectrpc_es": "1.0.0-20230504140941-3dc602456973.1",
+    "@buf/bufbuild_knit.bufbuild_es": "1.3.1-20230504140941-3dc602456973.1",
     "@bufbuild/knit-test-spec": "workspace:*",
-    "@jest/globals": "^29.4.1",
+    "@jest/globals": "^29.7.0",
     "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*",
-    "tsup": "^6.7.0"
+    "tsup": "^8.0.1"
   },
   "files": [
     "dist/**"

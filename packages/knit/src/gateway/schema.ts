@@ -16,7 +16,7 @@ import {
   Schema,
   Schema_Field_Type_ScalarType,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
-import { Code, ConnectError } from "@bufbuild/connect";
+import { Code, ConnectError } from "@connectrpc/connect";
 import { ScalarType } from "@bufbuild/protobuf";
 import { wktSet } from "./wkt.js";
 import type {
@@ -60,13 +60,13 @@ export function computeSchema(
   path: string,
   relations: RelationsMap,
   schemaCache: Map<string, PlainSchema>,
-  operations: string[]
+  operations: string[],
 ): PlainSchema {
   return applyMask(
     getMessageSchema(message, relations, schemaCache),
     mask,
     path,
-    operations
+    operations,
   );
 }
 
@@ -74,7 +74,7 @@ function applyMask(
   schema: PlainSchema,
   mask: MaskField[],
   path: string,
-  operations: string[]
+  operations: string[],
 ): PlainSchema {
   const fields: PlainSchemaField[] = [];
   const localNameTable = new Map<string, PlainSchemaField>();
@@ -84,7 +84,7 @@ function applyMask(
     if (schemaField === undefined) {
       throw new ConnectError(
         `field ${fieldPath} not found`,
-        Code.InvalidArgument
+        Code.InvalidArgument,
       );
     }
     const fieldOperations =
@@ -98,7 +98,7 @@ function applyMask(
         schemaField.type?.value,
         maskField.mask,
         fieldPath,
-        fieldOperations
+        fieldOperations,
       ),
       operations: fieldOperations,
       onError: maskField.onError,
@@ -107,12 +107,12 @@ function applyMask(
       if (maskField.params === undefined) {
         throw new ConnectError(
           `params for field ${fieldPath} not found`,
-          Code.InvalidArgument
+          Code.InvalidArgument,
         );
       }
       try {
         field.params = schemaField.relation.params.fromJson(
-          maskField.params.toJson()
+          maskField.params.toJson(),
         );
       } catch (err) {
         // Must be invalid json
@@ -121,7 +121,7 @@ function applyMask(
           Code.InvalidArgument,
           undefined,
           undefined,
-          err
+          err,
         );
       }
     }
@@ -139,7 +139,7 @@ function applyMaskToType(
   type: PlainSchemaFieldType["value"] | undefined,
   mask: MaskField[],
   path: string,
-  operations: string[]
+  operations: string[],
 ): PlainSchemaFieldType {
   switch (type?.case) {
     case "map":
@@ -155,7 +155,7 @@ function applyMaskToType(
                   type.value.value.value,
                   mask,
                   path,
-                  operations
+                  operations,
                 ),
               },
             },
@@ -182,7 +182,7 @@ function applyMaskToType(
                   type.value.element.value,
                   mask,
                   path,
-                  operations
+                  operations,
                 ),
               },
             },
@@ -202,7 +202,7 @@ function applyMaskToType(
 function getMessageSchema(
   message: MessageType,
   relations: RelationsMap,
-  schemaCache: Map<string, PlainSchema>
+  schemaCache: Map<string, PlainSchema>,
 ): PlainSchema {
   let schema = schemaCache.get(message.typeName);
   if (schema !== undefined) {
@@ -225,7 +225,7 @@ function getMessageSchema(
 function computeMessageFields(
   message: MessageType,
   relations: RelationsMap,
-  schemaCache: Map<string, PlainSchema>
+  schemaCache: Map<string, PlainSchema>,
 ): PlainSchemaField[] {
   if (wktSet.has(message.typeName)) {
     return [];
@@ -259,7 +259,7 @@ function computeMessageFields(
 function computeFieldType(
   protoField: FieldInfo,
   relations: RelationsMap,
-  schemaCache: Map<string, PlainSchema>
+  schemaCache: Map<string, PlainSchema>,
 ): PlainSchemaFieldType {
   if (protoField.kind === "map") {
     return computeMapType(protoField, relations, schemaCache);
@@ -288,7 +288,7 @@ function computeRepeatedType(
     kind: "scalar" | "enum" | "message";
   },
   relations: RelationsMap,
-  schemaCache: Map<string, PlainSchema>
+  schemaCache: Map<string, PlainSchema>,
 ): PlainSchemaFieldType {
   return {
     value: {
@@ -312,7 +312,7 @@ function computeRepeatedType(
 function computeMapType(
   protoField: FieldInfo & { kind: "map" },
   relations: RelationsMap,
-  schemaCache: Map<string, PlainSchema>
+  schemaCache: Map<string, PlainSchema>,
 ): PlainSchemaFieldType {
   return {
     value: {
@@ -358,7 +358,7 @@ function computeScalarType(
         kind: "scalar";
         T: ScalarType;
       }
-    | { kind: "enum"; T: EnumType }
+    | { kind: "enum"; T: EnumType },
 ): Schema_Field_Type_ScalarType {
   if (protoField.kind === "enum") {
     if (protoField.T.typeName === "google.protobuf.NullValue") {

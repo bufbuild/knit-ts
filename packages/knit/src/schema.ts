@@ -291,7 +291,7 @@ export type ListenSchema<S extends Schema> = ExtractMethodSchema<S, "listen">;
 
 type ExtractOneOrMoreQuery<
   S extends Schema,
-  M extends keyof S[keyof S]
+  M extends keyof S[keyof S],
 > = OneOrMore<{
   [service in keyof S]?: OneOrMore<Query<S[service][M]>>;
 }>;

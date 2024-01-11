@@ -13,6 +13,7 @@
 // limitations under the License.
 
 export { createKnitService } from "./service.js";
+export { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 
 export type { CreateKnitServiceOptions } from "./service.js";
 export type { Gateway } from "./gateway.js";

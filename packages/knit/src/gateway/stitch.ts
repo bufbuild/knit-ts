@@ -26,7 +26,7 @@ import {
   type Patch,
   formatError,
 } from "./json.js";
-import { Code, ConnectError } from "@bufbuild/connect";
+import { Code, ConnectError } from "@connectrpc/connect";
 import { makeResolverHeaders } from "./headers.js";
 
 interface Batch {
@@ -46,7 +46,7 @@ export async function stitch(
   patches: Patch[],
   fallbackCatch: boolean,
   typeRegistry: IMessageTypeRegistry | undefined,
-  context: ResolverContext
+  context: ResolverContext,
 ) {
   while (patches.length > 0) {
     const batches = makeBatches(patches);
@@ -62,7 +62,7 @@ async function resolveBatch(
   { field, bases, formatTargets, errorPatches }: Batch,
   fallbackCatch: boolean,
   typeRegistry: IMessageTypeRegistry | undefined,
-  context: ResolverContext
+  context: ResolverContext,
 ): Promise<Patch[]> {
   let results: unknown[];
   try {
@@ -75,7 +75,7 @@ async function resolveBatch(
     if (results.length !== formatTargets.length) {
       throw new ConnectError(
         `resolver returned ${results.length} results, expected ${formatTargets.length}`,
-        Code.Internal
+        Code.Internal,
       );
     }
   } catch (err) {
@@ -99,7 +99,7 @@ async function resolveBatch(
       field.type?.value.value,
       errorPatches[i],
       fallbackCatch,
-      typeRegistry
+      typeRegistry,
     );
     if (formattedResult === undefined) continue;
     target[field.name] = formattedResult;

@@ -9,19 +9,21 @@
     "clean": "turbo run clean --no-daemon --cache-dir=.turbo",
     "build": "turbo run build --no-daemon --cache-dir=.turbo",
     "lint": "turbo run lint --no-daemon --cache-dir=.turbo",
+    "attw": "turbo run attw --no-daemon --cache-dir=.turbo",
     "test": "turbo run test --no-daemon --cache-dir=.turbo",
     "test:watch": "turbo run test:watch --no-daemon --cache-dir=.turbo",
     "buf:generate": "turbo run buf:generate --no-daemon --cache-dir=.turbo",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "@types/node": "^20.2.4",
+    "@types/node": "^20.10.1",
     "eslint-config-custom": "workspace:*",
-    "jest": "^29.5.0",
-    "prettier": "^2.8.8",
-    "ts-jest": "^29.1.0",
-    "turbo": "^1.9.3",
-    "typescript": "^5.0.4"
+    "jest": "^29.7.0",
+    "prettier": "^3.1.0",
+    "ts-jest": "^29.1.1",
+    "turbo": "^1.10.16",
+    "typescript": "^5.3.2",
+    "@arethetypeswrong/cli": "^0.13.2"
   },
   "engines": {
     "node": ">=18.16.0",

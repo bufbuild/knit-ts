@@ -49,26 +49,26 @@ import type { AnyQuery } from "./protocol.js";
  */
 export function makeScopedClient<
   S extends Schema,
-  P extends Split<Cast<keyof S, string>, ".">
+  P extends Split<Cast<keyof S, string>, ".">,
 >(client: Client<S>, scope: P): Client<Scope<S, P>> {
   return {
     fetch: async (query) => {
       return scopeResult(
         (await client.fetch(
-          unscopeQuery(query as AnyQuery, scope) as any
+          unscopeQuery(query as AnyQuery, scope) as any,
         )) as any,
-        scope
+        scope,
       ) as any;
     },
     do: async (query) => {
       return scopeResult(
         (await client.do(unscopeQuery(query as AnyQuery, scope) as any)) as any,
-        scope
+        scope,
       ) as any;
     },
     listen: (query) => {
       const resultIterable = client.listen(
-        unscopeQuery(query as AnyQuery, scope) as any
+        unscopeQuery(query as AnyQuery, scope) as any,
       );
       return scopeResultIterable(resultIterable as any, scope) as any;
     },
@@ -77,7 +77,7 @@ export function makeScopedClient<
 
 async function* scopeResultIterable(
   result: AsyncIterable<{ [k: string]: unknown }>,
-  scope: string
+  scope: string,
 ) {
   for await (const next of result) {
     yield scopeResult(next, scope);

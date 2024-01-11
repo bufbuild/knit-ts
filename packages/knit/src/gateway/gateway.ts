@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import type { Transport } from "@bufbuild/connect";
+import type { Transport } from "@connectrpc/connect";
 import { MethodKind, type PlainMessage } from "@bufbuild/protobuf";
 import type {
   ServiceType,
@@ -96,7 +96,7 @@ export interface Gateway {
    */
   service<S extends ServiceType>(
     service: S,
-    options?: GatewayServiceOptions<S>
+    options?: GatewayServiceOptions<S>,
   ): Gateway;
   /**
    * Add relation(s) to the gateway.
@@ -104,7 +104,7 @@ export interface Gateway {
   relation<S extends ServiceType>(
     service: S,
     methods: RelationMethodConfig<S>,
-    options?: GatewayRelationOptions
+    options?: GatewayRelationOptions,
   ): Gateway;
 }
 
@@ -166,7 +166,7 @@ export interface Relation {
   resolver: (
     bases: AnyMessage[],
     params: PartialMessage<AnyMessage> | undefined,
-    context: ResolverContext
+    context: ResolverContext,
   ) => Promise<unknown[]>;
 }
 
@@ -219,7 +219,7 @@ export function createGateway({
     relations,
     service<S extends ServiceType>(
       service: S,
-      options?: GatewayServiceOptions<S>
+      options?: GatewayServiceOptions<S>,
     ) {
       for (const [localName, methodInfo] of Object.entries(service.methods)) {
         switch (methodInfo.kind) {
@@ -239,7 +239,7 @@ export function createGateway({
         const fullyQualifiedMethodName = `${service.typeName}.${methodInfo.name}`;
         if (entryPoints.has(fullyQualifiedMethodName)) {
           throw new Error(
-            `Knit: ${methodInfo.name} on ${service.typeName} provided more than once`
+            `Knit: ${methodInfo.name} on ${service.typeName} provided more than once`,
           );
         }
         entryPoints.set(fullyQualifiedMethodName, {
@@ -254,12 +254,12 @@ export function createGateway({
     relation<S extends ServiceType>(
       service: S,
       methods: RelationMethodConfig<S>,
-      options?: GatewayRelationOptions
+      options?: GatewayRelationOptions,
     ) {
       for (const [method, config] of Object.entries(methods)) {
         if (config === undefined) {
           throw new Error(
-            `Knit: ${method}: relation config cannot be undefined`
+            `Knit: ${method}: relation config cannot be undefined`,
           );
         }
         if (config.name === "") {
@@ -271,25 +271,25 @@ export function createGateway({
           base.fields.list().find((f) => f.name === config.name) !== undefined
         ) {
           throw new Error(
-            `Knit: ${method}: relation name '${config.name}' already exists on ${base.typeName}`
+            `Knit: ${method}: relation name '${config.name}' already exists on ${base.typeName}`,
           );
         }
         const shell = getRepeatedMessage(methodInfo.O, 1, "values");
         const shellFields = shell.fields.list();
         if (shellFields.length !== 1) {
           throw new Error(
-            `Knit: ${method}: relation must have exactly one field, found ${shellFields.length}`
+            `Knit: ${method}: relation must have exactly one field, found ${shellFields.length}`,
           );
         }
         const field = shellFields[0];
         if (field.no !== 1) {
           throw new Error(
-            `Knit: ${method}: relation ${field.name} must have tag 1, found ${field.no}`
+            `Knit: ${method}: relation ${field.name} must have tag 1, found ${field.no}`,
           );
         }
         if (field.name !== config.name) {
           throw new Error(
-            `Knit: ${method}: relation field must be named '${config.name}', found '${field.name}'`
+            `Knit: ${method}: relation field must be named '${config.name}', found '${field.name}'`,
           );
         }
         let baseRelations = relations.get(base.typeName);
@@ -299,7 +299,7 @@ export function createGateway({
         }
         if (baseRelations.has(config.name)) {
           throw new Error(
-            `Knit: ${method}: relation name '${config.name}' already exists on ${base.typeName}`
+            `Knit: ${method}: relation name '${config.name}' already exists on ${base.typeName}`,
           );
         }
         const paramFields = methodInfo.I.fields
@@ -309,7 +309,7 @@ export function createGateway({
         if (paramFields.length > 0) {
           params = methodInfo.I.runtime.makeMessageType(
             `buf.knit.params.${base.typeName}.${config.name}`,
-            methodInfo.I.fields.list().filter((f) => f.no !== 1)
+            methodInfo.I.fields.list().filter((f) => f.no !== 1),
           );
         }
         const resolverTransport = options?.transport ?? transport;
@@ -330,10 +330,10 @@ export function createGateway({
               {
                 bases,
                 ...params,
-              }
+              },
             );
             return (response.message["values"] as Array<AnyMessage>).map(
-              (v: AnyMessage) => v[field.localName] as unknown
+              (v: AnyMessage) => v[field.localName] as unknown,
             );
           },
         });
@@ -347,12 +347,12 @@ function getRepeatedMessage(message: MessageType, tag: number, name: string) {
   const field = message.fields.find(tag);
   if (field === undefined) {
     throw new Error(
-      `Knit: ${message.name}: relation must have a '${name}' field with tag ${tag}`
+      `Knit: ${message.name}: relation must have a '${name}' field with tag ${tag}`,
     );
   }
   if (field.name !== name) {
     throw new Error(
-      `Knit: ${message.name}: field with ${tag} must be named '${name}', found '${field.name}'`
+      `Knit: ${message.name}: field with ${tag} must be named '${name}', found '${field.name}'`,
     );
   }
   if (!field.repeated) {
