@@ -20,9 +20,9 @@ import type {
 import type { Map, MapEnum } from "@bufbuild/knit-test-spec/spec/map_knit.js";
 import { describe, test } from "@jest/globals";
 import { type DeepDiff, expectType } from "./jest/util.js";
-import { oneof, type Oneof } from "./oneof";
-import type { Mask, Parameter, Query } from "./schema.js";
-import type { Equal } from "./utils/types.js";
+import { oneof, OneofQuery, type Oneof } from "./oneof";
+import type { FetchQuery, Mask, Parameter, Query } from "./schema.js";
+import type { Equal, SubsetRecord } from "./utils/types.js";
 import type { PartialMessage } from "@bufbuild/protobuf";
 import type { Message as ProtoMessage } from "@bufbuild/knit-test-spec/spec/messages_pb.js";
 import { alias } from "./alias";
@@ -32,7 +32,10 @@ import type {
   EnumShell_InsideMessage,
   TopLevel,
 } from "@bufbuild/knit-test-spec/spec/enum_knit.js";
-import type { OneofEnum } from "@bufbuild/knit-test-spec/spec/oneof_knit.js";
+import type {
+  OneofEnum,
+  Oneof as OneofFullMessage,
+} from "@bufbuild/knit-test-spec/spec/oneof_knit.js";
 import type {
   All,
   AllService,
@@ -264,6 +267,43 @@ describe("wkt", () => {
             uint32Value: number;
             uint64Value: bigint;
             value: Value;
+          }>;
+        };
+      };
+      type Diff = DeepDiff<Actual, Expected>;
+      expectType<Equal<Diff, never>>(true);
+    });
+
+    test("oneof with nested object", () => {
+      interface Schema {
+        oneofs?: OneofFullMessage;
+      }
+      const query = {
+        oneofs: {
+          oneofValue: oneof({
+            message: {
+              id: {},
+            },
+            nestedMessage: {
+              nested: {
+                id: {},
+              },
+            },
+          }),
+        },
+      } as const satisfies Query<Schema>;
+      type Actual = Mask<typeof query, Schema>;
+      type Expected = {
+        oneofs?: {
+          oneofValue?: Oneof<{
+            message: {
+              id: string;
+            };
+            nestedMessage: {
+              nested?: {
+                id: string;
+              };
+            };
           }>;
         };
       };
@@ -671,48 +711,6 @@ describe("client", () => {
           },
         },
       });
-    });
-    test("oneof in fetch", async () => {
-      const response = await client.fetch({
-        "spec.AllService": {
-          getAll: {
-            $: {},
-            oneof: {
-              oneofValue: oneof({
-                message: {
-                  id: {},
-                },
-                nestedMessage: {
-                  nested: {
-                    // id: {},
-                  },
-                },
-              }),
-            },
-          },
-        },
-      });
-      type Actual = typeof response;
-      type Expected = {
-        "spec.AllService": {
-          getAll: {
-            oneof: {
-              oneofValue: Oneof<{
-                message: {
-                  id: string;
-                };
-                nestedMessage: {
-                  nested: {
-                    // id: string;
-                  };
-                };
-              }>;
-            };
-          };
-        };
-      };
-      type Diff = DeepDiff<Actual, Expected>;
-      expectType<Equal<Diff, never>>(true);
     });
   });
 
