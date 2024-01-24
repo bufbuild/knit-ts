@@ -25,6 +25,7 @@ export const Oneof = proto3.makeMessageType(
     { no: 1, name: "scalar", kind: "scalar", T: 9 /* ScalarType.STRING */, oneof: "oneof_value" },
     { no: 2, name: "message", kind: "message", T: OneofMessage, oneof: "oneof_value" },
     { no: 3, name: "enum", kind: "enum", T: proto3.getEnumType(OneofEnum), oneof: "oneof_value" },
+    { no: 4, name: "nestedMessage", kind: "message", T: NestedMessage, oneof: "oneof_value" },
   ],
 );
 
@@ -35,6 +36,16 @@ export const OneofMessage = proto3.makeMessageType(
   "spec.OneofMessage",
   () => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ],
+);
+
+/**
+ * @generated from message spec.NestedMessage
+ */
+export const NestedMessage = proto3.makeMessageType(
+  "spec.NestedMessage",
+  () => [
+    { no: 1, name: "nested", kind: "message", T: OneofMessage },
   ],
 );
 

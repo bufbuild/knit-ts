@@ -46,6 +46,12 @@ export declare class Oneof extends Message<Oneof> {
      */
     value: OneofEnum;
     case: "enum";
+  } | {
+    /**
+     * @generated from field: spec.NestedMessage nestedMessage = 4;
+     */
+    value: NestedMessage;
+    case: "nestedMessage";
   } | { case: undefined; value?: undefined };
 
   constructor(data?: PartialMessage<Oneof>);
@@ -85,5 +91,29 @@ export declare class OneofMessage extends Message<OneofMessage> {
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OneofMessage;
 
   static equals(a: OneofMessage | PlainMessage<OneofMessage> | undefined, b: OneofMessage | PlainMessage<OneofMessage> | undefined): boolean;
+}
+
+/**
+ * @generated from message spec.NestedMessage
+ */
+export declare class NestedMessage extends Message<NestedMessage> {
+  /**
+   * @generated from field: spec.OneofMessage nested = 1;
+   */
+  nested?: OneofMessage;
+
+  constructor(data?: PartialMessage<NestedMessage>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "spec.NestedMessage";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): NestedMessage;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): NestedMessage;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): NestedMessage;
+
+  static equals(a: NestedMessage | PlainMessage<NestedMessage> | undefined, b: NestedMessage | PlainMessage<NestedMessage> | undefined): boolean;
 }
 

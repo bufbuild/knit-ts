@@ -270,6 +270,34 @@ describe("wkt", () => {
       type Diff = DeepDiff<Actual, Expected>;
       expectType<Equal<Diff, never>>(true);
     });
+
+    test("oneof with a nested message", () => {
+      const query = {
+        oneof: oneof({
+          oneofValue: {
+            nestedMessage: {
+              nested: {
+                id: {},
+              },
+            },
+          },
+        }),
+      } satisfies Query<All>;
+      type Actual = Mask<typeof query, All>;
+      type Expected = {
+        oneofs?: {
+          oneofValue?: Oneof<{
+            nestedMessage: {
+              nested: {
+                id: string;
+              };
+            };
+          }>;
+        };
+      };
+      type Diff = DeepDiff<Actual, Expected>;
+      expectType<Equal<Diff, never>>(true);
+    });
   });
 
   describe("params", () => {
@@ -468,7 +496,7 @@ describe("messages", () => {
     type Diff = DeepDiff<Actual, Expected>;
     expectType<Equal<Diff, never>>(true);
     expectType<Actual extends PartialMessage<ProtoMessage> ? true : false>(
-      true,
+      true
     );
   });
   test("params ignore relations", () => {
@@ -482,7 +510,7 @@ describe("messages", () => {
 describe("maps", () => {
   test("query", () => {
     const [str, bl, i32, i64, u32, u64, s32, s64, f32, f64, sf32, sf64] = Array(
-      12,
+      12
     ).fill({});
     const query = {
       keys: {
