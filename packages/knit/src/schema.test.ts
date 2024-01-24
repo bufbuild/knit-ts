@@ -20,9 +20,9 @@ import type {
 import type { Map, MapEnum } from "@bufbuild/knit-test-spec/spec/map_knit.js";
 import { describe, test } from "@jest/globals";
 import { type DeepDiff, expectType } from "./jest/util.js";
-import { oneof, OneofQuery, type Oneof } from "./oneof";
-import type { FetchQuery, Mask, Parameter, Query } from "./schema.js";
-import type { Equal, SubsetRecord } from "./utils/types.js";
+import { oneof, type Oneof } from "./oneof";
+import type { Mask, Parameter, Query } from "./schema.js";
+import type { Equal } from "./utils/types.js";
 import type { PartialMessage } from "@bufbuild/protobuf";
 import type { Message as ProtoMessage } from "@bufbuild/knit-test-spec/spec/messages_pb.js";
 import { alias } from "./alias";
