@@ -270,34 +270,6 @@ describe("wkt", () => {
       type Diff = DeepDiff<Actual, Expected>;
       expectType<Equal<Diff, never>>(true);
     });
-
-    test("oneof with a nested message", () => {
-      const query = {
-        oneof: oneof({
-          oneofValue: {
-            nestedMessage: {
-              nested: {
-                id: {},
-              },
-            },
-          },
-        }),
-      } satisfies Query<All>;
-      type Actual = Mask<typeof query, All>;
-      type Expected = {
-        oneofs?: {
-          oneofValue?: Oneof<{
-            nestedMessage: {
-              nested: {
-                id: string;
-              };
-            };
-          }>;
-        };
-      };
-      type Diff = DeepDiff<Actual, Expected>;
-      expectType<Equal<Diff, never>>(true);
-    });
   });
 
   describe("params", () => {
@@ -699,6 +671,48 @@ describe("client", () => {
           },
         },
       });
+    });
+    test("oneof in fetch", async () => {
+      const response = await client.fetch({
+        "spec.AllService": {
+          getAll: {
+            $: {},
+            oneof: {
+              oneofValue: oneof({
+                message: {
+                  id: {},
+                },
+                nestedMessage: {
+                  nested: {
+                    // id: {},
+                  },
+                },
+              }),
+            },
+          },
+        },
+      });
+      type Actual = typeof response;
+      type Expected = {
+        "spec.AllService": {
+          getAll: {
+            oneof: {
+              oneofValue: Oneof<{
+                message: {
+                  id: string;
+                };
+                nestedMessage: {
+                  nested: {
+                    // id: string;
+                  };
+                };
+              }>;
+            };
+          };
+        };
+      };
+      type Diff = DeepDiff<Actual, Expected>;
+      expectType<Equal<Diff, never>>(true);
     });
   });
 
