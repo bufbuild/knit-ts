@@ -1,6 +1,6 @@
 # Knit
 
-The Knit client. Knit brings GraphQL like capabilities to RPCs. It is built on top of [Protobuf](https://protobuf.com) and [Connect](https://connect.build).
+The Knit client. Knit brings GraphQL like capabilities to RPCs. It is built on top of [Protobuf](https://protobuf.com) and [Connect](https://connectrpc.com).
 This package exports a TypeScript client for Knit among other utilities for constructing and executing typed Knit queries.
 
 Learn more about Knit at [github.com/bufbuild/knit](https://github.com/bufbuild/knit).
