@@ -890,6 +890,31 @@ describe("decode", () => {
                                       },
                                     },
                                   },
+                                  {
+                                    jsonName: "",
+                                    name: "opt2",
+                                    type: {
+                                      value: {
+                                        case: "message",
+                                        value: {
+                                          name: "somenested4",
+                                          fields: [
+                                            {
+                                              jsonName: "",
+                                              name: "value",
+                                              type: {
+                                                value: {
+                                                  case: "scalar",
+                                                  value:
+                                                    Schema_Field_Type_ScalarType.STRING,
+                                                },
+                                              },
+                                            },
+                                          ],
+                                        },
+                                      },
+                                    },
+                                  },
                                 ],
                               },
                             },
