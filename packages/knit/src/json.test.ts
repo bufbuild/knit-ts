@@ -823,4 +823,91 @@ describe("decode", () => {
     ]);
     expect(result).toHaveProperty("path", "some.path");
   });
+
+  test("repeated oneof", () => {
+    const result = decodeMessage(
+      {
+        ".key1.key2.opt1": "item",
+        ".key1.key2.opt2": "item",
+      },
+      {
+        key1: [
+          {
+            key2: {
+              opt1: {
+                value: 1,
+              },
+            },
+          },
+        ],
+      },
+      new Schema({
+        name: "some-name",
+        fields: [
+          {
+            jsonName: "",
+            name: "key1",
+            type: {
+              value: {
+                case: "repeated",
+                value: {
+                  element: {
+                    case: "message",
+                    value: {
+                      name: "somenested",
+                      fields: [
+                        {
+                          jsonName: "",
+                          name: "key2",
+                          type: {
+                            value: {
+                              case: "message",
+                              value: {
+                                name: "somenested2",
+                                fields: [
+                                  {
+                                    jsonName: "",
+                                    name: "opt1",
+                                    type: {
+                                      value: {
+                                        case: "message",
+                                        value: {
+                                          name: "somenested3",
+                                          fields: [
+                                            {
+                                              jsonName: "",
+                                              name: "value",
+                                              type: {
+                                                value: {
+                                                  case: "scalar",
+                                                  value:
+                                                    Schema_Field_Type_ScalarType.INT32,
+                                                },
+                                              },
+                                            },
+                                          ],
+                                        },
+                                      },
+                                    },
+                                  },
+                                ],
+                              },
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+      }),
+      "",
+    ) as any;
+
+    expect(result.key1[0].key2.item.case).toBe("opt1");
+    expect(result.key1[0].key2.item.value).toStrictEqual({ value: 1 });
+  });
 });

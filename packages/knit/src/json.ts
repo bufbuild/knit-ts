@@ -151,7 +151,9 @@ export function decodeMessage(
     if (value === undefined) {
       continue;
     }
-    const oneOfField = oneofTable[fieldPath];
+    const fieldPathWithoutIndices = fieldPath.replace(/\[[0-9]+\]/g, "");
+    const oneOfField = oneofTable[fieldPathWithoutIndices];
+
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (oneOfField !== undefined) {
       result[oneOfField] = makeOneof({
