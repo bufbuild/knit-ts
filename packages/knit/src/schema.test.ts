@@ -712,6 +712,48 @@ describe("client", () => {
         },
       });
     });
+
+    test("query for oneof with nested object", async () => {
+      const response = await client.fetch({
+        "spec.AllService": {
+          getAll: {
+            $: {},
+            oneof: {
+              oneofValue: oneof({
+                message: {
+                  id: {}
+                },
+                nestedMessage: {
+                  nested: {
+                    id: {}
+                  }
+                }
+              })
+            }
+          },
+        },
+      });
+      type Actual = typeof response;
+      type Expected = {
+        "spec.AllService": {
+          getAll: {
+            oneof: {
+              oneofValue?: Oneof<{
+                message: {
+                  id: string;
+                };
+                nestedMessage: {
+                  nested?: {
+                    id: string;
+                  };
+                };
+              }>
+            }
+          };
+        };
+      };
+      type Diff = DeepDiff<Actual, Expected>;
+      expectType<Equal<Diff, never>>(true);
   });
 
   describe("do", () => {
