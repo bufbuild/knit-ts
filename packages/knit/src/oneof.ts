@@ -155,4 +155,4 @@ export function getOneof(
  */
 export type OneofQuery<T extends AnyRecord> = {
   [oneOfSymbol]: "query";
-} & OneOrMore<T>;
+} & T;
