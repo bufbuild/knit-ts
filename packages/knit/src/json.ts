@@ -151,8 +151,7 @@ export function decodeMessage(
     if (value === undefined) {
       continue;
     }
-    const fieldPathWithoutIndices = fieldPath.replace(/\[[0-9]+\]/g, "");
-    const oneOfField = oneofTable[fieldPathWithoutIndices];
+    const oneOfField = oneofTable[fieldPath];
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (oneOfField !== undefined) {
@@ -214,7 +213,7 @@ function decodeMap(
   }
   const result: { [k: string]: unknown } = {};
   for (const [k, v] of Object.entries(data)) {
-    result[k] = decodeValue(v, path + `["${k}"]`);
+    result[k] = decodeValue(v, path);
   }
   return result;
 }
@@ -248,8 +247,8 @@ function decodeRepeated(
       break;
   }
   const result: ReturnType<typeof decodeElement>[] = [];
-  for (const [i, v] of data.entries()) {
-    result.push(decodeElement(v, path + `[${i}]`));
+  for (const v of data.values()) {
+    result.push(decodeElement(v, path));
   }
   return result;
 }
