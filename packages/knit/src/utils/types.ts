@@ -62,7 +62,7 @@ export type DistributiveKeyOf<T> = T extends T ? keyof T : never;
 //prettier-ignore
 export type Subset<I, T> = 
   Equal<T, I> extends true
-  ? T
+  ? T 
   : T extends any[] // eslint-disable-line @typescript-eslint/no-explicit-any
   ? Array<Subset<Element<I>, Element<T>>>
   : T extends AnyRecord
@@ -70,7 +70,7 @@ export type Subset<I, T> =
   : T;
 
 //prettier-ignore
-type SubsetRecord<I, T> = 
+export type SubsetRecord<I, T> = 
  & { [P in keyof T]: Subset<P extends keyof I ? I[P] : never, T[P]>; } 
  & Record<Exclude<keyof I, DistributiveKeyOf<T>>, never>;
 

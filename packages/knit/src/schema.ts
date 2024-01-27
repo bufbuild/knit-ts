@@ -166,11 +166,7 @@ export type Parameter<T> =
 //prettier-ignore
 export type Mask<Q, R, ES extends ErrorStrategy = ErrorStrategyThrow> = 
   R extends OneofMarker<infer OR>
-  // We must restrict these conditionals from distributing over the union.
-  // See https://www.typescriptlang.org/docs/handbook/2/conditional-types.html#distributive-conditional-types
-  ? [Q] extends [OneofQuery<infer OQ>]
-    ? Oneof<Mask<OQ, OR, ES>> 
-    : never
+  ? Q extends OneofQuery<infer OQ> ? Oneof<Mask<OQ, OR, ES>> : never
   : R extends (infer E)[]
   ? Array<Mask<Q, E, ES>>
   : R extends MapMarker<infer M>

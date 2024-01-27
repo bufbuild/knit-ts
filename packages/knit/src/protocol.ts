@@ -81,7 +81,7 @@ function makeMaskField(
       continue;
     }
     if (isOneofQuery(v)) {
-      for (const [oneOfKey, oneOfValue] of Object.entries(v)) {
+      for (const [oneOfKey, oneOfValue] of Object.entries(v["@oneof"])) {
         const keyPath = path + "." + oneOfKey;
         const [maskField, fieldOneofTable] = makeMaskField(oneOfValue, keyPath);
         mask.push({ ...maskField, name: oneOfKey });

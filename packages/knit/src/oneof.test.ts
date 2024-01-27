@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import { describe, test, expect } from "@jest/globals";
-import { makeOneof, type Oneof, oneof } from "./oneof.js";
+import { makeOneof } from "./oneof.js";
+import type { Oneof } from "./oneof.js";
 
 type Cases = { a: string; b: number };
 
@@ -28,38 +29,6 @@ describe("makeOneof", () => {
   });
   test("throws if not one", () => {
     expect(() => makeOneof<Cases>({} as any)).toThrowError();
-  });
-});
-
-describe("oneof", () => {
-  type OneofQuery = {
-    a: {};
-    b: {};
-  };
-  test("accepts one", () => {
-    const query = oneof<OneofQuery>({
-      a: {},
-    });
-    expect(query).toHaveProperty("a", {});
-  });
-  test("accepts multiple", () => {
-    const query = oneof<OneofQuery>({
-      a: {},
-      b: {},
-    });
-    expect(query).toHaveProperty("a", {});
-    expect(query).toHaveProperty("b", {});
-  });
-});
-
-describe("OneofQuery", () => {
-  test("fails on empty object", () => {
-    //@ts-expect-error
-    const _ = {} satisfies OneofQuery<Cases>;
-  });
-  test("fails if not made from `oneof`", () => {
-    //@ts-expect-error
-    const _ = { a: "string" } satisfies OneofQuery<Cases>;
   });
 });
 
