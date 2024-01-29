@@ -70,7 +70,7 @@ export type Subset<I, T> =
   : T;
 
 //prettier-ignore
-export type SubsetRecord<I, T> = 
+type SubsetRecord<I, T> = 
  & { [P in keyof T]: Subset<P extends keyof I ? I[P] : never, T[P]>; } 
  & Record<Exclude<keyof I, DistributiveKeyOf<T>>, never>;
 
