@@ -26,23 +26,23 @@ export function expectType<T extends true | false>(_expectedValue: T) {} // esli
 export type DeepDiff<L, R> = Equal<L, R> extends true
   ? never
   : L extends (infer LE)[]
-  ? R extends (infer RE)[]
-    ? DeepDiff<LE, RE>[]
-    : L | R
-  : L extends Record<string, unknown>
-  ? R extends Record<string, unknown>
-    ? {
-        [P in keyof L | keyof R as P extends keyof R & keyof L
-          ? Equal<L[P], R[P]> extends true
-            ? never
-            : P
-          : P]: P extends keyof R & keyof L
-          ? DeepDiff<L[P], R[P]>
-          : P extends keyof L
-          ? L[P]
-          : P extends keyof R
-          ? R[P]
-          : never;
-      }
-    : L | R
-  : L | R;
+    ? R extends (infer RE)[]
+      ? DeepDiff<LE, RE>[]
+      : L | R
+    : L extends Record<string, unknown>
+      ? R extends Record<string, unknown>
+        ? {
+            [P in keyof L | keyof R as P extends keyof R & keyof L
+              ? Equal<L[P], R[P]> extends true
+                ? never
+                : P
+              : P]: P extends keyof R & keyof L
+              ? DeepDiff<L[P], R[P]>
+              : P extends keyof L
+                ? L[P]
+                : P extends keyof R
+                  ? R[P]
+                  : never;
+          }
+        : L | R
+      : L | R;

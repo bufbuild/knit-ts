@@ -15,7 +15,6 @@
 import { type PartialMessage, Value } from "@bufbuild/protobuf";
 import { describe, expect, test } from "@jest/globals";
 import type { Request } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
-import { oneof } from "./oneof.js";
 import { makeRequests } from "./protocol.js";
 
 describe("makeRequests", () => {
@@ -145,10 +144,12 @@ describe("makeRequests", () => {
       "foo.v1.FooService": {
         getFoo: {
           foo: {
-            oneofField: oneof({
-              a: {},
-              b: {},
-            }),
+            oneofField: {
+              "@oneof": {
+                a: {},
+                b: {},
+              },
+            },
           },
         },
       },
@@ -183,12 +184,14 @@ describe("makeRequests", () => {
       "foo.v1.FooService": {
         getFoo: {
           foo: {
-            oneofField: oneof({
-              a: {
-                sub: {},
+            oneofField: {
+              "@oneof": {
+                a: {
+                  sub: {},
+                },
+                b: {},
               },
-              b: {},
-            }),
+            },
           },
         },
       },
@@ -235,15 +238,19 @@ describe("makeRequests", () => {
       "foo.v1.FooService": {
         getFoo: {
           foo: {
-            oneofField: oneof({
-              a: {
-                subOneof: oneof({
-                  p: {},
-                  q: {},
-                }),
+            oneofField: {
+              "@oneof": {
+                a: {
+                  subOneof: {
+                    "@oneof": {
+                      p: {},
+                      q: {},
+                    },
+                  },
+                },
+                b: {},
               },
-              b: {},
-            }),
+            },
           },
         },
       },
@@ -298,17 +305,19 @@ describe("makeRequests", () => {
       "foo.v1.FooService": {
         getFoo: {
           foo: {
-            fooOneof: oneof({
-              a: {},
-              b: {},
-            }),
+            fooOneof: {
+              "@oneof": {
+                a: {},
+                b: {},
+              },
+            },
           },
         },
       },
       "bar.v1.BarService": {
         listBar: {
           bar: {
-            barOneof: oneof({ a: {}, b: {} }),
+            barOneof: { "@oneof": { a: {}, b: {} } },
           },
         },
       },
