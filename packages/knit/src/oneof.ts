@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import type { AnyQuery } from "./protocol.js";
 import type { AnyRecord, ExactlyOne, OneOrMore } from "./utils/types.js";
 
 const oneOfSymbol = Symbol("oneof");
@@ -59,35 +60,6 @@ export type Oneof<T extends AnyRecord> = {
 }[keyof T];
 
 /**
- * Used to query oneof fields.
- *
- * @example
- * Here's an example of querying oneof fields:
- * ```ts
- * client.fetch({
- *  "pet.v1.PetService": {
- *    getPet: {
- *      $: {},
- *      pet: {
- *        // Only oneof the following will be fetched.
- *        order: oneof({
- *          stripe: {},
- *          apple: {},
- *        })
- *      }
- *    }
- *  }
- * })
- * ```
- */
-export function oneof<T extends AnyRecord>(value: OneOrMore<T>): OneofQuery<T> {
-  return {
-    [oneOfSymbol]: "query",
-    ...value,
-  };
-}
-
-/**
  * Creates a new {@link Oneof}.
  *
  * @example
@@ -130,8 +102,8 @@ export function makeOneof<T extends AnyRecord>(value: ExactlyOne<T>): Oneof<T> {
  *
  * @internal
  */
-export function isOneofQuery(v: object) {
-  return oneOfSymbol in v && v[oneOfSymbol] === "query";
+export function isOneofQuery(v: object): v is { "@oneof": AnyQuery } {
+  return "@oneof" in v;
 }
 
 /**
@@ -154,5 +126,5 @@ export function getOneof(
  * @internal
  */
 export type OneofQuery<T extends AnyRecord> = {
-  [oneOfSymbol]: "query";
-} & T;
+  "@oneof": OneOrMore<T>;
+};

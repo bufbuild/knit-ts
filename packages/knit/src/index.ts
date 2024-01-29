@@ -22,7 +22,7 @@
  * @packageDocumentation
  */
 
-export { oneof, makeOneof } from "./oneof.js";
+export { makeOneof } from "./oneof.js";
 export { alias } from "./alias.js";
 export { createClient } from "./client.js";
 export { makeScopedClient } from "./scope.js";
