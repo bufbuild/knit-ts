@@ -483,10 +483,12 @@ strip the `@oneof` property and apply the relevant type:
 
 ```ts
 const query = {
-  result: oneof({
-    value: {},
-    error: {},
-  }),
+  result: {
+    "@oneof": {
+      value: {},
+      error: {},
+    },
+  },
 } satisfies Query<Example>;
 
 type Result = Mask<typeof query, Example>;
