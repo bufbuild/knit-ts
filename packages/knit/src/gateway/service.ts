@@ -15,6 +15,7 @@
 import {
   Code,
   ConnectError,
+  type ConnectRouter,
   type HandlerContext,
   type ServiceImpl,
   type Transport,
@@ -57,6 +58,13 @@ import { min } from "./util.js";
 const doOperation = `${KnitService.typeName}.${KnitService.methods.do.name}`;
 const fetchOperation = `${KnitService.typeName}.${KnitService.methods.fetch.name}`;
 const listenOperation = `${KnitService.typeName}.${KnitService.methods.listen.name}`;
+
+export function registerKnitService(
+  router: ConnectRouter,
+  options: CreateKnitServiceOptions,
+) {
+  router.service(KnitService, createKnitService(options));
+}
 
 /**
  * Options accepted by {@link createKnitService}.
