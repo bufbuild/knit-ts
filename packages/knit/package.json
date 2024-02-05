@@ -1,6 +1,6 @@
 {
   "name": "@bufbuild/knit",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "TypeScript client for Knit",
   "license": "Apache-2.0",
   "repository": {
