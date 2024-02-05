@@ -18,15 +18,19 @@ import {
   type Transport,
   createPromiseClient,
   createRouterTransport,
+  createConnectRouter,
+  ConnectRouter,
 } from "@connectrpc/connect";
 import { describe, expect, test } from "@jest/globals";
-import { createKnitService } from "./service.js";
+import { createKnitService, registerKnitService } from "./service.js";
 import { AllService } from "@bufbuild/knit-test-spec/spec/all_connect.js";
 import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_connect.js";
 import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
 import { Value } from "@bufbuild/protobuf";
 import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import { ListenResponse } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import { expectType } from "../jest/util.js";
+import { Equal } from "../utils/types.js";
 
 const sharedRequest = {
   body: Value.fromJson(
@@ -36,7 +40,7 @@ const sharedRequest = {
           str: "foo",
         },
       },
-    }).toJson(),
+    }).toJson()
   ),
   mask: [
     {
@@ -80,7 +84,7 @@ describe("success", () => {
           expectCustomHeader(requestHeader);
           expectOperation(
             requestHeader,
-            `${AllResolverService.typeName}.${AllResolverService.methods.getAllRelSelfParam.name}`,
+            `${AllResolverService.typeName}.${AllResolverService.methods.getAllRelSelfParam.name}`
           );
           return {
             values: request.bases.map((base) => ({
@@ -89,7 +93,7 @@ describe("success", () => {
           };
         },
       });
-    }),
+    })
   );
   test("fetch", async () => {
     const response = await knitClient.fetch({
@@ -441,7 +445,7 @@ describe("errors", () => {
           throw new ConnectError("Relation error", Code.FailedPrecondition);
         },
       });
-    }),
+    })
   );
   describe("fetch", () => {
     test("default", async () => {
@@ -453,9 +457,9 @@ describe("errors", () => {
               ...sharedRequest,
             },
           ],
-        }),
+        })
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"[failed_precondition] Relation error"`,
+        `"[failed_precondition] Relation error"`
       );
     });
     test("catch-source", async () => {
@@ -775,9 +779,9 @@ describe("errors", () => {
               onError: { case: "throw", value: {} },
             },
           ],
-        }),
+        })
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"[failed_precondition] Relation error"`,
+        `"[failed_precondition] Relation error"`
       );
     });
   });
@@ -794,7 +798,7 @@ describe("errors", () => {
           expect(next).toBe(true); // This must never be called.
         }
       }).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"[failed_precondition] Relation error"`,
+        `"[failed_precondition] Relation error"`
       );
     });
     test("catch-source", async () => {
@@ -963,6 +967,51 @@ describe("errors", () => {
   });
 });
 
+describe("registerKnitService", () => {
+  test("works with default connect router", () => {
+    const baseRouter = createConnectRouter({});
+    const knitTransport = createRouterTransport(() => {
+      // don't register anything.
+    });
+    const router = registerKnitService(baseRouter, {
+      configure: ({ service }) => {
+        service(AllService);
+      },
+      transport: knitTransport,
+    });
+    expectType<Equal<typeof router, ConnectRouter>>(true);
+  });
+
+  test("returns the same type as the service method returns", () => {
+    const knitTransport = createRouterTransport(() => {
+      // don't register anything.
+    });
+    const customReturn = registerKnitService(
+      {
+        service: function () {
+          // do nothing but return a custom obj.
+          // This allows a custom register to be used that returns a promise (or anything else) instead.
+          return { customObj: 1 };
+        },
+      },
+      {
+        configure: ({ service }) => {
+          service(AllService);
+        },
+        transport: knitTransport,
+      }
+    );
+    expectType<
+      Equal<
+        typeof customReturn,
+        {
+          customObj: number;
+        }
+      >
+    >(true);
+  });
+});
+
 function createKnitClient(transport: Transport) {
   const knitTransport = createRouterTransport(
     ({ service }) => {
@@ -976,7 +1025,7 @@ function createKnitClient(transport: Transport) {
               getAllRelSelfParam: { name: "rel_self_param" },
             });
           },
-        }),
+        })
       );
     },
     {
@@ -990,7 +1039,7 @@ function createKnitClient(transport: Transport) {
           },
         ],
       },
-    },
+    }
   );
   return createPromiseClient(KnitService, knitTransport);
 }
@@ -1005,7 +1054,7 @@ function expectOperation(headers: Headers, operation: string) {
   try {
     expect(operations?.[operations?.length - 1]).toEqual(operation);
     expect(operations?.[0]).toMatch(
-      /buf\.knit\.gateway\.v1alpha1\.KnitService\.(Fetch)|(Do)|(Listen)/,
+      /buf\.knit\.gateway\.v1alpha1\.KnitService\.(Fetch)|(Do)|(Listen)/
     );
   } catch (err) {
     throw new ConnectError(
@@ -1013,7 +1062,7 @@ function expectOperation(headers: Headers, operation: string) {
       Code.FailedPrecondition,
       undefined,
       undefined,
-      err,
+      err
     );
   }
 }
