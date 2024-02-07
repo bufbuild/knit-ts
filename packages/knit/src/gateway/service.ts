@@ -59,9 +59,9 @@ const doOperation = `${KnitService.typeName}.${KnitService.methods.do.name}`;
 const fetchOperation = `${KnitService.typeName}.${KnitService.methods.fetch.name}`;
 const listenOperation = `${KnitService.typeName}.${KnitService.methods.listen.name}`;
 
-export function registerKnitService<T extends ServiceType, Ret extends unknown>(
+export function registerKnitService<Ret extends unknown>(
   router: {
-    service: (service: T, impl: ServiceImpl<T>) => Ret;
+    service: (service: ServiceType, impl: ServiceImpl<ServiceType>) => Ret;
   },
   options: CreateKnitServiceOptions
 ) {
