@@ -63,7 +63,7 @@ export function registerKnitService<Ret extends unknown>(
   router: {
     service: (service: ServiceType, impl: ServiceImpl<ServiceType>) => Ret;
   },
-  options: CreateKnitServiceOptions
+  options: CreateKnitServiceOptions,
 ) {
   return router.service(KnitService, createKnitService(options));
 }
@@ -142,7 +142,7 @@ export function createKnitService({
           context,
           false,
           typeRegistry,
-          schemaCache
+          schemaCache,
         ),
       });
     },
@@ -154,7 +154,7 @@ export function createKnitService({
           context,
           true,
           typeRegistry,
-          schemaCache
+          schemaCache,
         ),
       });
     },
@@ -164,7 +164,7 @@ export function createKnitService({
         request,
         context,
         typeRegistry,
-        schemaCache
+        schemaCache,
       );
       for await (const response of iterable) {
         yield new ListenResponse({ response });
@@ -179,7 +179,7 @@ async function handleUnary(
   context: HandlerContext,
   forFetch: boolean,
   typeRegistry: IMessageTypeRegistry | undefined,
-  schemaCache: Map<string, PlainMessage<Schema>>
+  schemaCache: Map<string, PlainMessage<Schema>>,
 ): Promise<PartialMessage<Response>[]> {
   // TODO: Create a typeRegistry for the schema and use that if
   // typeRegistry is not provided. It is not sound, but it should be good enough.
@@ -198,7 +198,7 @@ async function handleUnary(
     if (entryPoint.method.kind !== MethodKind.Unary) {
       throw new ConnectError(
         `Only unary methods in "Fetch"/"Do"`,
-        Code.InvalidArgument
+        Code.InvalidArgument,
       );
     }
     if (
@@ -207,7 +207,7 @@ async function handleUnary(
     ) {
       throw new ConnectError(
         `Only methods with idempotency_level set to NO_SIDE_EFFECTS are allowed in "Fetch"`,
-        Code.InvalidArgument
+        Code.InvalidArgument,
       );
     }
     const schema = computeSchema(
@@ -219,7 +219,7 @@ async function handleUnary(
       [
         forFetch ? fetchOperation : doOperation,
         `${entryPoint.service.typeName}.${entryPoint.method.name}`,
-      ]
+      ],
     );
     results.push(
       (async () => {
@@ -231,7 +231,7 @@ async function handleUnary(
             context.signal,
             min(context.timeoutMs(), entryPoint.timeoutMs),
             headers,
-            entryPoint.method.I.fromJson(request.body?.toJson() ?? {})
+            entryPoint.method.I.fromJson(request.body?.toJson() ?? {}),
           );
           message = response.message;
         } catch (err) {
@@ -240,7 +240,7 @@ async function handleUnary(
           }
           return {
             body: Value.fromJson(
-              formatError(err, request.method, typeRegistry)
+              formatError(err, request.method, typeRegistry),
             ),
             method: request.method,
             schema: schema,
@@ -252,9 +252,9 @@ async function handleUnary(
           message,
           fallbackCatch,
           typeRegistry,
-          { headers, signal: context.signal, timeoutMs: context.timeoutMs() }
+          { headers, signal: context.signal, timeoutMs: context.timeoutMs() },
         );
-      })()
+      })(),
     );
   }
   return await Promise.all(results);
@@ -265,7 +265,7 @@ async function handleStream(
   request: Request | undefined,
   context: HandlerContext,
   typeRegistry: IMessageTypeRegistry | undefined,
-  schemaCache: Map<string, PlainMessage<Schema>>
+  schemaCache: Map<string, PlainMessage<Schema>>,
 ): Promise<AsyncIterable<PartialMessage<Response>>> {
   if (request === undefined) {
     throw new ConnectError(`No request provided`, Code.InvalidArgument);
@@ -277,7 +277,7 @@ async function handleStream(
   if (entryPoint.method.kind !== MethodKind.ServerStreaming) {
     throw new ConnectError(
       `Only server streaming endpoints are allowed in "Listen"`,
-      Code.InvalidArgument
+      Code.InvalidArgument,
     );
   }
   const schema = computeSchema(
@@ -289,7 +289,7 @@ async function handleStream(
     [
       listenOperation,
       `${entryPoint.service.typeName}.${entryPoint.method.name}`,
-    ]
+    ],
   );
   const headers = makeOutboundHeader(context.requestHeader);
   const { message: messageIt } = await entryPoint.transport.stream(
@@ -301,7 +301,7 @@ async function handleStream(
     // eslint-disable-next-line @typescript-eslint/require-await
     (async function* () {
       yield entryPoint.method.I.fromJson(request.body?.toJson() ?? {});
-    })()
+    })(),
   );
   return (async function* () {
     // TODO: Abort the stream when this function is complete.
@@ -313,7 +313,7 @@ async function handleStream(
         message,
         false,
         typeRegistry,
-        { headers, signal: context.signal, timeoutMs: context.timeoutMs() }
+        { headers, signal: context.signal, timeoutMs: context.timeoutMs() },
       );
       if (schemaSent) {
         delete response.schema;
@@ -331,7 +331,7 @@ async function makeResponse(
   responseMessage: AnyMessage,
   fallbackCatch: boolean,
   typeRegistry: IMessageTypeRegistry | undefined,
-  context: ResolverContext
+  context: ResolverContext,
 ): Promise<PartialMessage<Response>> {
   const target: { body?: JsonValue } = {};
   let errorPatch: ErrorPatch | undefined = undefined;
@@ -346,7 +346,7 @@ async function makeResponse(
     schema,
     errorPatch,
     fallbackCatch,
-    typeRegistry
+    typeRegistry,
   );
   await stitch(patches, fallbackCatch, typeRegistry, context);
   return {
