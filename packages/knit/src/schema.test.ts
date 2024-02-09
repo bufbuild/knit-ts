@@ -20,7 +20,7 @@ import type {
 import type { Map, MapEnum } from "@bufbuild/knit-test-spec/spec/map_knit.js";
 import { describe, test } from "@jest/globals";
 import { type DeepDiff, expectType } from "./jest/util.js";
-import { type Oneof } from "./oneof";
+import { oneOfSymbol, type Oneof } from "./oneof";
 import type { Mask, Parameter, Query } from "./schema.js";
 import type { Equal } from "./utils/types.js";
 import type { PartialMessage } from "@bufbuild/protobuf";
@@ -512,7 +512,7 @@ describe("messages", () => {
     type Diff = DeepDiff<Actual, Expected>;
     expectType<Equal<Diff, never>>(true);
     expectType<Actual extends PartialMessage<ProtoMessage> ? true : false>(
-      true,
+      true
     );
   });
   test("params ignore relations", () => {
@@ -526,7 +526,7 @@ describe("messages", () => {
 describe("maps", () => {
   test("query", () => {
     const [str, bl, i32, i64, u32, u64, s32, s64, f32, f64, sf32, sf64] = Array(
-      12,
+      12
     ).fill({});
     const query = {
       keys: {
@@ -721,7 +721,14 @@ describe("client", () => {
       const response = await client.fetch({
         "spec.AllService": {
           getAll: {
-            $: {},
+            $: {
+              oneof: {
+                oneofValue: {
+                  case: "scalar",
+                  value: "some value",
+                },
+              },
+            },
             oneof: {
               oneofValue: {
                 "@oneof": {
