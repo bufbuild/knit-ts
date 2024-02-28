@@ -1,4 +1,4 @@
-// Copyright 2023 Buf Technologies, Inc.
+// Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import {
 import { wktSet } from "./wkt.js";
 import type { Relation } from "./gateway.js";
 import { Code, ConnectError } from "@connectrpc/connect";
-import type {} from "./schema.js";
+import type { } from "./schema.js";
 
 export interface Patch {
   base: AnyMessage;

@@ -1,4 +1,4 @@
-// Copyright 2023 Buf Technologies, Inc.
+// Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -297,13 +297,13 @@ function computeRepeatedType(
         element:
           protoField.kind === "message"
             ? {
-                case: "message",
-                value: getMessageSchema(protoField.T, relations, schemaCache),
-              }
+              case: "message",
+              value: getMessageSchema(protoField.T, relations, schemaCache),
+            }
             : {
-                case: "scalar",
-                value: computeScalarType(protoField),
-              },
+              case: "scalar",
+              value: computeScalarType(protoField),
+            },
       },
     },
   };
@@ -322,13 +322,13 @@ function computeMapType(
         value:
           protoField.V.kind === "message"
             ? {
-                case: "message",
-                value: getMessageSchema(protoField.V.T, relations, schemaCache),
-              }
+              case: "message",
+              value: getMessageSchema(protoField.V.T, relations, schemaCache),
+            }
             : {
-                case: "scalar",
-                value: computeScalarType(protoField.V),
-              },
+              case: "scalar",
+              value: computeScalarType(protoField.V),
+            },
       },
     },
   };
@@ -355,9 +355,9 @@ const protoScalarToKnitTable = {
 function computeScalarType(
   protoField:
     | {
-        kind: "scalar";
-        T: ScalarType;
-      }
+      kind: "scalar";
+      T: ScalarType;
+    }
     | { kind: "enum"; T: EnumType },
 ): Schema_Field_Type_ScalarType {
   if (protoField.kind === "enum") {

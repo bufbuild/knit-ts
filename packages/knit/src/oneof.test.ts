@@ -1,4 +1,4 @@
-// Copyright 2023 Buf Technologies, Inc.
+// Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ import type { Oneof } from "./oneof.js";
 type Cases = { a: string; b: number };
 
 describe("Oneof", () => {
-  const f = (_: Oneof<Cases>) => {};
+  const f = (_: Oneof<Cases>) => { };
   test("works for correct cases", () => {
     f({ "@case": "a", value: "str" });
     f({ "@case": "b", value: 123 });
