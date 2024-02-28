@@ -27,8 +27,7 @@ import {
   type Schema_Field_Type_RepeatedType,
   Error as PBError,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
-import { getOneof, makeOneof } from "./oneof.js";
-import type { AnyRecord } from "./utils/types.js";
+import { getOneof } from "./oneof.js";
 import { Duration } from "./wkt/duration.js";
 import { Timestamp } from "./wkt/timestamp.js";
 import { FieldMask } from "./wkt/field_mask.js";
@@ -97,7 +96,7 @@ export function format(data: unknown): JsonValue {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             const oneof = getOneof(value);
             if (oneof !== undefined) {
-              key = oneof.case;
+              key = oneof["@case"];
               value = oneof.value;
             }
           }
@@ -155,9 +154,10 @@ export function decodeMessage(
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (oneOfField !== undefined) {
-      result[oneOfField] = makeOneof({
-        [field.name]: value,
-      } as AnyRecord);
+      result[oneOfField] = {
+        "@case": field.name,
+        value,
+      };
       continue;
     }
     result[field.name] = value;
