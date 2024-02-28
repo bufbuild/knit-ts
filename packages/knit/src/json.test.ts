@@ -26,7 +26,6 @@ import {
   Schema_Field_Type_ScalarType,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import { decodeMessage, format } from "./json.js";
-import { makeOneof } from "./oneof.js";
 import { Timestamp } from "./wkt/timestamp.js";
 import type { Any } from "./wkt/any.js";
 import type { Struct } from "./wkt/struct.js";
@@ -94,7 +93,7 @@ describe("format", () => {
     },
     {
       name: "oneof",
-      i: { oneof: makeOneof({ a: "some" }) },
+      i: { oneof: { "@case": "a", value: "some" } },
       o: { a: "some" },
     },
     // WKT wrappers are treated as primitives
@@ -480,7 +479,7 @@ describe("decode", () => {
           "",
         );
         expect(result).toStrictEqual({
-          key: { oneofKey: makeOneof({ key: testCase.o }) },
+          key: { oneofKey: { "@case": "key", value: testCase.o } },
         });
       });
     }
@@ -785,7 +784,7 @@ describe("decode", () => {
           "",
         );
         expect(result).toStrictEqual({
-          key: { oneofKey: makeOneof({ key: testCase.o }) },
+          key: { oneofKey: { "@case": "key", value: testCase.o } },
         });
       });
     }
@@ -932,7 +931,7 @@ describe("decode", () => {
       "",
     ) as any;
 
-    expect(result.key1[0].key2.item.case).toBe("opt1");
+    expect(result.key1[0].key2.item["@case"]).toBe("opt1");
     expect(result.key1[0].key2.item.value).toStrictEqual({ value: 1 });
   });
 
@@ -1045,7 +1044,7 @@ describe("decode", () => {
       "",
     ) as any;
 
-    expect(result.key1["someId"].key2.item.case).toBe("opt1");
+    expect(result.key1["someId"].key2.item["@case"]).toBe("opt1");
     expect(result.key1["someId"].key2.item.value).toStrictEqual({
       value: 1,
     });

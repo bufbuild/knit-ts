@@ -12,27 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { describe, test, expect } from "@jest/globals";
-import { makeOneof } from "./oneof.js";
+import { describe, test } from "@jest/globals";
 import type { Oneof } from "./oneof.js";
-
 type Cases = { a: string; b: number };
 
-describe("makeOneof", () => {
-  test("accepts one", () => {
-    const p = makeOneof<Cases>({ a: "knit" });
-    expect(p).toHaveProperty("case", "a");
-    expect(p).toHaveProperty("value", "knit");
-    const q = makeOneof<Cases>({ b: 1 });
-    expect(q).toHaveProperty("case", "b");
-    expect(q).toHaveProperty("value", 1);
-  });
-  test("throws if not one", () => {
-    expect(() => makeOneof<Cases>({} as any)).toThrowError();
-  });
-});
-
 describe("Oneof", () => {
+  const f = (_: Oneof<Cases>) => {};
+  test("works for correct cases", () => {
+    f({ "@case": "a", value: "str" });
+    f({ "@case": "b", value: 123 });
+  });
   test("fails on empty object", () => {
     //@ts-expect-error
     const _ = {} satisfies Oneof<Cases>;

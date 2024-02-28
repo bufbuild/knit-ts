@@ -13,22 +13,17 @@
 // limitations under the License.
 
 import type { AnyQuery } from "./protocol.js";
-import type { AnyRecord, ExactlyOne, OneOrMore } from "./utils/types.js";
-
-const oneOfSymbol = Symbol("oneof");
+import type { AnyRecord, OneOrMore } from "./utils/types.js";
 
 /**
  * Represents a Oneof type.
  *
- * The type has `case` and `value` getters. `case`
+ * The type has `@case` and `value` fields. `@case`
  * is the name of the field that is set, and `value` is the corresponding value.
  *
  * This can be used in a switch statement exhaustively check all possible cases.
  *
  * @remarks
- *
- * This type can be passed to a {@link https://www.npmjs.com/package/@bufbuild/protobuf | @bufbuild/protobuf }'s
- * `Message` constructor that expects a oneof field. The inverse is not possible. To make a `Oneof` use {@link makeOneof}.
  *
  * @example
  * Here's an example of using it in a switch case:
@@ -48,54 +43,15 @@ const oneOfSymbol = Symbol("oneof");
  *
  * @privateRemarks
  *
- * We use the symbol identify oneofs at runtime. This is needed for parameter types, to make the result and parameter
- * types interoperable we also return the result with the symbol set.
+ * We use the '@case' to identify oneofs at runtime. This is needed for parameter types, to make the result and parameter
+ * types interoperable we also return the result with these same field keys.
  */
 export type Oneof<T extends AnyRecord> = {
   [K in keyof T]-?: {
-    [oneOfSymbol]: "result";
-    get case(): K;
-    get value(): T[K];
+    "@case": K;
+    value: T[K];
   };
 }[keyof T];
-
-/**
- * Creates a new {@link Oneof}.
- *
- * @example
- * ```ts
- * type Result = Oneof<{value: number; error: string;}>;
- *
- * let result = makeOneof<Result>({
- *   value: 1,
- * })
- *
- * result = makeOneof<Result>({
- *   error: "error",
- * })
- *
- * \@ts-expect-error
- * result = makeOneof<Result>({
- *   value: 1,
- *   error: "error",
- * })
- * ```
- */
-export function makeOneof<T extends AnyRecord>(value: ExactlyOne<T>): Oneof<T> {
-  const keys = Object.keys(value);
-  if (keys.length !== 1)
-    throw new Error("Oneof should have exactly one value set");
-  const key = keys[0];
-  return {
-    [oneOfSymbol]: "result",
-    get ["case"]() {
-      return key;
-    },
-    get value() {
-      return value[key];
-    },
-  };
-}
 
 /**
  * Checks if an object is a `OneofQuery`.
@@ -113,11 +69,11 @@ export function isOneofQuery(v: object): v is { "@oneof": AnyQuery } {
  */
 export function getOneof(
   v: object,
-): { case: string; value: unknown } | undefined {
-  if (!(oneOfSymbol in v && v[oneOfSymbol] === "result")) {
-    return undefined;
+): { "@case": string; value: unknown } | undefined {
+  if ("@case" in v) {
+    return v as Oneof<Record<string, unknown>>;
   }
-  return v as Oneof<Record<string, unknown>>;
+  return undefined;
 }
 
 /**
