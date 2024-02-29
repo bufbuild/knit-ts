@@ -1,4 +1,4 @@
-// Copyright 2023 Buf Technologies, Inc.
+// Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ type Split<
   S extends string,
   C extends string,
   P extends string = ""
-> = 
+> =
   // Check to see if S has at least one `C` somewhere.
   // This always matches the first `C`.
   //
@@ -122,19 +122,19 @@ type Split<
   // L -> com
   // R -> example.foo.v1.FooService
   S extends `${infer L}${C}${infer R}`
-    // Prefix `L` with `P`, for the first run P is always ''.
-    //
-    // For com.example.foo.v1.FooService
-    // 
-    // First iteration:
-    // "com" | Split<"example.foo.v1.FooService", ".", "com.">
-    //
-    // Second iteration:
-    // "com.example" | Split<"foo.v1.FooService", ".", "com.example.">    
-    ? `${P}${L}` | Split<R, C, `${P}${L}${C}`>
-    // Last iteration:
-    // `never`. `|` with never is a noop.
-    : never;
+  // Prefix `L` with `P`, for the first run P is always ''.
+  //
+  // For com.example.foo.v1.FooService
+  // 
+  // First iteration:
+  // "com" | Split<"example.foo.v1.FooService", ".", "com.">
+  //
+  // Second iteration:
+  // "com.example" | Split<"foo.v1.FooService", ".", "com.example.">    
+  ? `${P}${L}` | Split<R, C, `${P}${L}${C}`>
+  // Last iteration:
+  // `never`. `|` with never is a noop.
+  : never;
 
 /**
  * Scope a Schema to only include services that have the prefix `P` and

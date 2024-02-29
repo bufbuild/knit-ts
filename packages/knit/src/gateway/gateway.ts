@@ -1,4 +1,4 @@
-// Copyright 2023 Buf Technologies, Inc.
+// Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -197,10 +197,10 @@ export interface ResolverContext {
  */
 export type UnaryAndServerStreamMethods<S extends ServiceType> = {
   [K in keyof S["methods"]]: S["methods"][K]["kind"] extends
-    | MethodKind.Unary
-    | MethodKind.ServerStreaming
-    ? K
-    : never;
+  | MethodKind.Unary
+  | MethodKind.ServerStreaming
+  ? K
+  : never;
 }[keyof S["methods"]];
 
 /**

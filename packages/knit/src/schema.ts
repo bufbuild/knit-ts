@@ -1,4 +1,4 @@
-// Copyright 2023 Buf Technologies, Inc.
+// Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ export type ErrorStrategyCatch = { "@catch": Record<never, never> };
  *
  */
 //prettier-ignore
-export type Query<T> = 
+export type Query<T> =
   T extends OneofMarker<infer OT>
   ? OneofQuery<Query<OT>>
   : T extends (infer E)[]
@@ -88,11 +88,11 @@ export type Query<T> =
   : T extends Uint8Array
   ? ScalarQuery
   : T extends RelationMarker<infer P, infer V>
-  ? ( 
-      P extends undefined
-      ? Query<V>
-      : { $: Parameter<P> } & Query<V>
-    ) & ErrorStrategy
+  ? (
+    P extends undefined
+    ? Query<V>
+    : { $: Parameter<P> } & Query<V>
+  ) & ErrorStrategy
   : T extends AnyRecord
   ? { [P in keyof T]?: Query<T[P]> }
   : T extends undefined
@@ -117,7 +117,7 @@ export type Query<T> =
  * ```
  */
 //prettier-ignore
-export type Parameter<T> = 
+export type Parameter<T> =
   T extends OneofMarker<infer OT>
   ? Oneof<Parameter<OT>>
   : T extends (infer E)[]
@@ -132,11 +132,11 @@ export type Parameter<T> =
   ? WktTypeTable[T]
   : T extends Uint8Array
   ? Uint8Array
-  : T extends AnyRecord  
+  : T extends AnyRecord
   ? {
     // Exclude the Knit relation fields
-      [ K in keyof T as T[K] extends RelationMarker<unknown, unknown> | undefined ? never: K]?: Parameter<T[K]>;
-    }
+    [K in keyof T as T[K] extends RelationMarker<unknown, unknown> | undefined ? never : K]?: Parameter<T[K]>;
+  }
   : T;
 
 /**
@@ -164,7 +164,7 @@ export type Parameter<T> =
  * ```
  */
 //prettier-ignore
-export type Mask<Q, R, ES extends ErrorStrategy = ErrorStrategyThrow> = 
+export type Mask<Q, R, ES extends ErrorStrategy = ErrorStrategyThrow> =
   R extends OneofMarker<infer OR>
   ? Q extends OneofQuery<infer OQ> ? Oneof<Mask<OQ, OR, ES>> : never
   : R extends (infer E)[]
@@ -183,10 +183,10 @@ export type Mask<Q, R, ES extends ErrorStrategy = ErrorStrategyThrow> =
   ? Mask<Q, V, ES> | ErrorMask<Q, ES>
   : R extends AnyRecord
   ? {
-      [K in keyof R as K extends keyof Q ? K : never]: K extends keyof Q
-        ? Mask<Q[K], R[K], ES>
-        : never;
-    }
+    [K in keyof R as K extends keyof Q ? K : never]: K extends keyof Q
+    ? Mask<Q[K], R[K], ES>
+    : never;
+  }
   : R;
 
 /**
@@ -223,7 +223,7 @@ type WktTypeTable = {
 };
 
 //prettier-ignore
-type ErrorMask<Q, ES extends ErrorStrategy> = 
+type ErrorMask<Q, ES extends ErrorStrategy> =
   Q extends ErrorStrategyCatch
   ? KnitError
   : Q extends ErrorStrategyThrow

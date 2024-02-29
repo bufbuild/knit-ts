@@ -1,4 +1,4 @@
-// Copyright 2023 Buf Technologies, Inc.
+// Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ export type AnyRecord = { [K in string]: any }; // eslint-disable-line @typescri
  * @link https://github.com/microsoft/TypeScript/issues/27024#issuecomment-421529650
  */
 //prettier-ignore
-export type Equal<L, R> = 
+export type Equal<L, R> =
   (<T>() => T extends L ? 1 : 2) extends (<T>() => T extends R ? 1 : 2)
   ? true
   : false;
@@ -60,9 +60,9 @@ export type DistributiveKeyOf<T> = T extends T ? keyof T : never;
  * Seals `I` to only contain field of `T`.
  */
 //prettier-ignore
-export type Subset<I, T> = 
+export type Subset<I, T> =
   Equal<T, I> extends true
-  ? T 
+  ? T
   : T extends any[] // eslint-disable-line @typescript-eslint/no-explicit-any
   ? Array<Subset<Element<I>, Element<T>>>
   : T extends AnyRecord
@@ -70,8 +70,8 @@ export type Subset<I, T> =
   : T;
 
 //prettier-ignore
-type SubsetRecord<I, T> = 
- & { [P in keyof T]: Subset<P extends keyof I ? I[P] : never, T[P]>; } 
- & Record<Exclude<keyof I, DistributiveKeyOf<T>>, never>;
+type SubsetRecord<I, T> =
+  & { [P in keyof T]: Subset<P extends keyof I ? I[P] : never, T[P]>; }
+  & Record<Exclude<keyof I, DistributiveKeyOf<T>>, never>;
 
 type Element<T> = T extends (infer E)[] ? E : never;

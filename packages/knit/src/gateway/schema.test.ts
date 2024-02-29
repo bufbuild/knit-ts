@@ -1,4 +1,4 @@
-// Copyright 2023 Buf Technologies, Inc.
+// Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,243 +83,243 @@ describe("valid mask", () => {
     mask: PartialMessage<MaskField>[];
     schema: PartialMessage<Schema>;
   }[] = [
-    {
-      name: "empty mask",
-      mask: [],
-      schema: {
-        name: All.typeName,
-        fields: [],
-      },
-      message: All,
-    },
-    {
-      name: "Scalars",
-      mask: [
-        { name: "str" },
-        { name: "bl" },
-        { name: "i32" },
-        { name: "i64" },
-        { name: "u32" },
-        { name: "u64" },
-        { name: "s32" },
-        { name: "s64" },
-        { name: "f32" },
-        { name: "f64" },
-        { name: "sf32" },
-        { name: "sf64" },
-        { name: "by" },
-        { name: "db" },
-        { name: "fl" },
-      ],
-      schema: {
-        name: ScalarFields.typeName,
-        fields: [
-          {
-            name: "str",
-            type: scalar(Schema_Field_Type_ScalarType.STRING),
-          },
-          { name: "bl", type: scalar(Schema_Field_Type_ScalarType.BOOL) },
-          { name: "i32", type: scalar(Schema_Field_Type_ScalarType.INT32) },
-          { name: "i64", type: scalar(Schema_Field_Type_ScalarType.INT64) },
-          {
-            name: "u32",
-            type: scalar(Schema_Field_Type_ScalarType.UINT32),
-          },
-          {
-            name: "u64",
-            type: scalar(Schema_Field_Type_ScalarType.UINT64),
-          },
-          { name: "s32", type: scalar(Schema_Field_Type_ScalarType.INT32) },
-          { name: "s64", type: scalar(Schema_Field_Type_ScalarType.INT64) },
-          {
-            name: "f32",
-            type: scalar(Schema_Field_Type_ScalarType.UINT32),
-          },
-          {
-            name: "f64",
-            type: scalar(Schema_Field_Type_ScalarType.UINT64),
-          },
-          {
-            name: "sf32",
-            type: scalar(Schema_Field_Type_ScalarType.INT32),
-          },
-          {
-            name: "sf64",
-            type: scalar(Schema_Field_Type_ScalarType.INT64),
-          },
-          { name: "by", type: scalar(Schema_Field_Type_ScalarType.BYTES) },
-          { name: "db", type: scalar(Schema_Field_Type_ScalarType.DOUBLE) },
-          { name: "fl", type: scalar(Schema_Field_Type_ScalarType.FLOAT) },
-        ],
-      },
-      message: ScalarFields,
-    },
-    {
-      name: "WKT",
-      message: WktFields,
-      mask: [
-        { name: "doubleValue" },
-        { name: "boolValue" },
-        { name: "floatValue" },
-        { name: "int64Value" },
-        { name: "uint64Value" },
-        { name: "int32Value" },
-        { name: "uint32Value" },
-        { name: "stringValue" },
-        { name: "bytesValue" },
-        { name: "any" },
-        { name: "duration" },
-        { name: "empty" },
-        { name: "fieldMask" },
-        { name: "timestamp" },
-        { name: "struct" },
-        { name: "listValue" },
-        { name: "value" },
-        { name: "nullValue" },
-      ],
-      schema: {
-        name: WktFields.typeName,
-        fields: [
-          { name: "doubleValue", type: message(DoubleValue) },
-          { name: "boolValue", type: message(BoolValue) },
-          { name: "floatValue", type: message(FloatValue) },
-          { name: "int64Value", type: message(Int64Value) },
-          { name: "uint64Value", type: message(UInt64Value) },
-          { name: "int32Value", type: message(Int32Value) },
-          { name: "uint32Value", type: message(UInt32Value) },
-          { name: "stringValue", type: message(StringValue) },
-          { name: "bytesValue", type: message(BytesValue) },
-          { name: "any", type: message(Any) },
-          { name: "duration", type: message(Duration) },
-          { name: "empty", type: message(Empty) },
-          { name: "fieldMask", type: message(FieldMask) },
-          { name: "timestamp", type: message(Timestamp) },
-          { name: "struct", type: message(Struct) },
-          { name: "listValue", type: message(ListValue) },
-          { name: "value", type: message(Value) },
-          {
-            name: "nullValue",
-            type: scalar(Schema_Field_Type_ScalarType.NULL),
-          },
-        ],
-      },
-    },
-    {
-      name: "Maps",
-      message: ProtoMap,
-      mask: [
-        {
-          name: "message",
-          mask: [{ name: "enum" }, { name: "keys", mask: [{ name: "str" }] }],
+      {
+        name: "empty mask",
+        mask: [],
+        schema: {
+          name: All.typeName,
+          fields: [],
         },
-      ],
-      schema: {
-        name: ProtoMap.typeName,
-        fields: [
+        message: All,
+      },
+      {
+        name: "Scalars",
+        mask: [
+          { name: "str" },
+          { name: "bl" },
+          { name: "i32" },
+          { name: "i64" },
+          { name: "u32" },
+          { name: "u64" },
+          { name: "s32" },
+          { name: "s64" },
+          { name: "f32" },
+          { name: "f64" },
+          { name: "sf32" },
+          { name: "sf64" },
+          { name: "by" },
+          { name: "db" },
+          { name: "fl" },
+        ],
+        schema: {
+          name: ScalarFields.typeName,
+          fields: [
+            {
+              name: "str",
+              type: scalar(Schema_Field_Type_ScalarType.STRING),
+            },
+            { name: "bl", type: scalar(Schema_Field_Type_ScalarType.BOOL) },
+            { name: "i32", type: scalar(Schema_Field_Type_ScalarType.INT32) },
+            { name: "i64", type: scalar(Schema_Field_Type_ScalarType.INT64) },
+            {
+              name: "u32",
+              type: scalar(Schema_Field_Type_ScalarType.UINT32),
+            },
+            {
+              name: "u64",
+              type: scalar(Schema_Field_Type_ScalarType.UINT64),
+            },
+            { name: "s32", type: scalar(Schema_Field_Type_ScalarType.INT32) },
+            { name: "s64", type: scalar(Schema_Field_Type_ScalarType.INT64) },
+            {
+              name: "f32",
+              type: scalar(Schema_Field_Type_ScalarType.UINT32),
+            },
+            {
+              name: "f64",
+              type: scalar(Schema_Field_Type_ScalarType.UINT64),
+            },
+            {
+              name: "sf32",
+              type: scalar(Schema_Field_Type_ScalarType.INT32),
+            },
+            {
+              name: "sf64",
+              type: scalar(Schema_Field_Type_ScalarType.INT64),
+            },
+            { name: "by", type: scalar(Schema_Field_Type_ScalarType.BYTES) },
+            { name: "db", type: scalar(Schema_Field_Type_ScalarType.DOUBLE) },
+            { name: "fl", type: scalar(Schema_Field_Type_ScalarType.FLOAT) },
+          ],
+        },
+        message: ScalarFields,
+      },
+      {
+        name: "WKT",
+        message: WktFields,
+        mask: [
+          { name: "doubleValue" },
+          { name: "boolValue" },
+          { name: "floatValue" },
+          { name: "int64Value" },
+          { name: "uint64Value" },
+          { name: "int32Value" },
+          { name: "uint32Value" },
+          { name: "stringValue" },
+          { name: "bytesValue" },
+          { name: "any" },
+          { name: "duration" },
+          { name: "empty" },
+          { name: "fieldMask" },
+          { name: "timestamp" },
+          { name: "struct" },
+          { name: "listValue" },
+          { name: "value" },
+          { name: "nullValue" },
+        ],
+        schema: {
+          name: WktFields.typeName,
+          fields: [
+            { name: "doubleValue", type: message(DoubleValue) },
+            { name: "boolValue", type: message(BoolValue) },
+            { name: "floatValue", type: message(FloatValue) },
+            { name: "int64Value", type: message(Int64Value) },
+            { name: "uint64Value", type: message(UInt64Value) },
+            { name: "int32Value", type: message(Int32Value) },
+            { name: "uint32Value", type: message(UInt32Value) },
+            { name: "stringValue", type: message(StringValue) },
+            { name: "bytesValue", type: message(BytesValue) },
+            { name: "any", type: message(Any) },
+            { name: "duration", type: message(Duration) },
+            { name: "empty", type: message(Empty) },
+            { name: "fieldMask", type: message(FieldMask) },
+            { name: "timestamp", type: message(Timestamp) },
+            { name: "struct", type: message(Struct) },
+            { name: "listValue", type: message(ListValue) },
+            { name: "value", type: message(Value) },
+            {
+              name: "nullValue",
+              type: scalar(Schema_Field_Type_ScalarType.NULL),
+            },
+          ],
+        },
+      },
+      {
+        name: "Maps",
+        message: ProtoMap,
+        mask: [
           {
             name: "message",
-            type: {
-              value: {
-                case: "map",
+            mask: [{ name: "enum" }, { name: "keys", mask: [{ name: "str" }] }],
+          },
+        ],
+        schema: {
+          name: ProtoMap.typeName,
+          fields: [
+            {
+              name: "message",
+              type: {
                 value: {
-                  key: Schema_Field_Type_ScalarType.STRING,
-                  value: messageElement(ProtoMap, [
-                    {
-                      name: "enum",
-                      type: {
-                        value: {
-                          case: "map",
+                  case: "map",
+                  value: {
+                    key: Schema_Field_Type_ScalarType.STRING,
+                    value: messageElement(ProtoMap, [
+                      {
+                        name: "enum",
+                        type: {
                           value: {
-                            key: Schema_Field_Type_ScalarType.STRING,
-                            value: scalarElement(
-                              Schema_Field_Type_ScalarType.ENUM,
-                            ),
-                          },
-                        },
-                      },
-                    },
-                    {
-                      name: "keys",
-                      type: message(Keys, [
-                        {
-                          name: "str",
-                          type: {
+                            case: "map",
                             value: {
-                              case: "map",
-                              value: {
-                                key: Schema_Field_Type_ScalarType.STRING,
-                                value: scalarElement(
-                                  Schema_Field_Type_ScalarType.STRING,
-                                ),
-                              },
+                              key: Schema_Field_Type_ScalarType.STRING,
+                              value: scalarElement(
+                                Schema_Field_Type_ScalarType.ENUM,
+                              ),
                             },
                           },
                         },
-                      ]),
-                    },
-                  ]),
-                },
-              },
-            },
-          },
-        ],
-      },
-    },
-    {
-      name: "Repeated scalar",
-      message: Scalar,
-      mask: [{ name: "repeated", mask: [{ name: "str" }] }],
-      schema: {
-        name: Scalar.typeName,
-        fields: [
-          {
-            name: "repeated",
-            type: message(ScalarRepeated, [
-              {
-                name: "str",
-                type: {
-                  value: {
-                    case: "repeated",
-                    value: {
-                      element: scalarElement(
-                        Schema_Field_Type_ScalarType.STRING,
-                      ),
-                    },
+                      },
+                      {
+                        name: "keys",
+                        type: message(Keys, [
+                          {
+                            name: "str",
+                            type: {
+                              value: {
+                                case: "map",
+                                value: {
+                                  key: Schema_Field_Type_ScalarType.STRING,
+                                  value: scalarElement(
+                                    Schema_Field_Type_ScalarType.STRING,
+                                  ),
+                                },
+                              },
+                            },
+                          },
+                        ]),
+                      },
+                    ]),
                   },
                 },
               },
-            ]),
-          },
-        ],
+            },
+          ],
+        },
       },
-    },
-    {
-      name: "Repeated message",
-      message: Message,
-      mask: [{ name: "selfs", mask: [{ name: "id" }] }],
-      schema: {
-        name: Message.typeName,
-        fields: [
-          {
-            name: "selfs",
-            type: {
-              value: {
-                case: "repeated",
-                value: {
-                  element: messageElement(Message, [
-                    {
-                      name: "id",
-                      type: scalar(Schema_Field_Type_ScalarType.STRING),
+      {
+        name: "Repeated scalar",
+        message: Scalar,
+        mask: [{ name: "repeated", mask: [{ name: "str" }] }],
+        schema: {
+          name: Scalar.typeName,
+          fields: [
+            {
+              name: "repeated",
+              type: message(ScalarRepeated, [
+                {
+                  name: "str",
+                  type: {
+                    value: {
+                      case: "repeated",
+                      value: {
+                        element: scalarElement(
+                          Schema_Field_Type_ScalarType.STRING,
+                        ),
+                      },
                     },
-                  ]),
+                  },
+                },
+              ]),
+            },
+          ],
+        },
+      },
+      {
+        name: "Repeated message",
+        message: Message,
+        mask: [{ name: "selfs", mask: [{ name: "id" }] }],
+        schema: {
+          name: Message.typeName,
+          fields: [
+            {
+              name: "selfs",
+              type: {
+                value: {
+                  case: "repeated",
+                  value: {
+                    element: messageElement(Message, [
+                      {
+                        name: "id",
+                        type: scalar(Schema_Field_Type_ScalarType.STRING),
+                      },
+                    ]),
+                  },
                 },
               },
             },
-          },
-        ],
+          ],
+        },
       },
-    },
-  ];
+    ];
   for (const testCase of testCases) {
     test(testCase.name, () => {
       expect(
@@ -344,17 +344,17 @@ describe("invalid mask", () => {
     message: MessageType;
     mask: PartialMessage<MaskField>[];
   }[] = [
-    {
-      name: "Can't select WKTs",
-      message: Timestamp,
-      mask: [{ name: "seconds" }],
-    },
-    {
-      name: "Can't select unknown fields",
-      message: All,
-      mask: [{ name: "notPartOfAll" }],
-    },
-  ];
+      {
+        name: "Can't select WKTs",
+        message: Timestamp,
+        mask: [{ name: "seconds" }],
+      },
+      {
+        name: "Can't select unknown fields",
+        message: All,
+        mask: [{ name: "notPartOfAll" }],
+      },
+    ];
   for (const testCase of testCases) {
     test(testCase.name, () => {
       expect(() =>

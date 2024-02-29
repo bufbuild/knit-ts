@@ -1,4 +1,4 @@
-// Copyright 2023 Buf Technologies, Inc.
+// Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -791,13 +791,13 @@ describe("client", () => {
       type Expected = {
         "spec.AllService": {
           createAll:
-            | {
-                enum: TopLevel;
-                oneof?: {
-                  oneofValue?: Oneof<{ enum: OneofEnum }>;
-                };
-              }
-            | KnitError;
+          | {
+            enum: TopLevel;
+            oneof?: {
+              oneofValue?: Oneof<{ enum: OneofEnum }>;
+            };
+          }
+          | KnitError;
         };
         "spec.WktService": {
           getAny: Any | KnitError;
@@ -877,10 +877,10 @@ describe("errors", () => {
       type Actual = Mask<typeof query, All, { "@catch": {} }>;
       type Expected = {
         relSelf?:
-          | {
-              scalars?: { fields?: { u32: number } };
-            }
-          | KnitError;
+        | {
+          scalars?: { fields?: { u32: number } };
+        }
+        | KnitError;
       };
       type Diff = DeepDiff<Actual, Expected>;
       expectType<Equal<Diff, never>>(true);
@@ -919,10 +919,10 @@ describe("errors", () => {
     type Actual = Mask<typeof query, All>;
     type Expected = {
       relSelf?:
-        | {
-            scalars?: { fields?: { u32: number } };
-          }
-        | KnitError;
+      | {
+        scalars?: { fields?: { u32: number } };
+      }
+      | KnitError;
     };
     type Diff = DeepDiff<Actual, Expected>;
     expectType<Equal<Diff, never>>(true);
