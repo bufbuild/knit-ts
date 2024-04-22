@@ -1,6 +1,6 @@
 # @bufbuild/protoc-gen-knit-ts
 
-The code generator for Knit. Knit brings GraphQL like capabilities to RPCs. It is built on top of [Protobuf](protobuf.com) and [Connect](connect.build). This packages houses a protoc plugin that generates TypeScript types for Knit clients.
+The code generator for Knit. Knit brings GraphQL like capabilities to RPCs. It is built on top of [Protobuf](protobuf.com) and [Connect](connectrpc.com). This packages houses a protoc plugin that generates TypeScript types for Knit clients.
 
 Learn more about Knit at [github.com/bufbuild/knit](github.com/bufbuild/knit).
 
