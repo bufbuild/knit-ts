@@ -24,7 +24,7 @@ const config = {
   // The root directory that Jest should scan for tests and modules within
   rootDir: "src",
   moduleNameMapper: {
-    "(.+)\\.js": "$1", // https://connect.build/docs/web/supported-browsers-and-frameworks/#jest
+    "(.+)\\.js": "$1", // https://connectrpc.com/docs/web/supported-browsers-and-frameworks/#jest
   },
   extensionsToTreatAsEsm: [".ts"],
   transform: {
