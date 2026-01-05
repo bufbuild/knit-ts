@@ -91,8 +91,8 @@ importers:
   packages/knit-test-spec:
     devDependencies:
       '@bufbuild/buf':
-        specifier: ^1.28.1
-        version: 1.28.1
+        specifier: ^1.62.1
+        version: 1.62.1
       '@bufbuild/protobuf':
         specifier: ^1.5.0
         version: 1.5.0
@@ -678,8 +678,8 @@ packages:
       - '@bufbuild/protobuf'
     dev: true
 
-  /@bufbuild/buf-darwin-arm64@1.28.1:
-    resolution: {integrity: sha512-nAyvwKkcd8qQTExCZo5MtSRhXLK7e3vzKFKHjXfkveRakSUST2HFlFZAHfErZimN4wBrPTN0V0hNRU8PPjkMpQ==}
+  /@bufbuild/buf-darwin-arm64@1.62.1:
+    resolution: {integrity: sha512-qklVRzBgdzLv9fVa9OX/ewpgX4H34b4mKezJsDPGRwAwykgswgF39jhihIRDJNI40/Gi2Ik0tvmg4v8aO2E/1Q==}
     engines: {node: '>=12'}
     cpu: [arm64]
     os: [darwin]
@@ -687,8 +687,8 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf-darwin-x64@1.28.1:
-    resolution: {integrity: sha512-b0eT3xd3vX5a5lWAbo5h7FPuf9MsOJI4I39qs4TZnrlZ8BOuPfqzwzijiFf9UCwaX2vR1NQXexIoQ80Ci+fCHw==}
+  /@bufbuild/buf-darwin-x64@1.62.1:
+    resolution: {integrity: sha512-HUEiPeIL9mFHSM5z9ZdD0ZgjQaDxwFnDr4sv62/ajgMZd0h/rXe212CPrrLxmufhNx1jnDuxiSyhhAvl6lS5bA==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [darwin]
@@ -696,8 +696,8 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf-linux-aarch64@1.28.1:
-    resolution: {integrity: sha512-p5h9bZCVLMh8No9/7k7ulXzsFx5P7Lu6DiUMjSJ6aBXPMYo6Xl7r/6L2cQkpsZ53HMtIxCgMYS9a7zoS4K8wIw==}
+  /@bufbuild/buf-linux-aarch64@1.62.1:
+    resolution: {integrity: sha512-NdLOdRSkhKDlOmRhwywbC0Bo5TcPuRscqwVLOWWkarDNG1mybMCZYTvzXyuvdHVILsq8aA3T5w9yfuzMsVNfQg==}
     engines: {node: '>=12'}
     cpu: [arm64]
     os: [linux]
@@ -705,8 +705,17 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf-linux-x64@1.28.1:
-    resolution: {integrity: sha512-fVJ3DiRigIso06jgEl+JNp59Y5t2pxDHd10d3SA4r+14sXbZ2J7Gy/wBqVXPry4x/jW567KKlvmhg7M5ZBgCQQ==}
+  /@bufbuild/buf-linux-armv7@1.62.1:
+    resolution: {integrity: sha512-BVaXXud1YQ++vK7OVH3CiQwSXqmzSU+f03Jhy+FxiXQZuCQ9+EQsqsCIdVYdTFTCNd4O8l66d290+smLVDf1/A==}
+    engines: {node: '>=12'}
+    cpu: [arm]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@bufbuild/buf-linux-x64@1.62.1:
+    resolution: {integrity: sha512-lmN5op+lRlcaOLohfAhYh6VkEnj0mDxuhVAEXOtG9rTpxDguOgFFDzoYzoVdxtGDAg9npgQaUl7W58KO9kfTHw==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [linux]
@@ -714,8 +723,8 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf-win32-arm64@1.28.1:
-    resolution: {integrity: sha512-KJiRJpugQRK/jXC46Xjlb68UydWhCZj2jHdWLIwNtgXd1WTJ3LngChZV7Y6pPK08pwBAVz0JYeVbD5IlTCD4TQ==}
+  /@bufbuild/buf-win32-arm64@1.62.1:
+    resolution: {integrity: sha512-jXO8TXIY8yVC/1br687WAJx7feRfccqOZYRDy9AaPupQ40Cv8l0L4TWckGketaftDcnJCWBStO5+rwjAmN7fug==}
     engines: {node: '>=12'}
     cpu: [arm64]
     os: [win32]
@@ -723,8 +732,8 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf-win32-x64@1.28.1:
-    resolution: {integrity: sha512-vMnc+7OVCkmlRWQsgYHgUqiBPRIjD8XeoRyApJ07YZzGs7DkRH4LhvmacJbLd3wORylbn6gLz3pQa8J/M61mzg==}
+  /@bufbuild/buf-win32-x64@1.62.1:
+    resolution: {integrity: sha512-djH6dYHCLBCNilXHzAZDxo39EIS2/etiShgznSI/mQe8ybsaObqoK8CCxLu+kpUXYFaDd4onbFQKos2fxONDqQ==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [win32]
@@ -732,18 +741,19 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf@1.28.1:
-    resolution: {integrity: sha512-WRDagrf0uBjfV9s5eyrSPJDcdI4A5Q7JMCA4aMrHRR8fo/TTjniDBjJprszhaguqsDkn/LS4QIu92HVFZCrl9A==}
+  /@bufbuild/buf@1.62.1:
+    resolution: {integrity: sha512-0S+7jXEl9LXdG8+lyoqGbHFiKgFjRK/EuuFxw+szMT9qVOhg4//j0wIfZ/visOCU2FB1fQNuesb1MB4WVnwH0A==}
     engines: {node: '>=12'}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      '@bufbuild/buf-darwin-arm64': 1.28.1
-      '@bufbuild/buf-darwin-x64': 1.28.1
-      '@bufbuild/buf-linux-aarch64': 1.28.1
-      '@bufbuild/buf-linux-x64': 1.28.1
-      '@bufbuild/buf-win32-arm64': 1.28.1
-      '@bufbuild/buf-win32-x64': 1.28.1
+      '@bufbuild/buf-darwin-arm64': 1.62.1
+      '@bufbuild/buf-darwin-x64': 1.62.1
+      '@bufbuild/buf-linux-aarch64': 1.62.1
+      '@bufbuild/buf-linux-armv7': 1.62.1
+      '@bufbuild/buf-linux-x64': 1.62.1
+      '@bufbuild/buf-win32-arm64': 1.62.1
+      '@bufbuild/buf-win32-x64': 1.62.1
     dev: true
 
   /@bufbuild/protobuf@1.10.1:
@@ -1981,8 +1991,8 @@ packages:
   /balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  /baseline-browser-mapping@2.9.5:
-    resolution: {integrity: sha512-D5vIoztZOq1XM54LUdttJVc96ggEsIfju2JBvht06pSzpckp3C7HReun67Bghzrtdsq9XdMGbSSB3v3GhMNmAA==}
+  /baseline-browser-mapping@2.9.11:
+    resolution: {integrity: sha512-Sg0xJUNDU1sJNGdfGWhVHX0kkZ+HWcvmVymJbj6NSgZZmW/8S9Y2HQ5euytnIgakgxN6papOAWiwDo1ctFDcoQ==}
     hasBin: true
     dev: true
 
@@ -2019,11 +2029,11 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      baseline-browser-mapping: 2.9.5
-      caniuse-lite: 1.0.30001760
+      baseline-browser-mapping: 2.9.11
+      caniuse-lite: 1.0.30001762
       electron-to-chromium: 1.5.267
       node-releases: 2.0.27
-      update-browserslist-db: 1.2.2(browserslist@4.28.1)
+      update-browserslist-db: 1.2.3(browserslist@4.28.1)
     dev: true
 
   /bs-logger@0.2.6:
@@ -2082,8 +2092,8 @@ packages:
     resolution: {integrity: sha512-XY7UbUpGRatZzoRft//5xOa69/1iGJRBlrieH6QYrkKLIFn3m7OVEJ81dSrKoy2BnKsdbX5cLrOispZNYo9v2w==}
     dev: true
 
-  /caniuse-lite@1.0.30001760:
-    resolution: {integrity: sha512-7AAMPcueWELt1p3mi13HR/LHH0TJLT11cnwDJEs3xA4+CK/PLKeO9Kl1oru24htkyUKtkGCvAx4ohB0Ttry8Dw==}
+  /caniuse-lite@1.0.30001762:
+    resolution: {integrity: sha512-PxZwGNvH7Ak8WX5iXzoK1KPZttBXNPuaOvI2ZYU7NrlM+d9Ov+TUvlLOBNGzVXAntMSMMlJPd+jY6ovrVjSmUw==}
     dev: true
 
   /cardinal@2.1.1:
@@ -4257,8 +4267,8 @@ packages:
       picocolors: 1.0.0
     dev: true
 
-  /update-browserslist-db@1.2.2(browserslist@4.28.1):
-    resolution: {integrity: sha512-E85pfNzMQ9jpKkA7+TJAi4TJN+tBCuWh5rUcS/sv6cFi+1q9LYDwDI5dpUL0u/73EElyQ8d3TEaeW4sPedBqYA==}
+  /update-browserslist-db@1.2.3(browserslist@4.28.1):
+    resolution: {integrity: sha512-Js0m9cx+qOgDxo0eMiFGEueWztz+d4+M3rGlmKPT+T4IS/jP4ylw3Nwpu6cpTTP8R1MAC1kF4VbdLt3ARf209w==}
     hasBin: true
     peerDependencies:
       browserslist: '>= 4.21.0'
