@@ -17,8 +17,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.10.1)
       prettier:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: ^3.7.4
+        version: 3.7.4
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.1(@babel/core@7.28.5)(jest@29.7.0)(typescript@5.3.2)
@@ -3988,8 +3988,8 @@ packages:
     engines: {node: '>= 0.8.0'}
     dev: false
 
-  /prettier@3.1.0:
-    resolution: {integrity: sha512-TQLvXjq5IAibjh8EpBIkNKxO749UEWABoiIZehEPiY4GNpVdhaFKqSTu+QrlU6D2dPAfubRmtJTi4K4YkQ5eXw==}
+  /prettier@3.7.4:
+    resolution: {integrity: sha512-v6UNi1+3hSlVvv8fSaoUbggEM5VErKmmpGA7Pl3HF8V6uKY7rvClBOJlH6yNwQtfTueNkGVpOv/mtWL9L4bgRA==}
     engines: {node: '>=14'}
     hasBin: true
     dev: true
