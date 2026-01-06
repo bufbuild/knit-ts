@@ -12,7 +12,7 @@
     "eslint-config-turbo": "^2.7.3"
   },
   "devDependencies": {
-    "typescript": "^5.3.2"
+    "typescript": "^5.9.3"
   },
   "publishConfig": {
     "access": "public"
