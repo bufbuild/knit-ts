@@ -62,7 +62,7 @@
     "@jest/globals": "^29.7.0",
     "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*",
-    "tsup": "^8.0.1"
+    "tsup": "^8.5.1"
   },
   "files": [
     "dist/**"
