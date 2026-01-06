@@ -97,14 +97,14 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0
       '@bufbuild/protoc-gen-es':
-        specifier: ^1.5.0
-        version: 1.5.0(@bufbuild/protobuf@1.5.0)
+        specifier: ^2.10.2
+        version: 2.10.2(@bufbuild/protobuf@1.5.0)
       '@bufbuild/protoc-gen-knit-ts':
         specifier: workspace:*
         version: link:../protoc-gen-knit-ts
       '@connectrpc/protoc-gen-connect-es':
         specifier: ^1.7.0
-        version: 1.7.0(@bufbuild/protoc-gen-es@1.5.0)
+        version: 1.7.0(@bufbuild/protoc-gen-es@2.10.2)
 
   packages/protoc-gen-knit-ts:
     dependencies:
@@ -596,18 +596,22 @@ packages:
   /@bufbuild/protobuf@1.5.0:
     resolution: {integrity: sha512-0Jg+B7Vl8YGCi7c3iZ8/38iTbZrwdU7or6QZlsA9lhSrhumaXOTMsGO8gqwDuus/THEkTiY3Uxn+PEJwgsLt0w==}
 
-  /@bufbuild/protoc-gen-es@1.5.0(@bufbuild/protobuf@1.5.0):
-    resolution: {integrity: sha512-6dPFlw7jhKPNoJUb5+0MPDTMEEbym4AAQZP2sCo4/0J+T2SlAzq5kbuNx92x+SFkOI5V7/iNoPHrxr0TZZ9b2g==}
-    engines: {node: '>=14'}
+  /@bufbuild/protobuf@2.10.2:
+    resolution: {integrity: sha512-uFsRXwIGyu+r6AMdz+XijIIZJYpoWeYzILt5yZ2d3mCjQrWUTVpVD9WL/jZAbvp+Ed04rOhrsk7FiTcEDseB5A==}
+    dev: true
+
+  /@bufbuild/protoc-gen-es@2.10.2(@bufbuild/protobuf@1.5.0):
+    resolution: {integrity: sha512-vbjPsuofbtZwZXuOP7Y16CQsxrwCjuRONffmJSBEhoC7PQu/Cabp0+Fu/poLPm9CNM0tDCQA0xvgobgudaEYxQ==}
+    engines: {node: '>=20'}
     hasBin: true
     peerDependencies:
-      '@bufbuild/protobuf': 1.5.0
+      '@bufbuild/protobuf': 2.10.2
     peerDependenciesMeta:
       '@bufbuild/protobuf':
         optional: true
     dependencies:
       '@bufbuild/protobuf': 1.5.0
-      '@bufbuild/protoplugin': 1.5.0
+      '@bufbuild/protoplugin': 2.10.2
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -630,6 +634,17 @@ packages:
       typescript: 4.5.2
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@bufbuild/protoplugin@2.10.2:
+    resolution: {integrity: sha512-RAWVs9tCzRqSS3tUtaFhOcauOAazCrm7tlGh0WHFq/44n5Fj6YgefdlZEPIaAK6VAA+FdOoFgtOJK2Ji5U24pw==}
+    dependencies:
+      '@bufbuild/protobuf': 2.10.2
+      '@typescript/vfs': 1.6.2(typescript@5.4.5)
+      typescript: 5.4.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /@colors/colors@1.5.0:
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -655,7 +670,7 @@ packages:
     dependencies:
       '@bufbuild/protobuf': 1.5.0
 
-  /@connectrpc/protoc-gen-connect-es@1.7.0(@bufbuild/protoc-gen-es@1.5.0):
+  /@connectrpc/protoc-gen-connect-es@1.7.0(@bufbuild/protoc-gen-es@2.10.2):
     resolution: {integrity: sha512-g2rE799dxGgXtwSTBOJoSlzCy3HN0IX/Es8uKsCgXRmco8o277/bb5nz1X8TmvBooCBGNdtEdUDG50olcvS9jQ==}
     engines: {node: '>=16.0.0'}
     hasBin: true
@@ -669,7 +684,7 @@ packages:
         optional: true
     dependencies:
       '@bufbuild/protobuf': 1.10.1
-      '@bufbuild/protoc-gen-es': 1.5.0(@bufbuild/protobuf@1.5.0)
+      '@bufbuild/protoc-gen-es': 2.10.2(@bufbuild/protobuf@1.5.0)
       '@bufbuild/protoplugin': 1.10.1
     transitivePeerDependencies:
       - supports-color
@@ -2098,6 +2113,7 @@ packages:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /@typescript/vfs@1.6.2(typescript@4.5.2):
     resolution: {integrity: sha512-hoBwJwcbKHmvd2QVebiytN1aELvpk9B74B4L1mFm/XT1Q/VOYAWl2vQ9AWRFtQq8zmz6enTpfTV8WRc4ATjW/g==}
@@ -2106,6 +2122,17 @@ packages:
     dependencies:
       debug: 4.4.3
       typescript: 4.5.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@typescript/vfs@1.6.2(typescript@5.4.5):
+    resolution: {integrity: sha512-hoBwJwcbKHmvd2QVebiytN1aELvpk9B74B4L1mFm/XT1Q/VOYAWl2vQ9AWRFtQq8zmz6enTpfTV8WRc4ATjW/g==}
+    peerDependencies:
+      typescript: '*'
+    dependencies:
+      debug: 4.4.3
+      typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -4754,6 +4781,12 @@ packages:
     resolution: {integrity: sha512-6l+RyNy7oAHDfxC4FzSJcz9vnjTKxrLpDG5M2Vu4SHRVNg6xzqZp6LYSR9zjqQTu8DU/f5xwxUdADOkbrIX2gQ==}
     engines: {node: '>=14.17'}
     hasBin: true
+
+  /typescript@5.4.5:
+    resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    dev: true
 
   /typescript@5.6.1-rc:
     resolution: {integrity: sha512-E3b2+1zEFu84jB0YQi9BORDjz9+jGbwwy1Zi3G0LUNw7a7cePUrHMRNy8aPh53nXpkFGVHSxIZo5vKTfYaFiBQ==}
