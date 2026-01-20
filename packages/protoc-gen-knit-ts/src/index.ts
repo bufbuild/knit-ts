@@ -215,7 +215,7 @@ function generateRelation(
 function generateEnum(g: GeneratedFile, _enum: DescEnum) {
   g.print("export type ", localName(_enum), " = ");
   for (const member of _enum.values) {
-    g.print`${indent(1)}| "${member.name}"`;
+    g.print(`${indent(1)}| "${member.name}"`);
   }
   g.print(indent(1), "| number");
   g.print(";\n");
