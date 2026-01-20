@@ -23,7 +23,7 @@
  */
 
 export { alias } from "./alias.js";
-export { createClient } from "./client.js";
+export { createClient, createClientWithTransport } from "./client.js";
 export { makeScopedClient } from "./scope.js";
 
 export { Duration } from "./wkt/duration.js";
