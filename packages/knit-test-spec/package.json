@@ -11,7 +11,7 @@
     "@bufbuild/protobuf": "^1.5.0"
   },
   "devDependencies": {
-    "@bufbuild/buf": "^1.63.0",
+    "@bufbuild/buf": "^1.64.0",
     "@bufbuild/protobuf": "^1.5.0",
     "@bufbuild/protoc-gen-es": "^1.5.0",
     "@bufbuild/protoc-gen-knit-ts": "workspace:*",
