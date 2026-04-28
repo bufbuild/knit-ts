@@ -8,11 +8,11 @@
     "buf:generate": "buf generate ./proto"
   },
   "peerDependencies": {
-    "@bufbuild/protobuf": "^1.5.0"
+    "@bufbuild/protobuf": "^2.12.0"
   },
   "devDependencies": {
     "@bufbuild/buf": "^1.68.4",
-    "@bufbuild/protobuf": "^1.5.0",
+    "@bufbuild/protobuf": "^2.12.0",
     "@bufbuild/protoc-gen-es": "^1.5.0",
     "@bufbuild/protoc-gen-knit-ts": "workspace:*",
     "@connectrpc/protoc-gen-connect-es": "^1.7.0"
