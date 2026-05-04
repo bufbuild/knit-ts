@@ -45,7 +45,7 @@ importers:
         version: 10.1.8(eslint@8.54.0)
       eslint-config-turbo:
         specifier: ^2.9.6
-        version: 2.9.6(eslint@8.54.0)(turbo@2.9.6)
+        version: 2.9.6(eslint@8.54.0)(turbo@2.9.8)
       eslint-plugin-notice:
         specifier: ^1.0.0
         version: 1.0.0(eslint@8.54.0)
@@ -91,8 +91,8 @@ importers:
   packages/knit-test-spec:
     devDependencies:
       '@bufbuild/buf':
-        specifier: ^1.68.4
-        version: 1.68.4
+        specifier: ^1.69.0
+        version: 1.69.0
       '@bufbuild/protobuf':
         specifier: ^1.5.0
         version: 1.5.0
@@ -511,8 +511,8 @@ packages:
       - '@bufbuild/protobuf'
     dev: true
 
-  /@bufbuild/buf-darwin-arm64@1.68.4:
-    resolution: {integrity: sha512-57VDmK/U8ysWLsydDy/UzQ4gxS8LZyBiAnq1WWk33aUCkHr1poDgAqdOSzjIlBqoe/Mx/+pbVk2/OuaiY8T6aQ==}
+  /@bufbuild/buf-darwin-arm64@1.69.0:
+    resolution: {integrity: sha512-q7086l1PRS0fUn/IYef7WUAq5PEPIxCh3AVZZdObdOAA9C77ES7CYBSTWH3oEJHVElv1KPVVqvGmOC+G78HuXg==}
     engines: {node: '>=12'}
     cpu: [arm64]
     os: [darwin]
@@ -520,8 +520,8 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf-darwin-x64@1.68.4:
-    resolution: {integrity: sha512-B552Ke9CMDOIyCZGXqSeEej2+13B1PlesZj3j9DCQml86vVEJLVNw9JIUBRE47S31h0qx/Qzptm1N898gaaXTw==}
+  /@bufbuild/buf-darwin-x64@1.69.0:
+    resolution: {integrity: sha512-ihM+lr0tahgLVbQvp5jhYS6T1cpydEX3TbJvAfePLJBCTrsXFMwKt1WIDjpSHIPHQABcqL9BuNnbs8r1+7E1MA==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [darwin]
@@ -529,8 +529,8 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf-linux-aarch64@1.68.4:
-    resolution: {integrity: sha512-bbe/EQ6vr5ytdoE/llICbp2jPzMDPnT0F0RwlE2rm1sU6crYNJQPOg+QG/NVabL8XimLooRZ1WgPEeZFyAW/hw==}
+  /@bufbuild/buf-linux-aarch64@1.69.0:
+    resolution: {integrity: sha512-4twJF1ehcPRBvgA2g2yIG/3ViZ3SrElqCqGjXHp+U4RfjHV249j8kzVj08mvI1t0kv8Rbm8JECYqkxcYnKyuRA==}
     engines: {node: '>=12'}
     cpu: [arm64]
     os: [linux]
@@ -538,8 +538,8 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf-linux-armv7@1.68.4:
-    resolution: {integrity: sha512-Q1SHNEYYiEpz/IwIfBrdVvgd8VCQlPue6J6IzMWNPCjwhhZViQNAMXIo4Huvz0Xhrwe3shYbdEx6uj/tu49dug==}
+  /@bufbuild/buf-linux-armv7@1.69.0:
+    resolution: {integrity: sha512-zfbYrfPjOBp1Dxj+9avW05NWzGwLUTInfslhgWVbq61DYLegX6UW12hVk5xS/C5D0IlfIDfJUXEeTsHImigQTQ==}
     engines: {node: '>=12'}
     cpu: [arm]
     os: [linux]
@@ -547,8 +547,8 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf-linux-x64@1.68.4:
-    resolution: {integrity: sha512-Bo8OaMc76+s23xDZ96LhHunBJYdwTyDOdLOvjiebMQ6MTkcPU/B+ecIwJtRj1FGh9NWWRpT/YaroTpOPVNXG/Q==}
+  /@bufbuild/buf-linux-x64@1.69.0:
+    resolution: {integrity: sha512-mt/hJesHK62TlsSJPwBpRIC/OzWTlgaRmyjC8QF+T6+IbFwiwz1E3ZBCfNECEa2HW4ma8HbugpJyCBbUSA+z/Q==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [linux]
@@ -556,8 +556,8 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf-win32-arm64@1.68.4:
-    resolution: {integrity: sha512-knbrAF8maJ+7GbsZ9Wp7GuZ72SEiBv/1/0vgZSgdzPn2VytciTM7HRGlsglk9sPTX18WlKZeOY/+pkJpC/RGRQ==}
+  /@bufbuild/buf-win32-arm64@1.69.0:
+    resolution: {integrity: sha512-IlMSIdCWvllwenbLlrWEH2YHQwCqmONKZYv4MXj56v6TvCWCTbYlaF5ZFP+xFAHToHp1OrFc+rwUqCt7ElBbHg==}
     engines: {node: '>=12'}
     cpu: [arm64]
     os: [win32]
@@ -565,8 +565,8 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf-win32-x64@1.68.4:
-    resolution: {integrity: sha512-JnUSCPNtmdSWaj9mA7ioLC2y8kpvX91FEYwxk3VrNukWtctiMTbhbS9CwbUdZuHjJSvWDLdKIS75Iyj16ufplg==}
+  /@bufbuild/buf-win32-x64@1.69.0:
+    resolution: {integrity: sha512-wpKZLXUF/w85g4ZL9XqQqm33cfw2NRjiidSX5EVFMx4rDp7cnAUv3+PTwZvEPriqJEihnOJ5JCozsxjiWqSX7Q==}
     engines: {node: '>=12'}
     cpu: [x64]
     os: [win32]
@@ -574,19 +574,19 @@ packages:
     dev: true
     optional: true
 
-  /@bufbuild/buf@1.68.4:
-    resolution: {integrity: sha512-r+QG3mlQ1h4agDwYxnPz1AdVLubgt09sRLnnlLMj0MVUOWjdV92i/20ZmSxn6+thouGlpr2A+VKPgy8NShchrA==}
+  /@bufbuild/buf@1.69.0:
+    resolution: {integrity: sha512-hWk7cW6Z/7g6jpybePaf15QUUFd2+s4lJCeaAkBeo3tWPGoSgNJaJdMqIUy2y99uYy4yMjq9GYmjc5dSrfIn5A==}
     engines: {node: '>=12'}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      '@bufbuild/buf-darwin-arm64': 1.68.4
-      '@bufbuild/buf-darwin-x64': 1.68.4
-      '@bufbuild/buf-linux-aarch64': 1.68.4
-      '@bufbuild/buf-linux-armv7': 1.68.4
-      '@bufbuild/buf-linux-x64': 1.68.4
-      '@bufbuild/buf-win32-arm64': 1.68.4
-      '@bufbuild/buf-win32-x64': 1.68.4
+      '@bufbuild/buf-darwin-arm64': 1.69.0
+      '@bufbuild/buf-darwin-x64': 1.69.0
+      '@bufbuild/buf-linux-aarch64': 1.69.0
+      '@bufbuild/buf-linux-armv7': 1.69.0
+      '@bufbuild/buf-linux-x64': 1.69.0
+      '@bufbuild/buf-win32-arm64': 1.69.0
+      '@bufbuild/buf-win32-x64': 1.69.0
     dev: true
 
   /@bufbuild/protobuf@1.10.1:
@@ -1844,48 +1844,48 @@ packages:
       '@sinonjs/commons': 3.0.1
     dev: true
 
-  /@turbo/darwin-64@2.9.6:
-    resolution: {integrity: sha512-X/56SnVXIQZBLKwniGTwEQTGmtE5brSACnKMBWpY3YafuxVYefrC2acamfjgxP7BG5w3I+6jf0UrLoSzgPcSJg==}
+  /@turbo/darwin-64@2.9.8:
+    resolution: {integrity: sha512-zU1P95ygDpsQ+2QHh7CVTqvYwi9UBlhKWzoIyUnP3vUoge7H9SQEzrd8dj+XcTrslAp9Db3vIBcXtMVoTEYDnA==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: false
     optional: true
 
-  /@turbo/darwin-arm64@2.9.6:
-    resolution: {integrity: sha512-aalBeSl4agT/QtYGDyf/XLajedWzUC9Vg/pm/YO6QQ93vkQ91Vz5uK1ta5RbVRDozQSz4njxUNqRNmOXDzW+qw==}
+  /@turbo/darwin-arm64@2.9.8:
+    resolution: {integrity: sha512-nKRFI5ZhCGUi4eXNlrojzWcT/CehMj0raot1WE4lw5qf66ZxZHbRbBqcwNEy+ZLY7RkJJRY+TaU89fuj3BcgGg==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: false
     optional: true
 
-  /@turbo/linux-64@2.9.6:
-    resolution: {integrity: sha512-YKi05jnNHaD7vevgYwahpzGwbsNNTwzU2c7VZdmdFm7+cGDP4oREUWSsainiMfRqjRuolQxBwRn8wf1jmu+YZA==}
+  /@turbo/linux-64@2.9.8:
+    resolution: {integrity: sha512-Wf/kQpVDCaWM3P5d6lKvJnqjYn/ofUBGbT4h4vRFrdC4N6B/nsun03S2kQNJJMXpXg39woeS4CI367RMU3/OAg==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: false
     optional: true
 
-  /@turbo/linux-arm64@2.9.6:
-    resolution: {integrity: sha512-02o/ZS69cOYEDczXvOB2xmyrtzjQ2hVFtWZK1iqxXUfzMmTjZK4UumrfNnjckSg+gqeBfnPRHa0NstA173Ik3g==}
+  /@turbo/linux-arm64@2.9.8:
+    resolution: {integrity: sha512-v6S3HuKVoa9CEx16IxKj1i/+crxXx22A9O80zW1350zyUlcX0T/zLOxVf1k+ruK/7ssXnDJVg8uSYOxlYRedlA==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: false
     optional: true
 
-  /@turbo/windows-64@2.9.6:
-    resolution: {integrity: sha512-wVdQjvnBI15wB6JrA+43CtUtagjIMmX6XYO758oZHAsCNSxqRlJtdyujih0D8OCnwCRWiGWGI63zAxR0hO6s9g==}
+  /@turbo/windows-64@2.9.8:
+    resolution: {integrity: sha512-JaefWOJNBazDylAn3f+lLB34XMNu8nEBbgPRP/Ewysg81cBubGfcyyyzpQOGVuMwfaqdNAE/kitG7w3AbJn9/g==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: false
     optional: true
 
-  /@turbo/windows-arm64@2.9.6:
-    resolution: {integrity: sha512-1XUUyWW0W6FTSqGEhU8RHVqb2wP1SPkr7hIvBlMEwH9jr+sJQK5kqeosLJ/QaUv4ecSAd1ZhIrLoW7qslAzT4A==}
+  /@turbo/windows-arm64@2.9.8:
+    resolution: {integrity: sha512-Or6ljjB4TiiwCdVKDYWew0SokQ9kep5zruL8P3nbum9WdkH5XA41rQID4Ulc215Z+R3DrB+qXSHPsJjU3/n2ng==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
@@ -2770,15 +2770,15 @@ packages:
       eslint: 8.54.0
     dev: false
 
-  /eslint-config-turbo@2.9.6(eslint@8.54.0)(turbo@2.9.6):
+  /eslint-config-turbo@2.9.6(eslint@8.54.0)(turbo@2.9.8):
     resolution: {integrity: sha512-yCZ2YcUKU2KtAO7fjqBQLI7bIc/cIH4lF/yk4ntSRDfsQiRpAtWaGTxqqMPVLZj5JpFfSZGceuM6YFHufJD5iA==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 8.54.0
-      eslint-plugin-turbo: 2.9.6(eslint@8.54.0)(turbo@2.9.6)
-      turbo: 2.9.6
+      eslint-plugin-turbo: 2.9.6(eslint@8.54.0)(turbo@2.9.8)
+      turbo: 2.9.8
     dev: false
 
   /eslint-plugin-notice@1.0.0(eslint@8.54.0):
@@ -2792,7 +2792,7 @@ packages:
       metric-lcs: 0.1.2
     dev: false
 
-  /eslint-plugin-turbo@2.9.6(eslint@8.54.0)(turbo@2.9.6):
+  /eslint-plugin-turbo@2.9.6(eslint@8.54.0)(turbo@2.9.8):
     resolution: {integrity: sha512-mntEkRe71izva2mJHZGxH2ccOdySqXiNJf5tdzRabaxhudLCeonPUdTE6aNGOhgVeL1lclxg5/ibp3C/cpe+kQ==}
     peerDependencies:
       eslint: '>6.6.0'
@@ -2800,7 +2800,7 @@ packages:
     dependencies:
       dotenv: 16.0.3
       eslint: 8.54.0
-      turbo: 2.9.6
+      turbo: 2.9.8
     dev: false
 
   /eslint-scope@7.2.2:
@@ -4797,16 +4797,16 @@ packages:
       turbo-windows-arm64: 1.10.16
     dev: true
 
-  /turbo@2.9.6:
-    resolution: {integrity: sha512-+v2QJey7ZUeUiuigkU+uFfklvNUyPI2VO2vBpMYJA+a1hKFLFiKtUYlRHdb3P9CrAvMzi0upbjI4WT+zKtqkBg==}
+  /turbo@2.9.8:
+    resolution: {integrity: sha512-REEB2rVTVDTf4hav1gJ5dIsGylWZrNonvjXFtk1dCi8gND3PhZtnYkyry1bra/Fo+iP6ctTEZbg6vWfdfHq/1A==}
     hasBin: true
     optionalDependencies:
-      '@turbo/darwin-64': 2.9.6
-      '@turbo/darwin-arm64': 2.9.6
-      '@turbo/linux-64': 2.9.6
-      '@turbo/linux-arm64': 2.9.6
-      '@turbo/windows-64': 2.9.6
-      '@turbo/windows-arm64': 2.9.6
+      '@turbo/darwin-64': 2.9.8
+      '@turbo/darwin-arm64': 2.9.8
+      '@turbo/linux-64': 2.9.8
+      '@turbo/linux-arm64': 2.9.8
+      '@turbo/windows-64': 2.9.8
+      '@turbo/windows-arm64': 2.9.8
     dev: false
 
   /type-check@0.4.0:
