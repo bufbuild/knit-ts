@@ -18,9 +18,9 @@
   "devDependencies": {
     "@types/node": "^25.9.3",
     "eslint-config-custom": "workspace:*",
-    "jest": "^29.7.0",
+    "jest": "^30.4.2",
     "prettier": "^3.8.4",
-    "ts-jest": "^29.1.1",
+    "ts-jest": "^29.4.11",
     "turbo": "^2.9.18",
     "typescript": "^6.0.3",
     "@arethetypeswrong/cli": "^0.18.3"

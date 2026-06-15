@@ -35,6 +35,12 @@ const config = {
       "ts-jest",
       {
         useESM: true,
+        // ts-jest's ESM mode requires an ES/Node16 module kind. The shared
+        // tsconfig targets CommonJS for the published build, so override it
+        // here (the package is `type: module`).
+        tsconfig: {
+          module: "ESNext",
+        },
         diagnostics: {
           ignoreCodes: [
             151001, // ts-jest[config] (WARN) message TS151001: If you have issues related to imports, you should consider setting `esModuleInterop` to `true` in your TypeScript configuration file (usually `tsconfig.json`). See https://blogs.msdn.microsoft.com/typescript/2018/01/31/announcing-typescript-2-7/#easier-ecmascript-module-interoperability for more information.
