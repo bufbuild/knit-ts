@@ -106,13 +106,14 @@ const config = tseslint.config(
       "@typescript-eslint/no-unnecessary-boolean-literal-compare": "error",
       "@typescript-eslint/no-invalid-void-type": "error",
       "@typescript-eslint/no-base-to-string": "error",
-      // Turn off rules that are new in typescript-eslint v8 and were not
-      // enforced by the v6 recommended-requiring-type-checking preset.
-      // This preserves the same effective enforcement level as the old config.
-      "@typescript-eslint/only-throw-error": "off",
       "@typescript-eslint/no-unnecessary-type-assertion": "error",
-      // New in v8 recommendedTypeChecked; not in v6 recommended-requiring-type-checking.
-      "@typescript-eslint/prefer-promise-reject-errors": "off",
+      // KnitError is a structured domain error: it is both thrown and returned
+      // as an embedded value in results (the `@catch` error strategy), so it is
+      // intentionally not an Error subclass. Allow throwing it.
+      "@typescript-eslint/only-throw-error": [
+        "error",
+        { allow: [{ from: "file", name: "KnitError" }] },
+      ],
     },
   },
 );
