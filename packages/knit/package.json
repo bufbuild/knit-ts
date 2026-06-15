@@ -56,7 +56,7 @@
     "@connectrpc/connect-web": "^2.1.2"
   },
   "devDependencies": {
-    "@buf/bufbuild_knit.bufbuild_es": "2.12.0-20230504140941-3dc602456973.1",
+    "@buf/bufbuild_knit.bufbuild_es": "2.12.0-20250213130123-9561c696fd69.1",
     "@bufbuild/knit-test-spec": "workspace:*",
     "@jest/globals": "^30.4.1",
     "eslint-config-custom": "workspace:*",

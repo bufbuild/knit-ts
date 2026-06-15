@@ -73,8 +73,8 @@ importers:
         version: 2.1.2(@bufbuild/protobuf@2.12.0)(@connectrpc/connect@2.1.2)
     devDependencies:
       '@buf/bufbuild_knit.bufbuild_es':
-        specifier: 2.12.0-20230504140941-3dc602456973.1
-        version: 2.12.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@2.12.0)
+        specifier: 2.12.0-20250213130123-9561c696fd69.1
+        version: 2.12.0-20250213130123-9561c696fd69.1(@bufbuild/protobuf@2.12.0)
       '@bufbuild/knit-test-spec':
         specifier: workspace:*
         version: link:../knit-test-spec
@@ -113,8 +113,8 @@ importers:
         version: 2.12.0
     devDependencies:
       '@buf/bufbuild_knit.bufbuild_es':
-        specifier: 2.12.0-20230504140941-3dc602456973.1
-        version: 2.12.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@2.12.0)
+        specifier: 2.12.0-20250213130123-9561c696fd69.1
+        version: 2.12.0-20250213130123-9561c696fd69.1(@bufbuild/protobuf@2.12.0)
       '@bufbuild/protobuf':
         specifier: ^2.12.0
         version: 2.12.0
@@ -492,8 +492,8 @@ packages:
     resolution: {integrity: sha512-qBcknbBufNHlui137Hft8xauQMTZDKdophmLFv05r2eNmdIv/MlPuP4TdUknHG68UdWLgVZwgxVe735HzJNIwA==}
     dev: true
 
-  /@buf/bufbuild_knit.bufbuild_es@2.12.0-20230504140941-3dc602456973.1(@bufbuild/protobuf@2.12.0):
-    resolution: {registry: https://buf.build/gen/npm/v1/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-2.12.0-20230504140941-3dc602456973.1.tgz}
+  /@buf/bufbuild_knit.bufbuild_es@2.12.0-20250213130123-9561c696fd69.1(@bufbuild/protobuf@2.12.0):
+    resolution: {registry: https://buf.build/gen/npm/v1/, tarball: https://buf.build/gen/npm/v1/@buf/bufbuild_knit.bufbuild_es/-/bufbuild_knit.bufbuild_es-2.12.0-20250213130123-9561c696fd69.1.tgz}
     peerDependencies:
       '@bufbuild/protobuf': ^2.12.0
     dependencies:
