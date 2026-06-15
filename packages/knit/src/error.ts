@@ -73,10 +73,5 @@ export function knitErrorFromReason(reason: unknown) {
       value: detail.value,
     });
   }
-  return new KnitError(
-    connectErr.code as unknown as Code,
-    connectErr.message,
-    details,
-    "",
-  );
+  return new KnitError(connectErr.code, connectErr.message, details, "");
 }

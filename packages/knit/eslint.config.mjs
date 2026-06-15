@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** @type { import('eslint').Linter.Config } */
-module.exports = {
-  root: true,
-  extends: ["custom"],
-  ignorePatterns: ["src/jest/*.ts", "tsup.config.ts", "gateway.js"],
-};
+import config from "eslint-config-custom";
+
+export default [
+  ...config,
+  {
+    ignores: ["src/jest/*.ts", "tsup.config.ts", "gateway.js"],
+  },
+];

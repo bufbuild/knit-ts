@@ -7,3 +7,4 @@
 **/dist
 **/src/gen
 packages/knit-test-spec/spec/**
+packages/knit-test-spec/buf/**

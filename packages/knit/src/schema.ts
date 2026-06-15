@@ -79,7 +79,7 @@ export type Query<T> =
   ? Query<E>
   : T extends MapMarker<infer _ extends { [k: string | number]: infer E }> // eslint-disable-line @typescript-eslint/no-unused-vars
   ? Query<E>
-  : T extends EnumMarker<unknown> // eslint-disable-line @typescript-eslint/no-unused-vars
+  : T extends EnumMarker<unknown>
   ? ScalarQuery
   : T extends AliasMarker<string, infer V>
   ? Query<V>

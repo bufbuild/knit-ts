@@ -20,7 +20,6 @@ import type {
   DescMethodUnary,
   DescService,
   Message,
-  MessageInitShape,
 } from "@bufbuild/protobuf";
 import { min } from "./util";
 
@@ -320,7 +319,7 @@ export function createGateway({
               {
                 ...params,
                 bases,
-              } as MessageInitShape<DescMessage>,
+              },
             );
             return (
               (response.message as Record<string, unknown>)[

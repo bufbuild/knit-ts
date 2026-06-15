@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** @type { import('eslint').Linter.Config } */
-module.exports = {
-  root: true,
-  extends: ["custom"],
-};
+import config from "eslint-config-custom";
+
+export default config;
