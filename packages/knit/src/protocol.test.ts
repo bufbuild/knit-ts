@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { type PartialMessage, Value } from "@bufbuild/protobuf";
+import { fromJson } from "@bufbuild/protobuf";
+import type { MessageInitShape } from "@bufbuild/protobuf";
+import { ValueSchema } from "@bufbuild/protobuf/wkt";
 import { describe, expect, test } from "@jest/globals";
-import type { Request } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import { RequestSchema } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import { makeRequests } from "./protocol.js";
 
 describe("makeRequests", () => {
@@ -44,7 +46,7 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
     expect(oneofs).toStrictEqual([{}]);
   });
   test("single query with catch", () => {
@@ -75,7 +77,7 @@ describe("makeRequests", () => {
         ],
         onError: { case: "catch", value: {} },
       },
-    ] satisfies PartialMessage<Request>[]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
     expect(oneofs).toStrictEqual([{}]);
   });
   test("single query with throw", () => {
@@ -106,7 +108,7 @@ describe("makeRequests", () => {
         ],
         onError: { case: "throw", value: {} },
       },
-    ] satisfies PartialMessage<Request>[]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
     expect(oneofs).toStrictEqual([{}]);
   });
   test("single query skip params", () => {
@@ -123,7 +125,7 @@ describe("makeRequests", () => {
     expect(requests).toStrictEqual([
       {
         method: "foo.v1.FooService.GetFoo",
-        body: Value.fromJson({}),
+        body: fromJson(ValueSchema, {}),
         onError: undefined,
         mask: [
           {
@@ -136,7 +138,7 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
     expect(oneofs).toStrictEqual([{}]);
   });
   test("single query with scalar oneof", () => {
@@ -171,7 +173,7 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
     expect(oneofs).toStrictEqual([
       {
         "foo.v1.FooService.getFoo.foo.a": "oneofField",
@@ -225,7 +227,7 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
     expect(oneofs).toStrictEqual([
       {
         "foo.v1.FooService.getFoo.foo.a": "oneofField",
@@ -290,7 +292,7 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
     expect(oneofs).toStrictEqual([
       {
         "foo.v1.FooService.getFoo.foo.a": "oneofField",
@@ -355,7 +357,7 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
     expect(oneofs).toStrictEqual([
       {
         "foo.v1.FooService.getFoo.foo.a": "fooOneof",

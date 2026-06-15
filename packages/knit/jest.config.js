@@ -23,6 +23,9 @@ const config = {
 
   // The root directory that Jest should scan for tests and modules within
   rootDir: "src",
+  // Prettier 3 is not supported by jest's inline-snapshot writer; disable it so
+  // inline snapshots can be written/updated (jest formats them itself).
+  prettierPath: null,
   moduleNameMapper: {
     "(.+)\\.js": "$1", // https://connectrpc.com/docs/web/supported-browsers-and-frameworks/#jest
   },

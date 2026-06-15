@@ -23,8 +23,8 @@ import { type DeepDiff, expectType } from "./jest/util.js";
 import { type Oneof } from "./oneof";
 import type { Mask, Parameter, Query } from "./schema.js";
 import type { Equal } from "./utils/types.js";
-import type { PartialMessage } from "@bufbuild/protobuf";
-import type { Message as ProtoMessage } from "@bufbuild/knit-test-spec/spec/messages_pb.js";
+import type { MessageInitShape } from "@bufbuild/protobuf";
+import { MessageSchema as ProtoMessageSchema } from "@bufbuild/knit-test-spec/spec/messages_pb.js";
 import { alias } from "./alias";
 import type { CustomJsonName } from "@bufbuild/knit-test-spec/spec/json_knit.js";
 import type {
@@ -511,9 +511,9 @@ describe("messages", () => {
     };
     type Diff = DeepDiff<Actual, Expected>;
     expectType<Equal<Diff, never>>(true);
-    expectType<Actual extends PartialMessage<ProtoMessage> ? true : false>(
-      true,
-    );
+    expectType<
+      Actual extends MessageInitShape<typeof ProtoMessageSchema> ? true : false
+    >(true);
   });
   test("params ignore relations", () => {
     type Actual = Parameter<All>;
@@ -791,13 +791,13 @@ describe("client", () => {
       type Expected = {
         "spec.AllService": {
           createAll:
-          | {
-            enum: TopLevel;
-            oneof?: {
-              oneofValue?: Oneof<{ enum: OneofEnum }>;
-            };
-          }
-          | KnitError;
+            | {
+                enum: TopLevel;
+                oneof?: {
+                  oneofValue?: Oneof<{ enum: OneofEnum }>;
+                };
+              }
+            | KnitError;
         };
         "spec.WktService": {
           getAny: Any | KnitError;
@@ -877,10 +877,10 @@ describe("errors", () => {
       type Actual = Mask<typeof query, All, { "@catch": {} }>;
       type Expected = {
         relSelf?:
-        | {
-          scalars?: { fields?: { u32: number } };
-        }
-        | KnitError;
+          | {
+              scalars?: { fields?: { u32: number } };
+            }
+          | KnitError;
       };
       type Diff = DeepDiff<Actual, Expected>;
       expectType<Equal<Diff, never>>(true);
@@ -919,10 +919,10 @@ describe("errors", () => {
     type Actual = Mask<typeof query, All>;
     type Expected = {
       relSelf?:
-      | {
-        scalars?: { fields?: { u32: number } };
-      }
-      | KnitError;
+        | {
+            scalars?: { fields?: { u32: number } };
+          }
+        | KnitError;
     };
     type Diff = DeepDiff<Actual, Expected>;
     expectType<Equal<Diff, never>>(true);

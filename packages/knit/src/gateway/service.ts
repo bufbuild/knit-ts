@@ -20,31 +20,34 @@ import {
   type ServiceImpl,
   type Transport,
 } from "@connectrpc/connect";
-import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
 import {
-  DoResponse,
-  FetchResponse,
-  ListenResponse,
-  Request,
-  Response,
-  Schema,
+  DoResponseSchema,
+  FetchResponseSchema,
+  KnitService,
+  ListenResponseSchema,
+  ResponseSchema,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import type { Request } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import {
   createGateway,
   type Gateway,
   type ResolverContext,
 } from "./gateway.js";
-import {
-  Value,
-  MethodKind,
-  MethodIdempotency,
-  type PartialMessage,
-  type PlainMessage,
-  type AnyMessage,
-  type IMessageTypeRegistry,
-  type JsonValue,
+import { create, fromJson, toJson } from "@bufbuild/protobuf";
+import type {
+  DescMessage,
+  DescMethodStreaming,
+  DescMethodUnary,
+  JsonValue,
+  Message,
+  MessageInitShape,
+  Registry,
 } from "@bufbuild/protobuf";
-import { computeSchema } from "./schema.js";
+import {
+  MethodOptions_IdempotencyLevel,
+  ValueSchema,
+} from "@bufbuild/protobuf/wkt";
+import { computeSchema, type GatewaySchema } from "./schema.js";
 import {
   formatError,
   formatMessage,
@@ -55,9 +58,11 @@ import { makeOutboundHeader } from "./headers.js";
 import { stitch } from "./stitch.js";
 import { min } from "./util.js";
 
-const doOperation = `${KnitService.typeName}.${KnitService.methods.do.name}`;
-const fetchOperation = `${KnitService.typeName}.${KnitService.methods.fetch.name}`;
-const listenOperation = `${KnitService.typeName}.${KnitService.methods.listen.name}`;
+type ResponseInit = MessageInitShape<typeof ResponseSchema>;
+
+const doOperation = `${KnitService.typeName}.${KnitService.method.do.name}`;
+const fetchOperation = `${KnitService.typeName}.${KnitService.method.fetch.name}`;
+const listenOperation = `${KnitService.typeName}.${KnitService.method.listen.name}`;
 
 export function registerKnitService(
   router: ConnectRouter,
@@ -79,7 +84,7 @@ export interface CreateKnitServiceOptions {
   /**
    * The type registry to use for encoding/decoding messages.
    */
-  typeRegistry?: IMessageTypeRegistry;
+  typeRegistry?: Registry;
   /**
    * The default timeout in millisecond for RPC calls.
    *
@@ -130,10 +135,10 @@ export function createKnitService({
 }: CreateKnitServiceOptions): ServiceImpl<typeof KnitService> {
   const gateway = createGateway({ transport, timeoutMs });
   configure(gateway);
-  const schemaCache = new Map<string, PlainMessage<Schema>>();
+  const schemaCache = new Map<string, GatewaySchema>();
   return {
     async do({ requests }, context) {
-      return new DoResponse({
+      return create(DoResponseSchema, {
         responses: await handleUnary(
           gateway,
           requests,
@@ -145,7 +150,7 @@ export function createKnitService({
       });
     },
     async fetch({ requests }, context) {
-      return new FetchResponse({
+      return create(FetchResponseSchema, {
         responses: await handleUnary(
           gateway,
           requests,
@@ -165,7 +170,7 @@ export function createKnitService({
         schemaCache,
       );
       for await (const response of iterable) {
-        yield new ListenResponse({ response });
+        yield create(ListenResponseSchema, { response });
       }
     },
   };
@@ -176,9 +181,9 @@ async function handleUnary(
   requests: Request[],
   context: HandlerContext,
   forFetch: boolean,
-  typeRegistry: IMessageTypeRegistry | undefined,
-  schemaCache: Map<string, PlainMessage<Schema>>,
-): Promise<PartialMessage<Response>[]> {
+  typeRegistry: Registry | undefined,
+  schemaCache: Map<string, GatewaySchema>,
+): Promise<ResponseInit[]> {
   // TODO: Create a typeRegistry for the schema and use that if
   // typeRegistry is not provided. It is not sound, but it should be good enough.
   if (requests.length === 0) {
@@ -187,13 +192,13 @@ async function handleUnary(
   // Fetch does not use catch as the fallback, but Do does.
   const fallbackCatch = !forFetch;
   const headers = makeOutboundHeader(context.requestHeader);
-  const results: Promise<PartialMessage<Response>>[] = [];
+  const results: Promise<ResponseInit>[] = [];
   for (const request of requests) {
     const entryPoint = entryPoints.get(request.method);
     if (entryPoint === undefined) {
       throw new ConnectError(`Method not found`, Code.NotFound);
     }
-    if (entryPoint.method.kind !== MethodKind.Unary) {
+    if (entryPoint.method.methodKind !== "unary") {
       throw new ConnectError(
         `Only unary methods in "Fetch"/"Do"`,
         Code.InvalidArgument,
@@ -201,7 +206,8 @@ async function handleUnary(
     }
     if (
       forFetch &&
-      entryPoint.method.idempotency !== MethodIdempotency.NoSideEffects
+      entryPoint.method.idempotency !==
+        MethodOptions_IdempotencyLevel.NO_SIDE_EFFECTS
     ) {
       throw new ConnectError(
         `Only methods with idempotency_level set to NO_SIDE_EFFECTS are allowed in "Fetch"`,
@@ -209,7 +215,7 @@ async function handleUnary(
       );
     }
     const schema = computeSchema(
-      entryPoint.method.O,
+      entryPoint.method.output,
       request.mask,
       request.method,
       relations,
@@ -219,17 +225,22 @@ async function handleUnary(
         `${entryPoint.service.typeName}.${entryPoint.method.name}`,
       ],
     );
+    const method = entryPoint.method as DescMethodUnary;
     results.push(
       (async () => {
-        let message: AnyMessage;
+        let message: Message;
         try {
           const response = await entryPoint.transport.unary(
-            entryPoint.service,
-            entryPoint.method,
+            method,
             context.signal,
             min(context.timeoutMs(), entryPoint.timeoutMs),
             headers,
-            entryPoint.method.I.fromJson(request.body?.toJson() ?? {}),
+            fromJson(
+              method.input,
+              request.body === undefined
+                ? {}
+                : toJson(ValueSchema, request.body),
+            ),
           );
           message = response.message;
         } catch (err) {
@@ -237,7 +248,8 @@ async function handleUnary(
             throw err;
           }
           return {
-            body: Value.fromJson(
+            body: fromJson(
+              ValueSchema,
               formatError(err, request.method, typeRegistry),
             ),
             method: request.method,
@@ -246,6 +258,7 @@ async function handleUnary(
         }
         return await makeResponse(
           request,
+          method.output,
           schema,
           message,
           fallbackCatch,
@@ -262,9 +275,9 @@ async function handleStream(
   { entryPoints, relations }: Gateway,
   request: Request | undefined,
   context: HandlerContext,
-  typeRegistry: IMessageTypeRegistry | undefined,
-  schemaCache: Map<string, PlainMessage<Schema>>,
-): Promise<AsyncIterable<PartialMessage<Response>>> {
+  typeRegistry: Registry | undefined,
+  schemaCache: Map<string, GatewaySchema>,
+): Promise<AsyncIterable<ResponseInit>> {
   if (request === undefined) {
     throw new ConnectError(`No request provided`, Code.InvalidArgument);
   }
@@ -272,14 +285,14 @@ async function handleStream(
   if (entryPoint === undefined) {
     throw new ConnectError(`Method not found`, Code.NotFound);
   }
-  if (entryPoint.method.kind !== MethodKind.ServerStreaming) {
+  if (entryPoint.method.methodKind !== "server_streaming") {
     throw new ConnectError(
       `Only server streaming endpoints are allowed in "Listen"`,
       Code.InvalidArgument,
     );
   }
   const schema = computeSchema(
-    entryPoint.method.O,
+    entryPoint.method.output,
     request.mask,
     request.method,
     relations,
@@ -289,16 +302,19 @@ async function handleStream(
       `${entryPoint.service.typeName}.${entryPoint.method.name}`,
     ],
   );
+  const method = entryPoint.method as DescMethodStreaming;
   const headers = makeOutboundHeader(context.requestHeader);
   const { message: messageIt } = await entryPoint.transport.stream(
-    entryPoint.service,
-    entryPoint.method,
+    method,
     context.signal,
     min(context.timeoutMs(), entryPoint.timeoutMs),
     headers,
     // eslint-disable-next-line @typescript-eslint/require-await
     (async function* () {
-      yield entryPoint.method.I.fromJson(request.body?.toJson() ?? {});
+      yield fromJson(
+        method.input,
+        request.body === undefined ? {} : toJson(ValueSchema, request.body),
+      );
     })(),
   );
   return (async function* () {
@@ -307,6 +323,7 @@ async function handleStream(
     for await (const message of messageIt) {
       const response = await makeResponse(
         request,
+        method.output,
         schema,
         message,
         false,
@@ -325,12 +342,13 @@ async function handleStream(
 
 async function makeResponse(
   request: Request,
-  schema: PlainMessage<Schema>,
-  responseMessage: AnyMessage,
+  responseDesc: DescMessage,
+  schema: GatewaySchema,
+  responseMessage: Message,
   fallbackCatch: boolean,
-  typeRegistry: IMessageTypeRegistry | undefined,
+  typeRegistry: Registry | undefined,
   context: ResolverContext,
-): Promise<PartialMessage<Response>> {
+): Promise<ResponseInit> {
   const target: { body?: JsonValue } = {};
   let errorPatch: ErrorPatch | undefined = undefined;
   if (shouldCatch(request.onError, fallbackCatch)) {
@@ -341,6 +359,7 @@ async function makeResponse(
   }
   const [result, patches] = formatMessage(
     responseMessage,
+    responseDesc,
     schema,
     errorPatch,
     fallbackCatch,
@@ -349,7 +368,7 @@ async function makeResponse(
   await stitch(patches, fallbackCatch, typeRegistry, context);
   return {
     method: request.method,
-    body: Value.fromJson(target.body ?? result),
+    body: fromJson(ValueSchema, target.body ?? result),
     schema: schema,
   };
 }

@@ -17,14 +17,14 @@
   "scripts": {
     "lint": "eslint .",
     "clean": "rm -rf ./dist/cjs/*",
-    "build": "esbuild src/index.ts --bundle --platform=node --target=node18 --outdir=./dist/cjs --external:@bufbuild/protoplugin --external:@bufbuild/protobuf && echo >./dist/cjs/package.json '{\"type\":\"commonjs\"}'"
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node18 --outdir=./dist/cjs --external:@bufbuild/protoplugin --external:@bufbuild/protobuf --external:@bufbuild/protobuf/* && echo >./dist/cjs/package.json '{\"type\":\"commonjs\"}'"
   },
   "preferUnplugged": true,
   "dependencies": {
-    "@bufbuild/protoplugin": "^1.5.0"
+    "@bufbuild/protoplugin": "^2.12.0"
   },
   "peerDependencies": {
-    "@bufbuild/protobuf": "^1.5.0"
+    "@bufbuild/protobuf": "^2.12.0"
   },
   "peerDependenciesMeta": {
     "@bufbuild/protobuf": {
@@ -32,8 +32,8 @@
     }
   },
   "devDependencies": {
-    "@buf/bufbuild_knit.bufbuild_es": "1.3.1-20230504140941-3dc602456973.1",
-    "@bufbuild/protobuf": "^1.5.0",
+    "@buf/bufbuild_knit.bufbuild_es": "2.12.0-20230504140941-3dc602456973.1",
+    "@bufbuild/protobuf": "^2.12.0",
     "esbuild": "^0.28.1",
     "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*"

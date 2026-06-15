@@ -12,13 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import type { Schema_Field } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
-import type {
-  JsonObject,
-  AnyMessage,
-  PlainMessage,
-  IMessageTypeRegistry,
-} from "@bufbuild/protobuf";
+import type { JsonObject, Message, Registry } from "@bufbuild/protobuf";
 import type { Relation, ResolverContext } from "./gateway.js";
 import {
   formatValue,
@@ -30,13 +24,10 @@ import { Code, ConnectError } from "@connectrpc/connect";
 import { makeResolverHeaders } from "./headers.js";
 
 interface Batch {
-  bases: AnyMessage[];
+  bases: Message[];
   formatTargets: JsonObject[];
   errorPatches: (ErrorPatch | undefined)[];
-  field: PlainMessage<Schema_Field> & {
-    relation: Relation;
-    operations: string[];
-  };
+  field: Patch["field"];
 }
 
 /**
@@ -45,7 +36,7 @@ interface Batch {
 export async function stitch(
   patches: Patch[],
   fallbackCatch: boolean,
-  typeRegistry: IMessageTypeRegistry | undefined,
+  typeRegistry: Registry | undefined,
   context: ResolverContext,
 ) {
   while (patches.length > 0) {
@@ -61,7 +52,7 @@ export async function stitch(
 async function resolveBatch(
   { field, bases, formatTargets, errorPatches }: Batch,
   fallbackCatch: boolean,
-  typeRegistry: IMessageTypeRegistry | undefined,
+  typeRegistry: Registry | undefined,
   context: ResolverContext,
 ): Promise<Patch[]> {
   let results: unknown[];
@@ -95,8 +86,7 @@ async function resolveBatch(
     const [formattedResult, resultPatches] = formatValue(
       result,
       field.relation.field,
-      field.relation.runtime,
-      field.type?.value.value,
+      field.type.value.value,
       errorPatches[i],
       fallbackCatch,
       typeRegistry,
@@ -111,7 +101,7 @@ async function resolveBatch(
 function makeBatches(patches: Patch[]) {
   // Maps only support reference checks for objects, so we use nested maps
   // as an alternative to composite keys.
-  const groups = new Map<Relation, Map<AnyMessage | undefined, Batch>>();
+  const groups = new Map<Relation, Map<Message | undefined, Batch>>();
   const batches: Batch[] = [];
   for (const patch of patches) {
     let relationPatches = groups.get(patch.field.relation);

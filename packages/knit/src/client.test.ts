@@ -5,24 +5,26 @@ import {
   createRouterTransport,
 } from "@connectrpc/connect";
 import type { AllService } from "@bufbuild/knit-test-spec/spec/all_knit.js";
-import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
-import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
-import { type PartialMessage, Value } from "@bufbuild/protobuf";
+import { AllSchema, type All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
 import {
-  FetchRequest,
-  FetchResponse,
-  Schema,
+  KnitService,
+  FetchResponseSchema,
+  SchemaSchema,
   Schema_Field_Type_ScalarType,
+  type ListenRequest,
+  type Request as KnitRequest,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import { type MessageInitShape, fromJson, toJson } from "@bufbuild/protobuf";
+import { ValueSchema } from "@bufbuild/protobuf/wkt";
 import {
-  Scalar,
-  ScalarFields,
+  ScalarSchema,
+  ScalarFieldsSchema,
 } from "@bufbuild/knit-test-spec/spec/scalars_pb.js";
 import type { Query } from "./schema.js";
 
 describe("client", () => {
-  const schema: PartialMessage<Schema> = {
-    name: All.typeName,
+  const schema: MessageInitShape<typeof SchemaSchema> = {
+    name: AllSchema.typeName,
     fields: [
       {
         name: "scalars",
@@ -30,7 +32,7 @@ describe("client", () => {
           value: {
             case: "message",
             value: {
-              name: Scalar.typeName,
+              name: ScalarSchema.typeName,
               fields: [
                 {
                   name: "fields",
@@ -38,7 +40,7 @@ describe("client", () => {
                     value: {
                       case: "message",
                       value: {
-                        name: ScalarFields.typeName,
+                        name: ScalarFieldsSchema.typeName,
                         fields: [
                           {
                             name: "str",
@@ -70,16 +72,16 @@ describe("client", () => {
   const headerKey = "Authorization";
   const headerValue = "some-token";
   const unary = (
-    { requests }: FetchRequest,
+    { requests }: { requests: KnitRequest[] },
     { requestHeader }: HandlerContext,
-  ): PartialMessage<FetchResponse> => {
+  ): MessageInitShape<typeof FetchResponseSchema> => {
     expect(requests).toHaveLength(1);
-    expect(requests[0].body?.toJson()).toEqual(request);
+    expect(toJson(ValueSchema, requests[0].body!)).toEqual(request);
     expect(requestHeader.get(headerKey)).toEqual(headerValue);
     return {
       responses: [
         {
-          body: Value.fromJson(response),
+          body: fromJson(ValueSchema, response),
           schema: schema,
           method: requests[0].method,
         },
@@ -89,18 +91,22 @@ describe("client", () => {
   const client = createClientWithTransport<AllService>(
     createRouterTransport(({ service }) => {
       service(KnitService, {
-        fetch: unary,
-        do: unary,
+        fetch: unary as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+        do: unary as any, // eslint-disable-line @typescript-eslint/no-explicit-any
         async *listen(
-          { request: actualRequest },
+          { request: actualRequest }: ListenRequest,
           { requestHeader }: HandlerContext,
         ) {
           expect(requestHeader.get(headerKey)).toEqual(headerValue);
-          expect(actualRequest?.body?.toJson()).toEqual(request);
+          expect(
+            actualRequest?.body !== undefined
+              ? toJson(ValueSchema, actualRequest.body)
+              : undefined,
+          ).toEqual(request);
           for (let i = 0; i < 5; i++) {
             yield {
               response: {
-                body: Value.fromJson(response),
+                body: fromJson(ValueSchema, response),
                 schema: schema,
                 method: actualRequest?.method,
               },

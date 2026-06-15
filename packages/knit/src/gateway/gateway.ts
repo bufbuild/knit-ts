@@ -13,16 +13,15 @@
 // limitations under the License.
 
 import type { Transport } from "@connectrpc/connect";
-import { MethodKind, type PlainMessage } from "@bufbuild/protobuf";
 import type {
-  ServiceType,
-  MethodInfo,
-  AnyMessage,
-  FieldInfo,
-  MessageType,
-  PartialMessage,
+  DescField,
+  DescMessage,
+  DescMethod,
+  DescMethodUnary,
+  DescService,
+  Message,
+  MessageInitShape,
 } from "@bufbuild/protobuf";
-import type { RelationConfig } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/v1alpha1/options_pb.js";
 import { min } from "./util";
 
 /**
@@ -46,7 +45,7 @@ interface GatewayOptions {
 /**
  * Options to configure a service using {@link Gateway}. See {@link Gateway.service}
  */
-interface GatewayServiceOptions<S extends ServiceType> {
+interface GatewayServiceOptions<S extends DescService> {
   /**
    * The transport to use for the service. Defaults to the base transport of the gateway.
    */
@@ -94,14 +93,14 @@ export interface Gateway {
   /**
    * Add the service methods as entry points.
    */
-  service<S extends ServiceType>(
+  service<S extends DescService>(
     service: S,
     options?: GatewayServiceOptions<S>,
   ): Gateway;
   /**
    * Add relation(s) to the gateway.
    */
-  relation<S extends ServiceType>(
+  relation<S extends DescService>(
     service: S,
     methods: RelationMethodConfig<S>,
     options?: GatewayRelationOptions,
@@ -117,11 +116,11 @@ export interface EntryPoint {
   /**
    * The service that the method belongs to.
    */
-  service: ServiceType;
+  service: DescService;
   /**
    * The method to call.
    */
-  method: MethodInfo;
+  method: DescMethod;
   /**
    * The transport to use for the call.
    */
@@ -141,31 +140,28 @@ export interface Relation {
   /**
    * The message type of the base message.
    */
-  base: MessageType;
+  base: DescMessage;
   /**
    * The relation field info.
    */
-  field: FieldInfo;
+  field: DescField;
   /**
    * The message type of the params.
+   *
+   * This is the resolver's request type; the params provided by a client are
+   * the fields of the request other than `bases`.
    */
-  params?: MessageType;
+  params?: DescMessage;
   /**
    * The fully-qualified rpc method that resolves the relation.
    */
   method: string;
   /**
-   * The runtime to use for the relation.
-   *
-   * This is the runtime of the file it was defined in.
-   */
-  runtime: MessageType["runtime"];
-  /**
    * The resolver to use for the relation.
    */
   resolver: (
-    bases: AnyMessage[],
-    params: PartialMessage<AnyMessage> | undefined,
+    bases: Message[],
+    params: Message | undefined,
     context: ResolverContext,
   ) => Promise<unknown[]>;
 }
@@ -195,13 +191,13 @@ export interface ResolverContext {
  *
  * @internal
  */
-export type UnaryAndServerStreamMethods<S extends ServiceType> = {
-  [K in keyof S["methods"]]: S["methods"][K]["kind"] extends
-  | MethodKind.Unary
-  | MethodKind.ServerStreaming
-  ? K
-  : never;
-}[keyof S["methods"]];
+export type UnaryAndServerStreamMethods<S extends DescService> = {
+  [K in keyof S["method"]]: S["method"][K]["methodKind"] extends
+    | "unary"
+    | "server_streaming"
+    ? K
+    : never;
+}[keyof S["method"]];
 
 /**
  * Create a new Gateway.
@@ -217,14 +213,14 @@ export function createGateway({
   return {
     entryPoints,
     relations,
-    service<S extends ServiceType>(
+    service<S extends DescService>(
       service: S,
       options?: GatewayServiceOptions<S>,
     ) {
-      for (const [localName, methodInfo] of Object.entries(service.methods)) {
-        switch (methodInfo.kind) {
-          case MethodKind.Unary:
-          case MethodKind.ServerStreaming:
+      for (const [localName, methodInfo] of Object.entries(service.method)) {
+        switch (methodInfo.methodKind) {
+          case "unary":
+          case "server_streaming":
             break;
           default:
             // stream kind not supported
@@ -251,7 +247,7 @@ export function createGateway({
       }
       return this;
     },
-    relation<S extends ServiceType>(
+    relation<S extends DescService>(
       service: S,
       methods: RelationMethodConfig<S>,
       options?: GatewayRelationOptions,
@@ -265,26 +261,24 @@ export function createGateway({
         if (config.name === "") {
           throw new Error("Knit: relation name cannot be empty");
         }
-        const methodInfo = service.methods[method];
-        const base = getRepeatedMessage(methodInfo.I, 1, "bases");
-        if (
-          base.fields.list().find((f) => f.name === config.name) !== undefined
-        ) {
+        const methodInfo = service.method[method];
+        const base = getRepeatedMessage(methodInfo.input, 1, "bases");
+        if (base.fields.find((f) => f.name === config.name) !== undefined) {
           throw new Error(
             `Knit: ${method}: relation name '${config.name}' already exists on ${base.typeName}`,
           );
         }
-        const shell = getRepeatedMessage(methodInfo.O, 1, "values");
-        const shellFields = shell.fields.list();
+        const shell = getRepeatedMessage(methodInfo.output, 1, "values");
+        const shellFields = shell.fields;
         if (shellFields.length !== 1) {
           throw new Error(
             `Knit: ${method}: relation must have exactly one field, found ${shellFields.length}`,
           );
         }
         const field = shellFields[0];
-        if (field.no !== 1) {
+        if (field.number !== 1) {
           throw new Error(
-            `Knit: ${method}: relation ${field.name} must have tag 1, found ${field.no}`,
+            `Knit: ${method}: relation ${field.name} must have tag 1, found ${field.number}`,
           );
         }
         if (field.name !== config.name) {
@@ -302,39 +296,37 @@ export function createGateway({
             `Knit: ${method}: relation name '${config.name}' already exists on ${base.typeName}`,
           );
         }
-        const paramFields = methodInfo.I.fields
-          .list()
-          .filter((f) => f.no !== 1);
-        let params: MessageType | undefined = undefined;
-        if (paramFields.length > 0) {
-          params = methodInfo.I.runtime.makeMessageType(
-            `buf.knit.params.${base.typeName}.${config.name}`,
-            methodInfo.I.fields.list().filter((f) => f.no !== 1),
-          );
-        }
+        const paramFields = methodInfo.input.fields.filter(
+          (f) => f.number !== 1,
+        );
+        // The params provided by a client are all request fields other than
+        // `bases`. We reuse the request type to parse and validate them.
+        const params: DescMessage | undefined =
+          paramFields.length > 0 ? methodInfo.input : undefined;
+        const resolverMethod = methodInfo as DescMethodUnary;
         const resolverTransport = options?.transport ?? transport;
         const resolverTimeoutMs = options?.timeoutMs ?? timeoutMs;
         baseRelations.set(config.name, {
           base,
           field,
-          runtime: shell.runtime,
           params,
           method: `${service.typeName}.${methodInfo.name}`,
           resolver: async (bases, params, { headers, signal, timeoutMs }) => {
             const response = await resolverTransport.unary(
-              service,
-              methodInfo,
+              resolverMethod,
               signal,
               min(timeoutMs, resolverTimeoutMs),
               headers,
               {
-                bases,
                 ...params,
-              },
+                bases,
+              } as MessageInitShape<DescMessage>,
             );
-            return (response.message["values"] as Array<AnyMessage>).map(
-              (v: AnyMessage) => v[field.localName] as unknown,
-            );
+            return (
+              (response.message as Record<string, unknown>)[
+                "values"
+              ] as Message[]
+            ).map((v) => (v as Record<string, unknown>)[field.localName]);
           },
         });
       }
@@ -343,8 +335,8 @@ export function createGateway({
   };
 }
 
-function getRepeatedMessage(message: MessageType, tag: number, name: string) {
-  const field = message.fields.find(tag);
+function getRepeatedMessage(message: DescMessage, tag: number, name: string) {
+  const field = message.fields.find((f) => f.number === tag);
   if (field === undefined) {
     throw new Error(
       `Knit: ${message.name}: relation must have a '${name}' field with tag ${tag}`,
@@ -355,15 +347,15 @@ function getRepeatedMessage(message: MessageType, tag: number, name: string) {
       `Knit: ${message.name}: field with ${tag} must be named '${name}', found '${field.name}'`,
     );
   }
-  if (!field.repeated) {
+  if (field.fieldKind !== "list") {
     throw new Error(`Knit: ${message.name}: bases field must be repeated`);
   }
-  if (field.kind !== "message") {
+  if (field.listKind !== "message") {
     throw new Error(`Knit: ${message.name}: bases field must be a message `);
   }
-  return field.T;
+  return field.message;
 }
 
-type RelationMethodConfig<S extends ServiceType> = {
-  [K in keyof S["methods"]]?: PlainMessage<RelationConfig>;
+type RelationMethodConfig<S extends DescService> = {
+  [K in keyof S["method"]]?: { name: string };
 };

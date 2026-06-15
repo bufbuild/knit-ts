@@ -12,39 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {
+import { ScalarType, create, toBinary, toJson } from "@bufbuild/protobuf";
+import type {
+  DescField,
+  DescMessage,
+  JsonObject,
+  JsonValue,
   Message,
-  type AnyMessage,
-  type FieldInfo,
-  type IMessageTypeRegistry,
-  type JsonObject,
-  type JsonValue,
-  type MessageType,
-  type PlainMessage,
-  protoBase64,
+  Registry,
 } from "@bufbuild/protobuf";
-import {
-  Error_Code,
-  MaskField,
-  type Schema,
-  type Schema_Field,
-  type Schema_Field_Type,
-  type Schema_Field_Type_MapType,
-  type Schema_Field_Type_RepeatedType,
-} from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import { base64Encode } from "@bufbuild/protobuf/wire";
+import { Error_Code } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import type { MaskField } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import { wktSet } from "./wkt.js";
 import type { Relation } from "./gateway.js";
+import type {
+  GatewaySchema,
+  GatewaySchemaField,
+  GatewaySchemaFieldType,
+  GatewaySchemaMapType,
+  GatewaySchemaRepeatedType,
+} from "./schema.js";
 import { Code, ConnectError } from "@connectrpc/connect";
-import type { } from "./schema.js";
+
+type SchemaType = GatewaySchemaFieldType["value"]["value"];
 
 export interface Patch {
-  base: AnyMessage;
+  base: Message;
   target: JsonObject;
   errorPatch: ErrorPatch | undefined;
-  field: PlainMessage<Schema_Field> & {
+  field: GatewaySchemaField & {
     relation: Relation;
-    params?: AnyMessage;
-    operations: string[];
   };
 }
 
@@ -65,15 +63,15 @@ export interface ErrorPatch {
  * @internal
  */
 export function formatMessage(
-  message: AnyMessage,
-  schema: PlainMessage<Schema>,
+  message: Message,
+  messageDesc: DescMessage,
+  schema: GatewaySchema,
   upstreamErrPatch: ErrorPatch | undefined,
   fallbackCatch: boolean,
-  typeRegistry: IMessageTypeRegistry | undefined,
+  typeRegistry: Registry | undefined,
 ): [JsonValue, Patch[]] {
-  const type = message.getType();
-  if (wktSet.has(type.typeName)) {
-    return [message.toJson({ typeRegistry }), []];
+  if (wktSet.has(messageDesc.typeName)) {
+    return [toJson(messageDesc, message, { registry: typeRegistry }), []];
   }
   const formattedObject: JsonObject = {};
   const patches: Patch[] = [];
@@ -94,21 +92,20 @@ export function formatMessage(
       });
       continue;
     }
-    const fieldInfo = type.fields.findJsonName(
-      field.jsonName === "" ? field.name : field.jsonName,
+    const fieldDesc = messageDesc.fields.find(
+      (f) => f.localName === field.name,
     );
-    if (fieldInfo === undefined) {
+    if (fieldDesc === undefined) {
       // Shouldn't happen because schema is created from the message
       throw new ConnectError(
-        `Field '${field.name}' not found for '${type.typeName}'`,
+        `Field '${field.name}' not found for '${messageDesc.typeName}'`,
         Code.InvalidArgument,
       );
     }
     const [fieldValue, fieldPatches] = formatValue(
-      message[field.name],
-      fieldInfo,
-      type.runtime,
-      field.type?.value.value,
+      (message as Record<string, unknown>)[field.name],
+      fieldDesc,
+      field.type.value.value,
       upstreamErrPatch,
       fallbackCatch,
       typeRegistry,
@@ -122,22 +119,20 @@ export function formatMessage(
 
 export function formatValue(
   value: unknown,
-  fieldInfo: FieldInfo,
-  runtime: MessageType["runtime"],
-  schemaType: PlainMessage<Schema_Field_Type>["value"]["value"],
+  fieldDesc: DescField,
+  schemaType: SchemaType,
   upstreamErrPatch: ErrorPatch | undefined,
   fallbackCatch: boolean,
-  typeRegistry: IMessageTypeRegistry | undefined,
+  typeRegistry: Registry | undefined,
 ): [JsonValue | undefined, Patch[]] {
-  if (fieldInfo.kind === "map") {
+  if (fieldDesc.fieldKind === "map") {
     const formattedValue: JsonObject = {};
     const patches: Patch[] = [];
     for (const [k, v] of Object.entries(value as object)) {
       const [elementValue, elementPatches] = formatSingular(
         v,
-        fieldInfo.V,
-        runtime,
-        (schemaType as PlainMessage<Schema_Field_Type_MapType>).value.value,
+        fieldDesc,
+        (schemaType as GatewaySchemaMapType).value.value,
         upstreamErrPatch,
         fallbackCatch,
         typeRegistry,
@@ -147,16 +142,14 @@ export function formatValue(
     }
     return [formattedValue, patches];
   }
-  if (fieldInfo.repeated) {
+  if (fieldDesc.fieldKind === "list") {
     const formattedValue: JsonValue[] = [];
     const patches: Patch[] = [];
     for (const element of value as Array<unknown>) {
       const [elementValue, elementPatches] = formatSingular(
         element,
-        fieldInfo as (FieldInfo & { kind: "map" })["V"],
-        runtime,
-        (schemaType as PlainMessage<Schema_Field_Type_RepeatedType>).element
-          .value,
+        fieldDesc,
+        (schemaType as GatewaySchemaRepeatedType).element.value,
         upstreamErrPatch,
         fallbackCatch,
         typeRegistry,
@@ -168,8 +161,7 @@ export function formatValue(
   }
   return formatSingular(
     value,
-    fieldInfo,
-    runtime,
+    fieldDesc,
     schemaType,
     upstreamErrPatch,
     fallbackCatch,
@@ -180,7 +172,7 @@ export function formatValue(
 export function formatError(
   rawErr: unknown,
   path: string,
-  typeRegistry?: IMessageTypeRegistry,
+  typeRegistry?: Registry,
 ): JsonValue {
   if (typeof rawErr === "object" && rawErr !== null && "[@error]" in rawErr) {
     return rawErr as JsonValue;
@@ -189,13 +181,14 @@ export function formatError(
   const details: JsonValue[] = [];
   for (const detail of connectErr.details) {
     let type: string, value: string, debug: JsonValue | null;
-    if (detail instanceof Message) {
-      type = detail.getType().typeName;
-      value = protoBase64.enc(detail.toBinary());
-      debug = detail.toJson({ typeRegistry });
+    if ("desc" in detail) {
+      const message = create(detail.desc, detail.value);
+      type = detail.desc.typeName;
+      value = base64Encode(toBinary(detail.desc, message));
+      debug = toJson(detail.desc, message, { registry: typeRegistry });
     } else {
       type = detail.type;
-      value = protoBase64.enc(detail.value);
+      value = base64Encode(detail.value);
       debug = detail.debug ?? null;
     }
     details.push({
@@ -215,29 +208,38 @@ export function formatError(
 
 function formatSingular(
   value: unknown,
-  type: (FieldInfo & { kind: "map" })["V"],
-  runtime: MessageType["runtime"],
-  schemaType: PlainMessage<Schema_Field_Type>["value"]["value"],
+  fieldDesc: DescField,
+  schemaType: SchemaType,
   upstreamErrPatch: ErrorPatch | undefined,
   fallbackCatch: boolean,
-  typeRegistry: IMessageTypeRegistry | undefined,
+  typeRegistry: Registry | undefined,
 ): [JsonValue | undefined, Patch[]] {
-  switch (type.kind) {
+  switch (elementKind(fieldDesc)) {
     case "scalar":
-      return [runtime.json.writeScalar(type.T, value, false), []];
-    case "enum":
-      if (type.T.typeName === "google.protobuf.NullValue") {
+      return [writeScalarJson(fieldDesc.scalar as ScalarType, value), []];
+    case "enum": {
+      const enumDesc = fieldDesc.enum;
+      if (enumDesc === undefined) {
+        return [value as JsonValue, []];
+      }
+      if (enumDesc.typeName === "google.protobuf.NullValue") {
         return [null, []];
       }
-      // return the number if the enum is not found
+      // return the number if the enum value is not found
       return [
-        type.T.findNumber(value as number)?.name ?? (value as number),
+        enumDesc.values.find((v) => v.number === value)?.name ??
+          (value as number),
         [],
       ];
+    }
     case "message":
+      if (value === undefined || value === null) {
+        return [undefined, []];
+      }
       return formatMessage(
-        value as AnyMessage,
-        schemaType as PlainMessage<Schema>,
+        value as Message,
+        fieldDesc.message as DescMessage,
+        schemaType as GatewaySchema,
         upstreamErrPatch,
         fallbackCatch,
         typeRegistry,
@@ -245,8 +247,65 @@ function formatSingular(
   }
 }
 
+/**
+ * Returns the element kind for a field: the kind of the value for singular
+ * fields, the list element for repeated fields, and the map value for map
+ * fields.
+ */
+function elementKind(field: DescField): "scalar" | "enum" | "message" {
+  switch (field.fieldKind) {
+    case "list":
+      return field.listKind;
+    case "map":
+      return field.mapKind;
+    default:
+      return field.fieldKind;
+  }
+}
+
+/**
+ * Serializes a scalar value to its proto3 JSON representation, omitting default
+ * (zero) values by returning `undefined`.
+ */
+function writeScalarJson(
+  scalar: ScalarType,
+  value: unknown,
+): JsonValue | undefined {
+  switch (scalar) {
+    case ScalarType.INT64:
+    case ScalarType.UINT64:
+    case ScalarType.SINT64:
+    case ScalarType.FIXED64:
+    case ScalarType.SFIXED64: {
+      const v = value as bigint | string;
+      if (v === BigInt(0) || v === "0") return undefined;
+      return v.toString();
+    }
+    case ScalarType.BYTES: {
+      const v = value as Uint8Array;
+      return v.length === 0 ? undefined : base64Encode(v);
+    }
+    case ScalarType.FLOAT:
+    case ScalarType.DOUBLE: {
+      const num = value as number;
+      if (num === 0) return undefined;
+      if (Number.isNaN(num)) return "NaN";
+      if (num === Number.POSITIVE_INFINITY) return "Infinity";
+      if (num === Number.NEGATIVE_INFINITY) return "-Infinity";
+      return num;
+    }
+    case ScalarType.BOOL:
+      return value === true ? true : undefined;
+    case ScalarType.STRING:
+      return value === "" ? undefined : (value as string);
+    default:
+      // INT32, UINT32, SINT32, FIXED32, SFIXED32
+      return value === 0 ? undefined : (value as number);
+  }
+}
+
 export function shouldCatch(
-  onError: PlainMessage<MaskField>["onError"],
+  onError: MaskField["onError"],
   fallbackCatch: boolean,
 ) {
   return (

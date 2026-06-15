@@ -1,31 +1,31 @@
 import { expect, test } from "@jest/globals";
 import { stitch } from "./stitch.js";
 import type { Patch } from "./json.js";
-import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
-import { type AnyMessage, type PlainMessage, proto3 } from "@bufbuild/protobuf";
-import { GetAllRelSelfParamResponse_AllParamResult } from "@bufbuild/knit-test-spec/spec/relations_pb.js";
+import { AllSchema } from "@bufbuild/knit-test-spec/spec/all_pb.js";
+import { create, toJson } from "@bufbuild/protobuf";
+import type { MessageShape } from "@bufbuild/protobuf";
+import { GetAllRelSelfParamResponse_AllParamResultSchema } from "@bufbuild/knit-test-spec/spec/relations_pb.js";
 import type { Relation } from "./gateway.js";
-import {
-  Schema_Field,
-  Schema_Field_Type,
-} from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
-import type {} from "./schema.js";
+import type { GatewaySchemaField, GatewaySchemaFieldType } from "./schema.js";
 
 test("stitch", async () => {
-  const base = new All();
+  const base = create(AllSchema, {});
   const relationFieldInfo =
-    GetAllRelSelfParamResponse_AllParamResult.fields.find(1)!;
+    GetAllRelSelfParamResponse_AllParamResultSchema.fields.find(
+      (f) => f.number === 1,
+    )!;
   expect(relationFieldInfo).toBeDefined();
   const target = {};
   const params = { scalars: { fields: { str: "param" } } };
   const relation = {
     field: relationFieldInfo,
-    base: All,
-    runtime: proto3,
+    base: AllSchema,
     method: "",
     resolver: async (bases, gotParams) => {
-      expect((gotParams as AnyMessage).toJson()).toEqual(params);
-      return Array(bases.length).fill(new All({}));
+      expect(
+        toJson(AllSchema, gotParams as MessageShape<typeof AllSchema>),
+      ).toEqual(params);
+      return Array(bases.length).fill(create(AllSchema, {}));
     },
   } satisfies Relation;
   const localName = relationFieldInfo.localName;
@@ -35,29 +35,29 @@ test("stitch", async () => {
     jsonName: "",
     relation: relation,
     operations: [],
-    params: new All(params),
+    params: create(AllSchema, params),
     onError: { case: undefined },
     type: {
       value: {
         case: "message",
         value: {
           localNameTable: new Map(),
-          name: All.typeName,
+          name: AllSchema.typeName,
           fields: [],
         },
       },
     },
-  } satisfies PlainMessage<Schema_Field>;
+  } satisfies GatewaySchemaField;
   const type = {
     value: {
       case: "message",
       value: {
         localNameTable: new Map([[localName, terminalField]]),
-        name: All.typeName,
+        name: AllSchema.typeName,
         fields: [terminalField],
       },
     },
-  } satisfies PlainMessage<Schema_Field_Type>;
+  } satisfies GatewaySchemaFieldType;
   const patch = {
     base: base,
     target: target,
@@ -70,7 +70,7 @@ test("stitch", async () => {
       type: type,
       operations: [],
       onError: { case: undefined },
-      params: new All(params),
+      params: create(AllSchema, params),
     },
   } satisfies Patch;
   await stitch([patch], false, undefined, {});

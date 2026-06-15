@@ -16,12 +16,15 @@ import { describe, test, expect } from "@jest/globals";
 import { expectType } from "../jest/util.js";
 import type { Equal } from "../utils/types.js";
 import { createGateway, type UnaryAndServerStreamMethods } from "./gateway.js";
-import type { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
-import { AllService } from "@bufbuild/knit-test-spec/spec/all_connect.js";
-import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_connect.js";
+import type { KnitService } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import {
+  AllService,
+  AllSchema,
+  type All,
+} from "@bufbuild/knit-test-spec/spec/all_pb.js";
+import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_pb.js";
 import { createRouterTransport } from "@connectrpc/connect";
-import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
-import type { AnyMessage } from "@bufbuild/protobuf";
+import { create, toJson } from "@bufbuild/protobuf";
 
 describe("types", () => {
   test("UnaryAndServerStreamMethods", () => {
@@ -79,7 +82,7 @@ describe("relation", () => {
         name: "rel_self",
       },
     });
-    const base = new All({
+    const base = create(AllSchema, {
       scalars: {
         fields: {
           str: "foo",
@@ -87,10 +90,12 @@ describe("relation", () => {
       },
     });
     const response = await gateway.relations
-      .get(All.typeName)
+      .get(AllSchema.typeName)
       ?.get("rel_self")
       ?.resolver([base], undefined, {});
     expect(response).toHaveLength(1);
-    expect((response?.[0]! as AnyMessage).toJson()).toEqual(base.toJson());
+    expect(toJson(AllSchema, response?.[0]! as All)).toEqual(
+      toJson(AllSchema, base),
+    );
   });
 });

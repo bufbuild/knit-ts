@@ -14,326 +14,349 @@
 
 import { describe, expect, test } from "@jest/globals";
 import { computeSchema } from "./schema.js";
+import type {
+  GatewaySchema,
+  GatewaySchemaField,
+  GatewaySchemaFieldType,
+} from "./schema.js";
 import {
-  MaskField,
-  Schema,
-  Schema_Field,
+  MaskFieldSchema,
+  SchemaSchema,
   Schema_Field_Type_ScalarType,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
-import type { MessageType, PartialMessage } from "@bufbuild/protobuf";
 import {
-  Scalar,
-  ScalarFields,
-  ScalarRepeated,
-} from "@bufbuild/knit-test-spec/spec/scalars_pb.js";
-import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
-import { WktFields } from "@bufbuild/knit-test-spec/spec/wkt_pb.js";
-import {
-  Any,
-  BoolValue,
-  BytesValue,
-  DoubleValue,
-  Duration,
-  Empty,
-  FieldMask,
-  FloatValue,
-  Int32Value,
-  Int64Value,
-  ListValue,
-  StringValue,
-  Struct,
-  Timestamp,
-  UInt32Value,
-  UInt64Value,
-  Value,
+  create,
+  type DescMessage,
+  type MessageInitShape,
 } from "@bufbuild/protobuf";
-import { Keys, Map as ProtoMap } from "@bufbuild/knit-test-spec/spec/map_pb.js";
-import { Message } from "@bufbuild/knit-test-spec/spec/messages_pb.js";
+import {
+  ScalarSchema,
+  ScalarFieldsSchema,
+  ScalarRepeatedSchema,
+} from "@bufbuild/knit-test-spec/spec/scalars_pb.js";
+import { AllSchema } from "@bufbuild/knit-test-spec/spec/all_pb.js";
+import { WktFieldsSchema } from "@bufbuild/knit-test-spec/spec/wkt_pb.js";
+import {
+  AnySchema,
+  BoolValueSchema,
+  BytesValueSchema,
+  DoubleValueSchema,
+  DurationSchema,
+  EmptySchema,
+  FieldMaskSchema,
+  FloatValueSchema,
+  Int32ValueSchema,
+  Int64ValueSchema,
+  ListValueSchema,
+  StringValueSchema,
+  StructSchema,
+  TimestampSchema,
+  UInt32ValueSchema,
+  UInt64ValueSchema,
+  ValueSchema,
+} from "@bufbuild/protobuf/wkt";
+import {
+  KeysSchema,
+  MapSchema as ProtoMapSchema,
+} from "@bufbuild/knit-test-spec/spec/map_pb.js";
+import { MessageSchema } from "@bufbuild/knit-test-spec/spec/messages_pb.js";
 
 describe("valid mask", () => {
-  const scalar = (type: Schema_Field_Type_ScalarType) =>
-    ({
-      value: {
-        case: "scalar",
-        value: type,
-      },
-    }) as const;
-  const messageElement = (
-    type: MessageType,
-    fields?: PartialMessage<Schema_Field>[],
-  ) => message(type, fields).value;
-  const scalarElement = (type: Schema_Field_Type_ScalarType) =>
-    scalar(type).value;
+  const scalar = (
+    type: Schema_Field_Type_ScalarType,
+  ): GatewaySchemaFieldType => ({
+    value: {
+      case: "scalar" as const,
+      value: type,
+    },
+  });
+  const scalarElement = (
+    type: Schema_Field_Type_ScalarType,
+  ): { case: "scalar"; value: Schema_Field_Type_ScalarType } => ({
+    case: "scalar" as const,
+    value: type,
+  });
+  // Accepts partial field shapes (only name+type required) for test data brevity
+  type PartialField = Pick<GatewaySchemaField, "name" | "type">;
   const message = (
-    type: MessageType,
-    fields?: PartialMessage<Schema_Field>[],
-  ) =>
-    ({
+    desc: DescMessage,
+    fields?: PartialField[],
+  ): GatewaySchemaFieldType => ({
+    value: {
+      case: "message" as const,
       value: {
-        case: "message",
-        value: {
-          name: type.typeName,
-          fields: fields,
-        } satisfies PartialMessage<Schema>,
-      },
-    }) as const;
+        name: desc.typeName,
+        fields: (fields ?? []) as unknown as GatewaySchemaField[],
+        localNameTable: new Map(),
+      } satisfies GatewaySchema,
+    },
+  });
+  const messageElement = (desc: DescMessage, fields?: PartialField[]) =>
+    message(desc, fields).value as { case: "message"; value: GatewaySchema };
   const testCases: {
     name: string;
-    message: MessageType;
-    mask: PartialMessage<MaskField>[];
-    schema: PartialMessage<Schema>;
+    message: DescMessage;
+    mask: MessageInitShape<typeof MaskFieldSchema>[];
+    schema: GatewaySchema;
   }[] = [
-      {
-        name: "empty mask",
-        mask: [],
-        schema: {
-          name: All.typeName,
-          fields: [],
-        },
-        message: All,
+    {
+      name: "empty mask",
+      mask: [],
+      schema: {
+        name: AllSchema.typeName,
+        fields: [],
+        localNameTable: new Map(),
       },
-      {
-        name: "Scalars",
-        mask: [
-          { name: "str" },
-          { name: "bl" },
-          { name: "i32" },
-          { name: "i64" },
-          { name: "u32" },
-          { name: "u64" },
-          { name: "s32" },
-          { name: "s64" },
-          { name: "f32" },
-          { name: "f64" },
-          { name: "sf32" },
-          { name: "sf64" },
-          { name: "by" },
-          { name: "db" },
-          { name: "fl" },
-        ],
-        schema: {
-          name: ScalarFields.typeName,
-          fields: [
-            {
-              name: "str",
-              type: scalar(Schema_Field_Type_ScalarType.STRING),
-            },
-            { name: "bl", type: scalar(Schema_Field_Type_ScalarType.BOOL) },
-            { name: "i32", type: scalar(Schema_Field_Type_ScalarType.INT32) },
-            { name: "i64", type: scalar(Schema_Field_Type_ScalarType.INT64) },
-            {
-              name: "u32",
-              type: scalar(Schema_Field_Type_ScalarType.UINT32),
-            },
-            {
-              name: "u64",
-              type: scalar(Schema_Field_Type_ScalarType.UINT64),
-            },
-            { name: "s32", type: scalar(Schema_Field_Type_ScalarType.INT32) },
-            { name: "s64", type: scalar(Schema_Field_Type_ScalarType.INT64) },
-            {
-              name: "f32",
-              type: scalar(Schema_Field_Type_ScalarType.UINT32),
-            },
-            {
-              name: "f64",
-              type: scalar(Schema_Field_Type_ScalarType.UINT64),
-            },
-            {
-              name: "sf32",
-              type: scalar(Schema_Field_Type_ScalarType.INT32),
-            },
-            {
-              name: "sf64",
-              type: scalar(Schema_Field_Type_ScalarType.INT64),
-            },
-            { name: "by", type: scalar(Schema_Field_Type_ScalarType.BYTES) },
-            { name: "db", type: scalar(Schema_Field_Type_ScalarType.DOUBLE) },
-            { name: "fl", type: scalar(Schema_Field_Type_ScalarType.FLOAT) },
-          ],
-        },
-        message: ScalarFields,
+      message: AllSchema,
+    },
+    {
+      name: "Scalars",
+      mask: [
+        { name: "str" },
+        { name: "bl" },
+        { name: "i32" },
+        { name: "i64" },
+        { name: "u32" },
+        { name: "u64" },
+        { name: "s32" },
+        { name: "s64" },
+        { name: "f32" },
+        { name: "f64" },
+        { name: "sf32" },
+        { name: "sf64" },
+        { name: "by" },
+        { name: "db" },
+        { name: "fl" },
+      ],
+      schema: {
+        name: ScalarFieldsSchema.typeName,
+        localNameTable: new Map(),
+        fields: [
+          {
+            name: "str",
+            type: scalar(Schema_Field_Type_ScalarType.STRING),
+          },
+          { name: "bl", type: scalar(Schema_Field_Type_ScalarType.BOOL) },
+          { name: "i32", type: scalar(Schema_Field_Type_ScalarType.INT32) },
+          { name: "i64", type: scalar(Schema_Field_Type_ScalarType.INT64) },
+          {
+            name: "u32",
+            type: scalar(Schema_Field_Type_ScalarType.UINT32),
+          },
+          {
+            name: "u64",
+            type: scalar(Schema_Field_Type_ScalarType.UINT64),
+          },
+          { name: "s32", type: scalar(Schema_Field_Type_ScalarType.INT32) },
+          { name: "s64", type: scalar(Schema_Field_Type_ScalarType.INT64) },
+          {
+            name: "f32",
+            type: scalar(Schema_Field_Type_ScalarType.UINT32),
+          },
+          {
+            name: "f64",
+            type: scalar(Schema_Field_Type_ScalarType.UINT64),
+          },
+          {
+            name: "sf32",
+            type: scalar(Schema_Field_Type_ScalarType.INT32),
+          },
+          {
+            name: "sf64",
+            type: scalar(Schema_Field_Type_ScalarType.INT64),
+          },
+          { name: "by", type: scalar(Schema_Field_Type_ScalarType.BYTES) },
+          { name: "db", type: scalar(Schema_Field_Type_ScalarType.DOUBLE) },
+          { name: "fl", type: scalar(Schema_Field_Type_ScalarType.FLOAT) },
+        ] as GatewaySchemaField[],
       },
-      {
-        name: "WKT",
-        message: WktFields,
-        mask: [
-          { name: "doubleValue" },
-          { name: "boolValue" },
-          { name: "floatValue" },
-          { name: "int64Value" },
-          { name: "uint64Value" },
-          { name: "int32Value" },
-          { name: "uint32Value" },
-          { name: "stringValue" },
-          { name: "bytesValue" },
-          { name: "any" },
-          { name: "duration" },
-          { name: "empty" },
-          { name: "fieldMask" },
-          { name: "timestamp" },
-          { name: "struct" },
-          { name: "listValue" },
-          { name: "value" },
-          { name: "nullValue" },
-        ],
-        schema: {
-          name: WktFields.typeName,
-          fields: [
-            { name: "doubleValue", type: message(DoubleValue) },
-            { name: "boolValue", type: message(BoolValue) },
-            { name: "floatValue", type: message(FloatValue) },
-            { name: "int64Value", type: message(Int64Value) },
-            { name: "uint64Value", type: message(UInt64Value) },
-            { name: "int32Value", type: message(Int32Value) },
-            { name: "uint32Value", type: message(UInt32Value) },
-            { name: "stringValue", type: message(StringValue) },
-            { name: "bytesValue", type: message(BytesValue) },
-            { name: "any", type: message(Any) },
-            { name: "duration", type: message(Duration) },
-            { name: "empty", type: message(Empty) },
-            { name: "fieldMask", type: message(FieldMask) },
-            { name: "timestamp", type: message(Timestamp) },
-            { name: "struct", type: message(Struct) },
-            { name: "listValue", type: message(ListValue) },
-            { name: "value", type: message(Value) },
-            {
-              name: "nullValue",
-              type: scalar(Schema_Field_Type_ScalarType.NULL),
-            },
-          ],
-        },
+      message: ScalarFieldsSchema,
+    },
+    {
+      name: "WKT",
+      message: WktFieldsSchema,
+      mask: [
+        { name: "doubleValue" },
+        { name: "boolValue" },
+        { name: "floatValue" },
+        { name: "int64Value" },
+        { name: "uint64Value" },
+        { name: "int32Value" },
+        { name: "uint32Value" },
+        { name: "stringValue" },
+        { name: "bytesValue" },
+        { name: "any" },
+        { name: "duration" },
+        { name: "empty" },
+        { name: "fieldMask" },
+        { name: "timestamp" },
+        { name: "struct" },
+        { name: "listValue" },
+        { name: "value" },
+        { name: "nullValue" },
+      ],
+      schema: {
+        name: WktFieldsSchema.typeName,
+        localNameTable: new Map(),
+        fields: [
+          { name: "doubleValue", type: message(DoubleValueSchema) },
+          { name: "boolValue", type: message(BoolValueSchema) },
+          { name: "floatValue", type: message(FloatValueSchema) },
+          { name: "int64Value", type: message(Int64ValueSchema) },
+          { name: "uint64Value", type: message(UInt64ValueSchema) },
+          { name: "int32Value", type: message(Int32ValueSchema) },
+          { name: "uint32Value", type: message(UInt32ValueSchema) },
+          { name: "stringValue", type: message(StringValueSchema) },
+          { name: "bytesValue", type: message(BytesValueSchema) },
+          { name: "any", type: message(AnySchema) },
+          { name: "duration", type: message(DurationSchema) },
+          { name: "empty", type: message(EmptySchema) },
+          { name: "fieldMask", type: message(FieldMaskSchema) },
+          { name: "timestamp", type: message(TimestampSchema) },
+          { name: "struct", type: message(StructSchema) },
+          { name: "listValue", type: message(ListValueSchema) },
+          { name: "value", type: message(ValueSchema) },
+          {
+            name: "nullValue",
+            type: scalar(Schema_Field_Type_ScalarType.NULL),
+          },
+        ] as GatewaySchemaField[],
       },
-      {
-        name: "Maps",
-        message: ProtoMap,
-        mask: [
+    },
+    {
+      name: "Maps",
+      message: ProtoMapSchema,
+      mask: [
+        {
+          name: "message",
+          mask: [{ name: "enum" }, { name: "keys", mask: [{ name: "str" }] }],
+        },
+      ],
+      schema: {
+        name: ProtoMapSchema.typeName,
+        localNameTable: new Map(),
+        fields: [
           {
             name: "message",
-            mask: [{ name: "enum" }, { name: "keys", mask: [{ name: "str" }] }],
-          },
-        ],
-        schema: {
-          name: ProtoMap.typeName,
-          fields: [
-            {
-              name: "message",
-              type: {
+            type: {
+              value: {
+                case: "map",
                 value: {
-                  case: "map",
-                  value: {
-                    key: Schema_Field_Type_ScalarType.STRING,
-                    value: messageElement(ProtoMap, [
-                      {
-                        name: "enum",
-                        type: {
+                  key: Schema_Field_Type_ScalarType.STRING,
+                  value: messageElement(ProtoMapSchema, [
+                    {
+                      name: "enum",
+                      type: {
+                        value: {
+                          case: "map",
                           value: {
-                            case: "map",
-                            value: {
-                              key: Schema_Field_Type_ScalarType.STRING,
-                              value: scalarElement(
-                                Schema_Field_Type_ScalarType.ENUM,
-                              ),
-                            },
+                            key: Schema_Field_Type_ScalarType.STRING,
+                            value: scalarElement(
+                              Schema_Field_Type_ScalarType.ENUM,
+                            ),
                           },
                         },
                       },
-                      {
-                        name: "keys",
-                        type: message(Keys, [
-                          {
-                            name: "str",
-                            type: {
+                    },
+                    {
+                      name: "keys",
+                      type: message(KeysSchema, [
+                        {
+                          name: "str",
+                          type: {
+                            value: {
+                              case: "map",
                               value: {
-                                case: "map",
-                                value: {
-                                  key: Schema_Field_Type_ScalarType.STRING,
-                                  value: scalarElement(
-                                    Schema_Field_Type_ScalarType.STRING,
-                                  ),
-                                },
+                                key: Schema_Field_Type_ScalarType.STRING,
+                                value: scalarElement(
+                                  Schema_Field_Type_ScalarType.STRING,
+                                ),
                               },
                             },
                           },
-                        ]),
-                      },
-                    ]),
-                  },
+                        },
+                      ]),
+                    },
+                  ]),
                 },
               },
             },
-          ],
-        },
+          },
+        ] as GatewaySchemaField[],
       },
-      {
-        name: "Repeated scalar",
-        message: Scalar,
-        mask: [{ name: "repeated", mask: [{ name: "str" }] }],
-        schema: {
-          name: Scalar.typeName,
-          fields: [
-            {
-              name: "repeated",
-              type: message(ScalarRepeated, [
-                {
-                  name: "str",
-                  type: {
+    },
+    {
+      name: "Repeated scalar",
+      message: ScalarSchema,
+      mask: [{ name: "repeated", mask: [{ name: "str" }] }],
+      schema: {
+        name: ScalarSchema.typeName,
+        localNameTable: new Map(),
+        fields: [
+          {
+            name: "repeated",
+            type: message(ScalarRepeatedSchema, [
+              {
+                name: "str",
+                type: {
+                  value: {
+                    case: "repeated",
                     value: {
-                      case: "repeated",
-                      value: {
-                        element: scalarElement(
-                          Schema_Field_Type_ScalarType.STRING,
-                        ),
-                      },
+                      element: scalarElement(
+                        Schema_Field_Type_ScalarType.STRING,
+                      ),
                     },
                   },
                 },
-              ]),
-            },
-          ],
-        },
+              },
+            ]),
+          },
+        ] as GatewaySchemaField[],
       },
-      {
-        name: "Repeated message",
-        message: Message,
-        mask: [{ name: "selfs", mask: [{ name: "id" }] }],
-        schema: {
-          name: Message.typeName,
-          fields: [
-            {
-              name: "selfs",
-              type: {
+    },
+    {
+      name: "Repeated message",
+      message: MessageSchema,
+      mask: [{ name: "selfs", mask: [{ name: "id" }] }],
+      schema: {
+        name: MessageSchema.typeName,
+        localNameTable: new Map(),
+        fields: [
+          {
+            name: "selfs",
+            type: {
+              value: {
+                case: "repeated",
                 value: {
-                  case: "repeated",
-                  value: {
-                    element: messageElement(Message, [
-                      {
-                        name: "id",
-                        type: scalar(Schema_Field_Type_ScalarType.STRING),
-                      },
-                    ]),
-                  },
+                  element: messageElement(MessageSchema, [
+                    {
+                      name: "id",
+                      type: scalar(Schema_Field_Type_ScalarType.STRING),
+                    },
+                  ]),
                 },
               },
             },
-          ],
-        },
+          },
+        ] as GatewaySchemaField[],
       },
-    ];
+    },
+  ];
   for (const testCase of testCases) {
     test(testCase.name, () => {
       expect(
-        new Schema(
+        create(
+          SchemaSchema,
           computeSchema(
             testCase.message,
-            testCase.mask.map((m) => new MaskField(m)),
+            testCase.mask.map((m) => create(MaskFieldSchema, m)),
             "",
             new Map(),
             new Map(),
             [],
           ),
         ),
-      ).toEqual(new Schema(testCase.schema));
+      ).toEqual(create(SchemaSchema, testCase.schema));
     });
   }
 });
@@ -341,26 +364,26 @@ describe("valid mask", () => {
 describe("invalid mask", () => {
   const testCases: {
     name: string;
-    message: MessageType;
-    mask: PartialMessage<MaskField>[];
+    message: DescMessage;
+    mask: MessageInitShape<typeof MaskFieldSchema>[];
   }[] = [
-      {
-        name: "Can't select WKTs",
-        message: Timestamp,
-        mask: [{ name: "seconds" }],
-      },
-      {
-        name: "Can't select unknown fields",
-        message: All,
-        mask: [{ name: "notPartOfAll" }],
-      },
-    ];
+    {
+      name: "Can't select WKTs",
+      message: TimestampSchema,
+      mask: [{ name: "seconds" }],
+    },
+    {
+      name: "Can't select unknown fields",
+      message: AllSchema,
+      mask: [{ name: "notPartOfAll" }],
+    },
+  ];
   for (const testCase of testCases) {
     test(testCase.name, () => {
       expect(() =>
         computeSchema(
           testCase.message,
-          testCase.mask.map((m) => new MaskField(m)),
+          testCase.mask.map((m) => create(MaskFieldSchema, m)),
           "",
           new Map(),
           new Map(),

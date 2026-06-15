@@ -14,8 +14,8 @@
 
 import { createConnectTransport } from "@connectrpc/connect-web";
 import {
-  createPromiseClient,
-  type PromiseClient,
+  createClient as createConnectRpcClient,
+  type Client as ConnectClient,
   type Transport,
 } from "@connectrpc/connect";
 import type {
@@ -32,7 +32,7 @@ import type {
 } from "./schema.js";
 
 import type { Subset } from "./utils/types.js";
-import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
+import { KnitService } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import {
   makeRequests,
   makeResult,
@@ -187,10 +187,15 @@ export interface Options {
  * @returns The Knit client see {@link Client}
  */
 export function createClient<S extends Schema>(options: Options): Client<S> {
+  const { baseUrl, credentials } = options;
   return createClientWithTransport(
     createConnectTransport({
-      baseUrl: options.baseUrl,
-      credentials: options.credentials,
+      baseUrl,
+      // connect-web v2 dropped the `credentials` option; emulate it with a
+      // fetch override that sets the credentials mode on each request.
+      fetch: credentials
+        ? (input, init) => fetch(input, { ...init, credentials })
+        : undefined,
     }),
     options,
   );
@@ -207,7 +212,7 @@ export function createClientWithTransport<S extends Schema>(
   transport: Transport,
   options: OptionalOptions,
 ): Client<S> {
-  const client = createPromiseClient(KnitService, transport);
+  const client = createConnectRpcClient(KnitService, transport);
   return {
     fetch: createFetch(client, options),
     do: createDo(client, options),
@@ -279,5 +284,5 @@ function createListen<S extends Schema>(
   };
 }
 
-type KnitServiceClient = PromiseClient<typeof KnitService>;
+type KnitServiceClient = ConnectClient<typeof KnitService>;
 type OptionalOptions = Omit<Options, "baseUrl" | "credentials">;

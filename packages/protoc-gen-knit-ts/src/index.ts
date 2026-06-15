@@ -13,37 +13,38 @@
 // limitations under the License.
 
 /* eslint-disable no-case-declarations,@typescript-eslint/unbound-method */
-import { createEcmaScriptPlugin } from "@bufbuild/protoplugin";
+import {
+  createEcmaScriptPlugin,
+  type Schema,
+  type GeneratedFile,
+  type Printable,
+  type ImportSymbol,
+  safeIdentifier,
+} from "@bufbuild/protoplugin";
 
 import { version } from "../package.json";
 
-import type { Schema } from "@bufbuild/protoplugin";
-import {
-  type GeneratedFile,
-  type Printable,
-  localName,
-  findCustomMessageOption,
-  type ImportSymbol,
-} from "@bufbuild/protoplugin/ecmascript";
-import {
-  type DescEnum,
-  type DescField,
-  type DescFile,
-  type DescMessage,
-  type DescMethod,
-  type DescService,
-  MethodIdempotency,
-  MethodKind,
-  ScalarType,
+import { getOption, hasOption, ScalarType } from "@bufbuild/protobuf";
+import type {
+  DescEnum,
+  DescField,
+  DescFile,
+  DescMessage,
+  DescMethod,
+  DescService,
 } from "@bufbuild/protobuf";
-import { RelationConfig } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/v1alpha1/options_pb.js";
+import {
+  FeatureSet_FieldPresence,
+  MethodOptions_IdempotencyLevel,
+} from "@bufbuild/protobuf/wkt";
+import { protoCamelCase } from "@bufbuild/protobuf/reflect";
+import { relation } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/v1alpha1/options_pb.js";
+import type { RelationConfig } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/v1alpha1/options_pb.js";
 
 export const protocGenKnitTs = createEcmaScriptPlugin({
   name: "protoc-gen-knit-ts",
   version: `v${version}`,
   generateTs,
-  // eslint-disable-next-line  @typescript-eslint/no-empty-function
-  generateJs: () => { },
 });
 
 function generateTs(schema: Schema) {
@@ -70,7 +71,7 @@ function generateSchema(g: GeneratedFile, file: DescFile) {
 }
 
 function generateService(g: GeneratedFile, service: DescService) {
-  g.print("export type ", localName(service), " = {");
+  g.print("export type ", localTypeName(service), " = {");
   g.print(indent(1), '"', service.typeName, '": {');
   for (const op of ["fetch", "do", "listen"]) {
     g.print(indent(2), op, ": {");
@@ -78,13 +79,7 @@ function generateService(g: GeneratedFile, service: DescService) {
       if (methodOp(method) !== op) {
         continue;
       }
-      g.print(
-        indent(3),
-        localName(method),
-        ": ",
-        getMethodType(g, method),
-        ";",
-      );
+      g.print(indent(3), method.localName, ": ", getMethodType(g, method), ";");
     }
     g.print(indent(2), "};");
   }
@@ -103,45 +98,40 @@ function getMethodType(g: GeneratedFile, method: DescMethod): Printable {
 }
 
 function methodOp(method: DescMethod) {
-  if (method.methodKind === MethodKind.Unary) {
-    if (method.idempotency === MethodIdempotency.NoSideEffects) {
+  if (method.methodKind === "unary") {
+    if (method.idempotency === MethodOptions_IdempotencyLevel.NO_SIDE_EFFECTS) {
       return "fetch";
     }
     return "do";
   }
-  if (method.methodKind === MethodKind.ServerStreaming) {
+  if (method.methodKind === "server_streaming") {
     return "listen";
   }
   return undefined;
 }
 
 function generateMessage(g: GeneratedFile, message: DescMessage) {
-  g.print("export interface ", localName(message), " {");
+  g.print("export interface ", localTypeName(message), " {");
   for (const member of message.members) {
     switch (member.kind) {
       case "field":
-        let propertyModifier: Printable = [": "];
-        if (
-          !member.repeated &&
-          (member.optional || member.fieldKind === "message")
-        ) {
-          propertyModifier = ["?: "];
-        }
+        const propertyModifier: Printable =
+          member.presence === FeatureSet_FieldPresence.EXPLICIT ? "?: " : ": ";
         g.print(
           indent(1),
-          localName(member),
+          member.localName,
           propertyModifier,
           getFieldType(member, g.import),
           ";",
         );
         break;
       case "oneof":
-        g.print(indent(1), localName(member), "?: ", '{ "@oneof": ');
+        g.print(indent(1), member.localName, "?: ", '{ "@oneof": ');
         g.print(indent(2), "{");
         for (const field of member.fields) {
           g.print(
             indent(3),
-            localName(field),
+            field.localName,
             ": ",
             getFieldType(field, g.import),
             ";",
@@ -197,7 +187,7 @@ function generateRelation(
     '" {',
   );
   g.print(indent(1), "export interface ", base, "{");
-  const valueType = [localName(shellMessage), '["', localName(field), '"]'];
+  const valueType = [localTypeName(shellMessage), '["', field.localName, '"]'];
   let paramType: Printable = "undefined";
   if (method.input.fields.length > 1) {
     paramType = [
@@ -207,13 +197,13 @@ function generateRelation(
     ];
   }
   const relationType = ["{ $: ", paramType, "; value: ", valueType, " }"];
-  g.print(indent(2), localName(field), "?: ", ...relationType);
+  g.print(indent(2), field.localName, "?: ", ...relationType);
   g.print(indent(1), "}");
   g.print("}\n");
 }
 
 function generateEnum(g: GeneratedFile, _enum: DescEnum) {
-  g.print("export type ", localName(_enum), " = ");
+  g.print("export type ", localTypeName(_enum), " = ");
   for (const member of _enum.values) {
     g.print(`${indent(1)}| "${member.name}"`);
   }
@@ -236,17 +226,32 @@ function getFieldType(
     case "message":
       type = getTypeOfMessage(importFn, field.message);
       break;
-    case "map":
-      let valueType: Printable = "unknown";
-      switch (field.mapValue.kind) {
+    case "list":
+      let elementType: Printable = "unknown";
+      switch (field.listKind) {
         case "scalar":
-          valueType = [scalarTable[field.mapValue.scalar]];
+          elementType = [scalarTable[field.scalar]];
           break;
         case "enum":
-          valueType = getTypeOfEnum(importFn, field.mapValue.enum);
+          elementType = getTypeOfEnum(importFn, field.enum);
           break;
         case "message":
-          valueType = getTypeOfMessage(importFn, field.mapValue.message);
+          elementType = getTypeOfMessage(importFn, field.message);
+          break;
+      }
+      type = ["Array<", elementType, ">"];
+      break;
+    case "map":
+      let valueType: Printable = "unknown";
+      switch (field.mapKind) {
+        case "scalar":
+          valueType = [scalarTable[field.scalar]];
+          break;
+        case "enum":
+          valueType = getTypeOfEnum(importFn, field.enum);
+          break;
+        case "message":
+          valueType = getTypeOfMessage(importFn, field.message);
           break;
       }
       type = [
@@ -258,10 +263,7 @@ function getFieldType(
       ];
       break;
   }
-  if (field.repeated) {
-    type = ["Array<", type, ">"];
-  }
-  if (field.jsonName !== undefined) {
+  if (protoCamelCase(field.name) !== field.jsonName) {
     type = ['{ "@alias": "', field.jsonName, '", value: ', type, "; }"];
   }
   return type;
@@ -289,7 +291,10 @@ function getTypeOfEnum(
 }
 
 function getRelationConfig(method: DescMethod): RelationConfig | undefined {
-  return findCustomMessageOption(method, 1157, RelationConfig);
+  if (!hasOption(method, relation)) {
+    return undefined;
+  }
+  return getOption(method, relation);
 }
 
 function getRepeatedMessage(message: DescMessage, tag: number, name: string) {
@@ -300,10 +305,10 @@ function getRepeatedMessage(message: DescMessage, tag: number, name: string) {
         `${message.name}: field with ${tag} must be named '${name}', found '${field.name}'`,
       );
     }
-    if (!field.repeated) {
+    if (field.fieldKind !== "list") {
       throw new Error(`${message.name}: bases field must be repeated`);
     }
-    if (field.fieldKind !== "message") {
+    if (field.listKind !== "message") {
       throw new Error(`${message.name}: bases field must be a message `);
     }
     return field.message;
@@ -375,7 +380,25 @@ function makeImportSymbol(
   importFn: GeneratedFile["import"],
   desc: DescMessage | DescEnum,
 ): ImportSymbol {
-  return importFn(localName(desc), getImportPath(desc.file)).toTypeOnly();
+  return importFn(localTypeName(desc), getImportPath(desc.file), true);
+}
+
+/**
+ * Computes the ECMAScript identifier that protoc-gen-es uses for a message,
+ * enum, or service type. Nested messages and enums are joined with their
+ * enclosing message names using an underscore (e.g. `Schema_Field`).
+ */
+function localTypeName(desc: DescMessage | DescEnum | DescService): string {
+  if (desc.kind === "service") {
+    return safeIdentifier(desc.name);
+  }
+  let name = desc.name;
+  let parent = desc.parent;
+  while (parent !== undefined) {
+    name = `${parent.name}_${name}`;
+    parent = parent.parent;
+  }
+  return safeIdentifier(name);
 }
 
 function getImportPath(file: DescFile) {
