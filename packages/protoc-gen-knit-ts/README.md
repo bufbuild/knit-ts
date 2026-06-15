@@ -33,11 +33,11 @@ npm install @buf/bufbuild_knit-demo.bufbuild_knit-es@latest
 If you use `buf` you can use remote plugins to generate the schema, for example:
 
 ```yaml
-# Learn more: https://docs.buf.build/configuration/v1/buf-gen-yaml
-version: v1
+# Learn more: https://buf.build/docs/configuration/v2/buf-gen-yaml
+version: v2
 plugins:
   # This will run the generator on the BSR and write output to src/gen
-  - plugin: buf.build/bufbuild/knit-ts
+  - remote: buf.build/bufbuild/knit-ts
     out: src/gen
 ```
 
@@ -47,11 +47,11 @@ To compile with [`buf`](https://github.com/bufbuild/buf), add a file `buf.gen.ya
 the following content:
 
 ```yaml
-# Learn more: https://docs.buf.build/configuration/v1/buf-gen-yaml
-version: v1
+# Learn more: https://buf.build/docs/configuration/v2/buf-gen-yaml
+version: v2
 plugins:
   # This will invoke protoc-gen-knit-ts and write output to src/gen
-  - name: knit-ts
+  - local: protoc-gen-knit-ts
     out: src/gen
     opt: target=ts # Optional, defaults to dts
 ```
@@ -79,7 +79,7 @@ Possible values:
 
 By default, the plugin generates `.d.ts` files. Since the plugin only generates types, and no JavaScript, it doesn't need to generate `.js` files.
 
-### `import_extension=.js`
+### `import_extension=js`
 
 By default, the generated files use a `.js` file extensions in import paths.
 
@@ -89,7 +89,7 @@ requires `.ts`. With this plugin option, you can replace `.js` extensions
 in import paths with the given value. For example, set
 
 - `import_extension=none` to remove the `.js` extension
-- `import_extension=.ts` to replace the `.js` extension with `.ts`
+- `import_extension=ts` to replace the `.js` extension with `.ts`
 
 ### `keep_empty_files=true`
 
