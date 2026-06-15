@@ -13,10 +13,7 @@
 // limitations under the License.
 
 import { describe, test, expect } from "@jest/globals";
-import { expectType } from "../jest/util.js";
-import type { Equal } from "../utils/types.js";
-import { createGateway, type UnaryAndServerStreamMethods } from "./gateway.js";
-import type { KnitService } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import { createGateway } from "./gateway.js";
 import {
   AllService,
   AllSchema,
@@ -25,14 +22,6 @@ import {
 import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_pb.js";
 import { createRouterTransport } from "@connectrpc/connect";
 import { create, toJson } from "@bufbuild/protobuf";
-
-describe("types", () => {
-  test("UnaryAndServerStreamMethods", () => {
-    type ExpectedType = "do" | "fetch" | "listen";
-    type ActualType = UnaryAndServerStreamMethods<typeof KnitService>;
-    expectType<Equal<ExpectedType, ActualType>>(true);
-  });
-});
 
 describe("service", () => {
   test("defaults to all supported methods", () => {

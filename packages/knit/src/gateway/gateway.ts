@@ -17,6 +17,7 @@ import type {
   DescField,
   DescMessage,
   DescMethod,
+  DescMethodServerStreaming,
   DescMethodUnary,
   DescService,
   Message,
@@ -54,7 +55,13 @@ interface GatewayServiceOptions<S extends DescService> {
    *
    * Client and Bidi streaming methods are not supported.
    */
-  methods?: UnaryAndServerStreamMethods<S>[];
+  methods?: {
+    [K in keyof S["method"]]: S["method"][K] extends
+      | DescMethodUnary
+      | DescMethodServerStreaming
+      ? K
+      : never;
+  }[keyof S["method"]][];
   /**
    * The timeout in millisecond to use for this service.
    */
@@ -186,19 +193,6 @@ export interface ResolverContext {
 }
 
 /**
- * Returns the union of local names of unary and server streaming methods of a service.
- *
- * @internal
- */
-export type UnaryAndServerStreamMethods<S extends DescService> = {
-  [K in keyof S["method"]]: S["method"][K]["methodKind"] extends
-    | "unary"
-    | "server_streaming"
-    ? K
-    : never;
-}[keyof S["method"]];
-
-/**
  * Create a new Gateway.
  *
  * @internal
@@ -227,7 +221,7 @@ export function createGateway({
         }
         if (
           options?.methods !== undefined &&
-          !options.methods.includes(localName as UnaryAndServerStreamMethods<S>)
+          !options.methods.some((method) => method === localName)
         ) {
           continue;
         }
