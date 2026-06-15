@@ -22,6 +22,7 @@ import type {
   Registry,
 } from "@bufbuild/protobuf";
 import { base64Encode } from "@bufbuild/protobuf/wire";
+import { isScalarZeroValue } from "@bufbuild/protobuf/reflect";
 import { Error_Code } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import type { MaskField } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import { wktSet } from "./wkt.js";
@@ -136,6 +137,8 @@ export function formatValue(
         upstreamErrPatch,
         fallbackCatch,
         typeRegistry,
+        // Map values are always emitted, including scalar zero values.
+        false,
       );
       formattedValue[k] = elementValue ?? null;
       patches.push(...elementPatches);
@@ -153,6 +156,8 @@ export function formatValue(
         upstreamErrPatch,
         fallbackCatch,
         typeRegistry,
+        // List elements are always emitted, including scalar zero values.
+        false,
       );
       formattedValue.push(elementValue ?? null);
       patches.push(...elementPatches);
@@ -166,6 +171,8 @@ export function formatValue(
     upstreamErrPatch,
     fallbackCatch,
     typeRegistry,
+    // Singular fields with implicit presence omit their zero value.
+    true,
   );
 }
 
@@ -213,10 +220,21 @@ function formatSingular(
   upstreamErrPatch: ErrorPatch | undefined,
   fallbackCatch: boolean,
   typeRegistry: Registry | undefined,
+  omitZeroScalar: boolean,
 ): [JsonValue | undefined, Patch[]] {
   switch (elementKind(fieldDesc)) {
-    case "scalar":
-      return [writeScalarJson(fieldDesc.scalar as ScalarType, value), []];
+    case "scalar": {
+      if (value === undefined) {
+        return [undefined, []];
+      }
+      const scalar = fieldDesc.scalar as ScalarType;
+      // Singular fields with implicit presence omit their zero value; list
+      // elements and map values always emit it.
+      if (omitZeroScalar && isScalarZeroValue(scalar, value)) {
+        return [undefined, []];
+      }
+      return [scalarToJson(scalar, value), []];
+    }
     case "enum": {
       const enumDesc = fieldDesc.enum;
       if (enumDesc === undefined) {
@@ -264,43 +282,32 @@ function elementKind(field: DescField): "scalar" | "enum" | "message" {
 }
 
 /**
- * Serializes a scalar value to its proto3 JSON representation, omitting default
- * (zero) values by returning `undefined`.
+ * Serializes a scalar value to its proto3 JSON representation. Unlike a full
+ * proto3 JSON writer, this always emits the value; the decision to omit zero
+ * values is made by the caller (see `omitZeroScalar`), because list elements
+ * and map values must emit zero values while singular fields omit them.
  */
-function writeScalarJson(
-  scalar: ScalarType,
-  value: unknown,
-): JsonValue | undefined {
+function scalarToJson(scalar: ScalarType, value: unknown): JsonValue {
   switch (scalar) {
     case ScalarType.INT64:
     case ScalarType.UINT64:
     case ScalarType.SINT64:
     case ScalarType.FIXED64:
-    case ScalarType.SFIXED64: {
-      const v = value as bigint | string;
-      if (v === BigInt(0) || v === "0") return undefined;
-      return v.toString();
-    }
-    case ScalarType.BYTES: {
-      const v = value as Uint8Array;
-      return v.length === 0 ? undefined : base64Encode(v);
-    }
+    case ScalarType.SFIXED64:
+      return (value as bigint | string).toString();
+    case ScalarType.BYTES:
+      return base64Encode(value as Uint8Array);
     case ScalarType.FLOAT:
     case ScalarType.DOUBLE: {
       const num = value as number;
-      if (num === 0) return undefined;
       if (Number.isNaN(num)) return "NaN";
       if (num === Number.POSITIVE_INFINITY) return "Infinity";
       if (num === Number.NEGATIVE_INFINITY) return "-Infinity";
       return num;
     }
-    case ScalarType.BOOL:
-      return value === true ? true : undefined;
-    case ScalarType.STRING:
-      return value === "" ? undefined : (value as string);
     default:
-      // INT32, UINT32, SINT32, FIXED32, SFIXED32
-      return value === 0 ? undefined : (value as number);
+      // BOOL, STRING, and 32-bit integer types map directly to JSON.
+      return value as JsonValue;
   }
 }
 
