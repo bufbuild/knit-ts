@@ -77,7 +77,7 @@ const filmsResult = await client.fetch({
 });
 
 // The result is a strongly typed object that matches the query.
-console.log(JSON.strigify(filmsResult, null, 2));
+console.log(JSON.stringify(filmsResult, null, 2));
 /**
  * This will print:
  * {

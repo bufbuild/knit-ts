@@ -63,7 +63,7 @@ Now run `npx buf generate` to generate Knit schema types in TypeScript from `.pr
 To compile with `protoc`:
 
 ```shell
-protoc -I . --plugin ./node_modules/.bin/protoc-gen-knit-ts --knit-es_out src/gen --knit-es_opt target=ts example.proto
+protoc -I . --plugin ./node_modules/.bin/protoc-gen-knit-ts --knit-ts_out src/gen --knit-ts_opt target=ts example.proto
 ```
 
 ## Plugin Options
@@ -350,11 +350,11 @@ For the following Knit relation definition:
 ```protobuf
 package example.relations.v1;
 
-import "buf/knit/options.proto";
+import "buf/knit/v1alpha1/options.proto";
 
 service ExampleRelationsService {
     rpc GetExampleRelation(GetExampleRelationRequest) returns (ExampleRelation) {
-        option (buf.knit.relation).name = "relation_field";
+        option (buf.knit.v1alpha1.relation).name = "relation_field";
         option idempotency_level = NO_SIDE_EFFECTS;
     }
 }
