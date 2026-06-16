@@ -21,7 +21,8 @@ import {
 } from "@bufbuild/protobuf";
 import { BoolValueSchema, ValueSchema } from "@bufbuild/protobuf/wkt";
 import { base64Encode } from "@bufbuild/protobuf/wire";
-import { describe, expect, test } from "@jest/globals";
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
 import { alias } from "./alias.js";
 import {
   Error_Code,
@@ -133,10 +134,11 @@ describe("format", () => {
   ];
   const check = (i: unknown, o: unknown) => {
     const formattedValue = format(i);
-    expect(JSON.parse(JSON.stringify(formattedValue))).toStrictEqual(o);
-    expect(
+    assert.deepStrictEqual(JSON.parse(JSON.stringify(formattedValue)), o);
+    assert.deepStrictEqual(
       toJson(ValueSchema, fromJson(ValueSchema, formattedValue)),
-    ).toStrictEqual(o);
+      o,
+    );
   };
   for (const testCase of testCases) {
     test(testCase.name, () => {
@@ -163,10 +165,10 @@ describe("format", () => {
   });
   describe("function or symbol", () => {
     test("throws on function", () => {
-      expect(() => format(() => null)).toThrow();
+      assert.throws(() => format(() => null));
     });
     test("throws on symbol", () => {
-      expect(() => format(Symbol("some"))).toThrow();
+      assert.throws(() => format(Symbol("some")));
     });
   });
 });
@@ -346,15 +348,15 @@ describe("decode", () => {
     for (const testCase of testCases) {
       test(testCase.name, () => {
         const result = decodeMessage({}, testCase.i, testCase.s, "");
-        expect(result).toStrictEqual(testCase.o);
+        assert.deepStrictEqual(result, testCase.o);
       });
       test(testCase.name + "-null", () => {
         const result = decodeMessage({}, null, testCase.s, "");
-        expect(result).toStrictEqual(undefined);
+        assert.deepStrictEqual(result, undefined);
       });
       test(testCase.name + "-undefined", () => {
         const result = decodeMessage({}, undefined, testCase.s, "");
-        expect(result).toStrictEqual(undefined);
+        assert.deepStrictEqual(result, undefined);
       });
       test(testCase.name + "-repeated", () => {
         const result = decodeMessage(
@@ -380,7 +382,7 @@ describe("decode", () => {
           }),
           "",
         );
-        expect(result).toStrictEqual({ key: [testCase.o] });
+        assert.deepStrictEqual(result, { key: [testCase.o] });
       });
       test(testCase.name + "-map", () => {
         const result = decodeMessage(
@@ -406,7 +408,7 @@ describe("decode", () => {
           }),
           "",
         );
-        expect(result).toStrictEqual({ key: { mapKey: testCase.o } });
+        assert.deepStrictEqual(result, { key: { mapKey: testCase.o } });
       });
       test(testCase.name + "-message", () => {
         const result = decodeMessage(
@@ -449,7 +451,7 @@ describe("decode", () => {
           }),
           "",
         );
-        expect(result).toStrictEqual({
+        assert.deepStrictEqual(result, {
           key: { key: testCase.o, customJson: testCase.o },
         });
       });
@@ -484,7 +486,7 @@ describe("decode", () => {
           }),
           "",
         );
-        expect(result).toStrictEqual({
+        assert.deepStrictEqual(result, {
           key: { oneofKey: { "@case": "key", value: testCase.o } },
         });
       });
@@ -649,17 +651,17 @@ describe("decode", () => {
       });
       test(testCase.name, () => {
         const result = decodeMessage({}, i, s, "");
-        expect(result).toStrictEqual(o);
+        assert.deepStrictEqual(result, o);
       });
       if (testCase.s !== Schema_Field_Type_ScalarType.NULL) {
         test(testCase.name + "-null", () => {
           const result = decodeMessage({}, { key: null }, s, "");
-          expect(result).toStrictEqual({});
+          assert.deepStrictEqual(result, {});
         });
       }
       test(testCase.name + "-undefined", () => {
         const result = decodeMessage({}, {}, s, "");
-        expect(result).toStrictEqual({});
+        assert.deepStrictEqual(result, {});
       });
       test(testCase.name + "-repeated", () => {
         const result = decodeMessage(
@@ -685,7 +687,7 @@ describe("decode", () => {
           }),
           "",
         );
-        expect(result).toStrictEqual({ key: [testCase.o] });
+        assert.deepStrictEqual(result, { key: [testCase.o] });
       });
       test(testCase.name + "-map", () => {
         const result = decodeMessage(
@@ -711,7 +713,7 @@ describe("decode", () => {
           }),
           "",
         );
-        expect(result).toStrictEqual({ key: { mapKey: testCase.o } });
+        assert.deepStrictEqual(result, { key: { mapKey: testCase.o } });
       });
       test(testCase.name + "-message", () => {
         const result = decodeMessage(
@@ -754,7 +756,7 @@ describe("decode", () => {
           }),
           "",
         );
-        expect(result).toStrictEqual({
+        assert.deepStrictEqual(result, {
           key: { key: testCase.o, customJson: testCase.o },
         });
       });
@@ -789,7 +791,7 @@ describe("decode", () => {
           }),
           "",
         );
-        expect(result).toStrictEqual({
+        assert.deepStrictEqual(result, {
           key: { oneofKey: { "@case": "key", value: testCase.o } },
         });
       });
@@ -821,10 +823,10 @@ describe("decode", () => {
       }),
       "",
     );
-    expect(result).toBeInstanceOf(KnitError);
-    expect(result).toHaveProperty("code", Error_Code.INVALID_ARGUMENT);
-    expect(result).toHaveProperty("message", "invalid");
-    expect(result).toHaveProperty("details", [
+    assert.ok(result instanceof KnitError);
+    assert.deepStrictEqual(result.code, Error_Code.INVALID_ARGUMENT);
+    assert.deepStrictEqual(result.message, "invalid");
+    assert.deepStrictEqual(result.details, [
       {
         type: "google.protobuf.BoolValue",
         value: toBinary(
@@ -834,7 +836,7 @@ describe("decode", () => {
         debug: true,
       },
     ]);
-    expect(result).toHaveProperty("path", "some.path");
+    assert.deepStrictEqual(result.path, "some.path");
   });
 
   test("repeated oneof", () => {
@@ -945,8 +947,8 @@ describe("decode", () => {
       "",
     ) as any;
 
-    expect(result.key1[0].key2.item["@case"]).toBe("opt1");
-    expect(result.key1[0].key2.item.value).toStrictEqual({ value: 1 });
+    assert.strictEqual(result.key1[0].key2.item["@case"], "opt1");
+    assert.deepStrictEqual(result.key1[0].key2.item.value, { value: 1 });
   });
 
   test("mapped oneof", () => {
@@ -1058,8 +1060,8 @@ describe("decode", () => {
       "",
     ) as any;
 
-    expect(result.key1["someId"].key2.item["@case"]).toBe("opt1");
-    expect(result.key1["someId"].key2.item.value).toStrictEqual({
+    assert.strictEqual(result.key1["someId"].key2.item["@case"], "opt1");
+    assert.deepStrictEqual(result.key1["someId"].key2.item.value, {
       value: 1,
     });
   });

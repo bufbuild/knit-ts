@@ -14,8 +14,10 @@
     "clean": "rm -rf ./dist/* .turbo/*",
     "lint": "eslint .",
     "attw": "attw --pack",
-    "test": "NODE_OPTIONS=--experimental-vm-modules ../../node_modules/.bin/jest",
-    "test:watch": "pnpm run build:esm+types --watch & pnpm run test --watchAll",
+    "typecheck": "tsc --noEmit -p tsconfig.test.json",
+    "test": "tsx --test $(find src -type f -path '*.test.ts')",
+    "test:watch": "tsx --watch --test $(find src -type f -path '*.test.ts')",
+    "test:update-snapshots": "tsx --test --test-update-snapshots $(find src -type f -path '*.test.ts')",
     "build:esm": "tsup --format esm",
     "build:cjs": "tsup --format cjs && mv ./dist/cjs/index.d.cts ./dist/cjs/index.d.ts && mv ./dist/cjs/gateway/index.d.cts ./dist/cjs/gateway/index.d.ts",
     "build": "pnpm run build:esm && pnpm run build:cjs"
@@ -58,10 +60,10 @@
   "devDependencies": {
     "@buf/bufbuild_knit.bufbuild_es": "2.12.0-20250213130123-9561c696fd69.1",
     "@bufbuild/knit-test-spec": "workspace:*",
-    "@jest/globals": "^30.4.1",
     "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*",
-    "tsup": "^8.5.1"
+    "tsup": "^8.5.1",
+    "tsx": "^4.22.4"
   },
   "files": [
     "dist/**"

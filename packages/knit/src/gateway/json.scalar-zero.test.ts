@@ -19,7 +19,8 @@ import {
 } from "@bufbuild/knit-test-spec/spec/scalars_pb.js";
 import { KeysSchema } from "@bufbuild/knit-test-spec/spec/map_pb.js";
 import { create } from "@bufbuild/protobuf";
-import { test, expect } from "@jest/globals";
+import { test } from "node:test";
+import assert from "node:assert/strict";
 import { formatMessage } from "./json.js";
 import type { GatewaySchema, GatewaySchemaField } from "./schema.js";
 
@@ -56,7 +57,7 @@ test("repeated int32 emits a zero element", () => {
     false,
     undefined,
   )[0];
-  expect(out).toEqual({ i32: [0, 1, 2] });
+  assert.deepStrictEqual(out, { i32: [0, 1, 2] });
 });
 
 test("map<string,string> emits an empty-string (zero) value", () => {
@@ -89,7 +90,7 @@ test("map<string,string> emits an empty-string (zero) value", () => {
     false,
     undefined,
   )[0];
-  expect(out).toEqual({ str: { a: "", b: "x" } });
+  assert.deepStrictEqual(out, { str: { a: "", b: "x" } });
 });
 
 test("unset optional int64 singular field is omitted, not a crash", () => {
@@ -116,5 +117,5 @@ test("unset optional int64 singular field is omitted, not a crash", () => {
     false,
     undefined,
   )[0];
-  expect(out).toEqual({});
+  assert.deepStrictEqual(out, {});
 });

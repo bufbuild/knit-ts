@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { describe, test, expect } from "@jest/globals";
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
+import { isDeepStrictEqual } from "node:util";
 import { createGateway } from "./gateway.js";
 import {
   AllService,
@@ -27,7 +29,8 @@ describe("service", () => {
   test("defaults to all supported methods", () => {
     const gateway = createGateway({ transport: {} as any });
     gateway.service(AllService);
-    expect([...gateway.entryPoints.keys()].sort()).toEqual(
+    assert.deepStrictEqual(
+      [...gateway.entryPoints.keys()].sort(),
       [
         "spec.AllService.GetAll",
         "spec.AllService.CreateAll",
@@ -38,16 +41,19 @@ describe("service", () => {
   test("respects methods option", () => {
     const gateway = createGateway({ transport: {} as any });
     gateway.service(AllService, { methods: ["getAll"] });
-    expect([...gateway.entryPoints.keys()]).toEqual(["spec.AllService.GetAll"]);
+    assert.deepStrictEqual(
+      [...gateway.entryPoints.keys()],
+      ["spec.AllService.GetAll"],
+    );
   });
   test("respects transport override", () => {
     const gateway = createGateway({ transport: { kind: "base" } as any });
     gateway.service(AllService, { transport: { kind: "override" } as any });
-    expect(
-      [...gateway.entryPoints.values()].map((v) => v.transport),
-    ).toContainEqual({
-      kind: "override",
-    });
+    assert.ok(
+      [...gateway.entryPoints.values()]
+        .map((v) => v.transport)
+        .some((e) => isDeepStrictEqual(e, { kind: "override" })),
+    );
   });
 });
 
@@ -82,8 +88,9 @@ describe("relation", () => {
       .get(AllSchema.typeName)
       ?.get("rel_self")
       ?.resolver([base], undefined, {});
-    expect(response).toHaveLength(1);
-    expect(toJson(AllSchema, response?.[0]! as All)).toEqual(
+    assert.strictEqual(response?.length, 1);
+    assert.deepStrictEqual(
+      toJson(AllSchema, response?.[0]! as All),
       toJson(AllSchema, base),
     );
   });

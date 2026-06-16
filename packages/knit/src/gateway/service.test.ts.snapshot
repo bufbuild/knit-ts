@@ -1,0 +1,1450 @@
+exports[`errors > do > default 1`] = `
+[
+  {
+    "$typeName": "buf.knit.gateway.v1alpha1.Response",
+    "method": "spec.AllService.CreateAll",
+    "body": {
+      "$typeName": "google.protobuf.Value",
+      "kind": {
+        "case": "structValue",
+        "value": {
+          "$typeName": "google.protobuf.Struct",
+          "fields": {
+            "scalars": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "structValue",
+                "value": {
+                  "$typeName": "google.protobuf.Struct",
+                  "fields": {
+                    "fields": {
+                      "$typeName": "google.protobuf.Value",
+                      "kind": {
+                        "case": "structValue",
+                        "value": {
+                          "$typeName": "google.protobuf.Struct",
+                          "fields": {
+                            "str": {
+                              "$typeName": "google.protobuf.Value",
+                              "kind": {
+                                "case": "stringValue",
+                                "value": "foo"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "relSelfParam": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "structValue",
+                "value": {
+                  "$typeName": "google.protobuf.Struct",
+                  "fields": {
+                    "[@error]": {
+                      "$typeName": "google.protobuf.Value",
+                      "kind": {
+                        "case": "structValue",
+                        "value": {
+                          "$typeName": "google.protobuf.Struct",
+                          "fields": {}
+                        }
+                      }
+                    },
+                    "code": {
+                      "$typeName": "google.protobuf.Value",
+                      "kind": {
+                        "case": "stringValue",
+                        "value": "FAILED_PRECONDITION"
+                      }
+                    },
+                    "message": {
+                      "$typeName": "google.protobuf.Value",
+                      "kind": {
+                        "case": "stringValue",
+                        "value": "[failed_precondition] Relation error"
+                      }
+                    },
+                    "details": {
+                      "$typeName": "google.protobuf.Value",
+                      "kind": {
+                        "case": "listValue",
+                        "value": {
+                          "$typeName": "google.protobuf.ListValue",
+                          "values": []
+                        }
+                      }
+                    },
+                    "path": {
+                      "$typeName": "google.protobuf.Value",
+                      "kind": {
+                        "case": "stringValue",
+                        "value": ""
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schema": {
+      "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+      "name": "spec.All",
+      "fields": [
+        {
+          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+          "name": "scalars",
+          "jsonName": "",
+          "type": {
+            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+            "value": {
+              "case": "message",
+              "value": {
+                "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                "name": "spec.Scalar",
+                "fields": [
+                  {
+                    "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                    "name": "fields",
+                    "jsonName": "",
+                    "type": {
+                      "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                      "value": {
+                        "case": "message",
+                        "value": {
+                          "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                          "name": "spec.ScalarFields",
+                          "fields": [
+                            {
+                              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                              "name": "str",
+                              "jsonName": "",
+                              "type": {
+                                "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                "value": {
+                                  "case": "scalar",
+                                  "value": 9
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+          "name": "relSelfParam",
+          "jsonName": "",
+          "type": {
+            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+            "value": {
+              "case": "message",
+              "value": {
+                "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                "name": "spec.All",
+                "fields": [
+                  {
+                    "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                    "name": "scalars",
+                    "jsonName": "",
+                    "type": {
+                      "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                      "value": {
+                        "case": "message",
+                        "value": {
+                          "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                          "name": "spec.Scalar",
+                          "fields": [
+                            {
+                              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                              "name": "fields",
+                              "jsonName": "",
+                              "type": {
+                                "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                "value": {
+                                  "case": "message",
+                                  "value": {
+                                    "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                                    "name": "spec.ScalarFields",
+                                    "fields": [
+                                      {
+                                        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                                        "name": "str",
+                                        "jsonName": "",
+                                        "type": {
+                                          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                          "value": {
+                                            "case": "scalar",
+                                            "value": 9
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+`;
+
+exports[`errors > do > throw-source 1`] = `
+[
+  {
+    "$typeName": "buf.knit.gateway.v1alpha1.Response",
+    "method": "spec.AllService.CreateAll",
+    "body": {
+      "$typeName": "google.protobuf.Value",
+      "kind": {
+        "case": "structValue",
+        "value": {
+          "$typeName": "google.protobuf.Struct",
+          "fields": {
+            "[@error]": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "structValue",
+                "value": {
+                  "$typeName": "google.protobuf.Struct",
+                  "fields": {}
+                }
+              }
+            },
+            "code": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "stringValue",
+                "value": "FAILED_PRECONDITION"
+              }
+            },
+            "message": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "stringValue",
+                "value": "[failed_precondition] Relation error"
+              }
+            },
+            "details": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "listValue",
+                "value": {
+                  "$typeName": "google.protobuf.ListValue",
+                  "values": []
+                }
+              }
+            },
+            "path": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "stringValue",
+                "value": ""
+              }
+            }
+          }
+        }
+      }
+    },
+    "schema": {
+      "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+      "name": "spec.All",
+      "fields": [
+        {
+          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+          "name": "relSelfParam",
+          "jsonName": "",
+          "type": {
+            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+            "value": {
+              "case": "message",
+              "value": {
+                "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                "name": "spec.All",
+                "fields": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+`;
+
+exports[`errors > fetch > catch-entrypoint 1`] = `
+[
+  {
+    "$typeName": "buf.knit.gateway.v1alpha1.Response",
+    "method": "spec.AllService.GetAll",
+    "body": {
+      "$typeName": "google.protobuf.Value",
+      "kind": {
+        "case": "structValue",
+        "value": {
+          "$typeName": "google.protobuf.Struct",
+          "fields": {
+            "[@error]": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "structValue",
+                "value": {
+                  "$typeName": "google.protobuf.Struct",
+                  "fields": {}
+                }
+              }
+            },
+            "code": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "stringValue",
+                "value": "FAILED_PRECONDITION"
+              }
+            },
+            "message": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "stringValue",
+                "value": "[failed_precondition] Relation error"
+              }
+            },
+            "details": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "listValue",
+                "value": {
+                  "$typeName": "google.protobuf.ListValue",
+                  "values": []
+                }
+              }
+            },
+            "path": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "stringValue",
+                "value": ""
+              }
+            }
+          }
+        }
+      }
+    },
+    "schema": {
+      "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+      "name": "spec.All",
+      "fields": [
+        {
+          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+          "name": "scalars",
+          "jsonName": "",
+          "type": {
+            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+            "value": {
+              "case": "message",
+              "value": {
+                "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                "name": "spec.Scalar",
+                "fields": [
+                  {
+                    "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                    "name": "fields",
+                    "jsonName": "",
+                    "type": {
+                      "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                      "value": {
+                        "case": "message",
+                        "value": {
+                          "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                          "name": "spec.ScalarFields",
+                          "fields": [
+                            {
+                              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                              "name": "str",
+                              "jsonName": "",
+                              "type": {
+                                "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                "value": {
+                                  "case": "scalar",
+                                  "value": 9
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+          "name": "relSelfParam",
+          "jsonName": "",
+          "type": {
+            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+            "value": {
+              "case": "message",
+              "value": {
+                "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                "name": "spec.All",
+                "fields": [
+                  {
+                    "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                    "name": "scalars",
+                    "jsonName": "",
+                    "type": {
+                      "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                      "value": {
+                        "case": "message",
+                        "value": {
+                          "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                          "name": "spec.Scalar",
+                          "fields": [
+                            {
+                              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                              "name": "fields",
+                              "jsonName": "",
+                              "type": {
+                                "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                "value": {
+                                  "case": "message",
+                                  "value": {
+                                    "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                                    "name": "spec.ScalarFields",
+                                    "fields": [
+                                      {
+                                        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                                        "name": "str",
+                                        "jsonName": "",
+                                        "type": {
+                                          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                          "value": {
+                                            "case": "scalar",
+                                            "value": 9
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+`;
+
+exports[`errors > fetch > catch-source 1`] = `
+[
+  {
+    "$typeName": "buf.knit.gateway.v1alpha1.Response",
+    "method": "spec.AllService.GetAll",
+    "body": {
+      "$typeName": "google.protobuf.Value",
+      "kind": {
+        "case": "structValue",
+        "value": {
+          "$typeName": "google.protobuf.Struct",
+          "fields": {
+            "relSelfParam": {
+              "$typeName": "google.protobuf.Value",
+              "kind": {
+                "case": "structValue",
+                "value": {
+                  "$typeName": "google.protobuf.Struct",
+                  "fields": {
+                    "[@error]": {
+                      "$typeName": "google.protobuf.Value",
+                      "kind": {
+                        "case": "structValue",
+                        "value": {
+                          "$typeName": "google.protobuf.Struct",
+                          "fields": {}
+                        }
+                      }
+                    },
+                    "code": {
+                      "$typeName": "google.protobuf.Value",
+                      "kind": {
+                        "case": "stringValue",
+                        "value": "FAILED_PRECONDITION"
+                      }
+                    },
+                    "message": {
+                      "$typeName": "google.protobuf.Value",
+                      "kind": {
+                        "case": "stringValue",
+                        "value": "[failed_precondition] Relation error"
+                      }
+                    },
+                    "details": {
+                      "$typeName": "google.protobuf.Value",
+                      "kind": {
+                        "case": "listValue",
+                        "value": {
+                          "$typeName": "google.protobuf.ListValue",
+                          "values": []
+                        }
+                      }
+                    },
+                    "path": {
+                      "$typeName": "google.protobuf.Value",
+                      "kind": {
+                        "case": "stringValue",
+                        "value": ""
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schema": {
+      "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+      "name": "spec.All",
+      "fields": [
+        {
+          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+          "name": "relSelfParam",
+          "jsonName": "",
+          "type": {
+            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+            "value": {
+              "case": "message",
+              "value": {
+                "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                "name": "spec.All",
+                "fields": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+`;
+
+exports[`errors > listen > catch-entrypoint 1`] = `
+{
+  "$typeName": "buf.knit.gateway.v1alpha1.Response",
+  "method": "spec.AllService.StreamAll",
+  "body": {
+    "$typeName": "google.protobuf.Value",
+    "kind": {
+      "case": "structValue",
+      "value": {
+        "$typeName": "google.protobuf.Struct",
+        "fields": {
+          "[@error]": {
+            "$typeName": "google.protobuf.Value",
+            "kind": {
+              "case": "structValue",
+              "value": {
+                "$typeName": "google.protobuf.Struct",
+                "fields": {}
+              }
+            }
+          },
+          "code": {
+            "$typeName": "google.protobuf.Value",
+            "kind": {
+              "case": "stringValue",
+              "value": "FAILED_PRECONDITION"
+            }
+          },
+          "message": {
+            "$typeName": "google.protobuf.Value",
+            "kind": {
+              "case": "stringValue",
+              "value": "[failed_precondition] Relation error"
+            }
+          },
+          "details": {
+            "$typeName": "google.protobuf.Value",
+            "kind": {
+              "case": "listValue",
+              "value": {
+                "$typeName": "google.protobuf.ListValue",
+                "values": []
+              }
+            }
+          },
+          "path": {
+            "$typeName": "google.protobuf.Value",
+            "kind": {
+              "case": "stringValue",
+              "value": ""
+            }
+          }
+        }
+      }
+    }
+  },
+  "schema": {
+    "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+    "name": "spec.All",
+    "fields": [
+      {
+        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+        "name": "scalars",
+        "jsonName": "",
+        "type": {
+          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+          "value": {
+            "case": "message",
+            "value": {
+              "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+              "name": "spec.Scalar",
+              "fields": [
+                {
+                  "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                  "name": "fields",
+                  "jsonName": "",
+                  "type": {
+                    "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                    "value": {
+                      "case": "message",
+                      "value": {
+                        "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                        "name": "spec.ScalarFields",
+                        "fields": [
+                          {
+                            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                            "name": "str",
+                            "jsonName": "",
+                            "type": {
+                              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                              "value": {
+                                "case": "scalar",
+                                "value": 9
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+        "name": "relSelfParam",
+        "jsonName": "",
+        "type": {
+          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+          "value": {
+            "case": "message",
+            "value": {
+              "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+              "name": "spec.All",
+              "fields": [
+                {
+                  "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                  "name": "scalars",
+                  "jsonName": "",
+                  "type": {
+                    "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                    "value": {
+                      "case": "message",
+                      "value": {
+                        "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                        "name": "spec.Scalar",
+                        "fields": [
+                          {
+                            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                            "name": "fields",
+                            "jsonName": "",
+                            "type": {
+                              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                              "value": {
+                                "case": "message",
+                                "value": {
+                                  "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                                  "name": "spec.ScalarFields",
+                                  "fields": [
+                                    {
+                                      "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                                      "name": "str",
+                                      "jsonName": "",
+                                      "type": {
+                                        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                        "value": {
+                                          "case": "scalar",
+                                          "value": 9
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`errors > listen > catch-source 1`] = `
+{
+  "$typeName": "buf.knit.gateway.v1alpha1.Response",
+  "method": "spec.AllService.StreamAll",
+  "body": {
+    "$typeName": "google.protobuf.Value",
+    "kind": {
+      "case": "structValue",
+      "value": {
+        "$typeName": "google.protobuf.Struct",
+        "fields": {
+          "relSelfParam": {
+            "$typeName": "google.protobuf.Value",
+            "kind": {
+              "case": "structValue",
+              "value": {
+                "$typeName": "google.protobuf.Struct",
+                "fields": {
+                  "[@error]": {
+                    "$typeName": "google.protobuf.Value",
+                    "kind": {
+                      "case": "structValue",
+                      "value": {
+                        "$typeName": "google.protobuf.Struct",
+                        "fields": {}
+                      }
+                    }
+                  },
+                  "code": {
+                    "$typeName": "google.protobuf.Value",
+                    "kind": {
+                      "case": "stringValue",
+                      "value": "FAILED_PRECONDITION"
+                    }
+                  },
+                  "message": {
+                    "$typeName": "google.protobuf.Value",
+                    "kind": {
+                      "case": "stringValue",
+                      "value": "[failed_precondition] Relation error"
+                    }
+                  },
+                  "details": {
+                    "$typeName": "google.protobuf.Value",
+                    "kind": {
+                      "case": "listValue",
+                      "value": {
+                        "$typeName": "google.protobuf.ListValue",
+                        "values": []
+                      }
+                    }
+                  },
+                  "path": {
+                    "$typeName": "google.protobuf.Value",
+                    "kind": {
+                      "case": "stringValue",
+                      "value": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "schema": {
+    "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+    "name": "spec.All",
+    "fields": [
+      {
+        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+        "name": "relSelfParam",
+        "jsonName": "",
+        "type": {
+          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+          "value": {
+            "case": "message",
+            "value": {
+              "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+              "name": "spec.All",
+              "fields": []
+            }
+          }
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`success > do 1`] = `
+{
+  "$typeName": "buf.knit.gateway.v1alpha1.DoResponse",
+  "responses": [
+    {
+      "$typeName": "buf.knit.gateway.v1alpha1.Response",
+      "method": "spec.AllService.CreateAll",
+      "body": {
+        "$typeName": "google.protobuf.Value",
+        "kind": {
+          "case": "structValue",
+          "value": {
+            "$typeName": "google.protobuf.Struct",
+            "fields": {
+              "scalars": {
+                "$typeName": "google.protobuf.Value",
+                "kind": {
+                  "case": "structValue",
+                  "value": {
+                    "$typeName": "google.protobuf.Struct",
+                    "fields": {
+                      "fields": {
+                        "$typeName": "google.protobuf.Value",
+                        "kind": {
+                          "case": "structValue",
+                          "value": {
+                            "$typeName": "google.protobuf.Struct",
+                            "fields": {
+                              "str": {
+                                "$typeName": "google.protobuf.Value",
+                                "kind": {
+                                  "case": "stringValue",
+                                  "value": "foo"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "relSelfParam": {
+                "$typeName": "google.protobuf.Value",
+                "kind": {
+                  "case": "structValue",
+                  "value": {
+                    "$typeName": "google.protobuf.Struct",
+                    "fields": {
+                      "scalars": {
+                        "$typeName": "google.protobuf.Value",
+                        "kind": {
+                          "case": "structValue",
+                          "value": {
+                            "$typeName": "google.protobuf.Struct",
+                            "fields": {
+                              "fields": {
+                                "$typeName": "google.protobuf.Value",
+                                "kind": {
+                                  "case": "structValue",
+                                  "value": {
+                                    "$typeName": "google.protobuf.Struct",
+                                    "fields": {
+                                      "str": {
+                                        "$typeName": "google.protobuf.Value",
+                                        "kind": {
+                                          "case": "stringValue",
+                                          "value": "foo"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "schema": {
+        "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+        "name": "spec.All",
+        "fields": [
+          {
+            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+            "name": "scalars",
+            "jsonName": "",
+            "type": {
+              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+              "value": {
+                "case": "message",
+                "value": {
+                  "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                  "name": "spec.Scalar",
+                  "fields": [
+                    {
+                      "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                      "name": "fields",
+                      "jsonName": "",
+                      "type": {
+                        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                        "value": {
+                          "case": "message",
+                          "value": {
+                            "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                            "name": "spec.ScalarFields",
+                            "fields": [
+                              {
+                                "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                                "name": "str",
+                                "jsonName": "",
+                                "type": {
+                                  "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                  "value": {
+                                    "case": "scalar",
+                                    "value": 9
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+            "name": "relSelfParam",
+            "jsonName": "",
+            "type": {
+              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+              "value": {
+                "case": "message",
+                "value": {
+                  "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                  "name": "spec.All",
+                  "fields": [
+                    {
+                      "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                      "name": "scalars",
+                      "jsonName": "",
+                      "type": {
+                        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                        "value": {
+                          "case": "message",
+                          "value": {
+                            "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                            "name": "spec.Scalar",
+                            "fields": [
+                              {
+                                "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                                "name": "fields",
+                                "jsonName": "",
+                                "type": {
+                                  "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                  "value": {
+                                    "case": "message",
+                                    "value": {
+                                      "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                                      "name": "spec.ScalarFields",
+                                      "fields": [
+                                        {
+                                          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                                          "name": "str",
+                                          "jsonName": "",
+                                          "type": {
+                                            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                            "value": {
+                                              "case": "scalar",
+                                              "value": 9
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`success > fetch 1`] = `
+{
+  "$typeName": "buf.knit.gateway.v1alpha1.FetchResponse",
+  "responses": [
+    {
+      "$typeName": "buf.knit.gateway.v1alpha1.Response",
+      "method": "spec.AllService.GetAll",
+      "body": {
+        "$typeName": "google.protobuf.Value",
+        "kind": {
+          "case": "structValue",
+          "value": {
+            "$typeName": "google.protobuf.Struct",
+            "fields": {
+              "scalars": {
+                "$typeName": "google.protobuf.Value",
+                "kind": {
+                  "case": "structValue",
+                  "value": {
+                    "$typeName": "google.protobuf.Struct",
+                    "fields": {
+                      "fields": {
+                        "$typeName": "google.protobuf.Value",
+                        "kind": {
+                          "case": "structValue",
+                          "value": {
+                            "$typeName": "google.protobuf.Struct",
+                            "fields": {
+                              "str": {
+                                "$typeName": "google.protobuf.Value",
+                                "kind": {
+                                  "case": "stringValue",
+                                  "value": "foo"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "relSelfParam": {
+                "$typeName": "google.protobuf.Value",
+                "kind": {
+                  "case": "structValue",
+                  "value": {
+                    "$typeName": "google.protobuf.Struct",
+                    "fields": {
+                      "scalars": {
+                        "$typeName": "google.protobuf.Value",
+                        "kind": {
+                          "case": "structValue",
+                          "value": {
+                            "$typeName": "google.protobuf.Struct",
+                            "fields": {
+                              "fields": {
+                                "$typeName": "google.protobuf.Value",
+                                "kind": {
+                                  "case": "structValue",
+                                  "value": {
+                                    "$typeName": "google.protobuf.Struct",
+                                    "fields": {
+                                      "str": {
+                                        "$typeName": "google.protobuf.Value",
+                                        "kind": {
+                                          "case": "stringValue",
+                                          "value": "foo"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "schema": {
+        "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+        "name": "spec.All",
+        "fields": [
+          {
+            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+            "name": "scalars",
+            "jsonName": "",
+            "type": {
+              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+              "value": {
+                "case": "message",
+                "value": {
+                  "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                  "name": "spec.Scalar",
+                  "fields": [
+                    {
+                      "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                      "name": "fields",
+                      "jsonName": "",
+                      "type": {
+                        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                        "value": {
+                          "case": "message",
+                          "value": {
+                            "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                            "name": "spec.ScalarFields",
+                            "fields": [
+                              {
+                                "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                                "name": "str",
+                                "jsonName": "",
+                                "type": {
+                                  "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                  "value": {
+                                    "case": "scalar",
+                                    "value": 9
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+            "name": "relSelfParam",
+            "jsonName": "",
+            "type": {
+              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+              "value": {
+                "case": "message",
+                "value": {
+                  "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                  "name": "spec.All",
+                  "fields": [
+                    {
+                      "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                      "name": "scalars",
+                      "jsonName": "",
+                      "type": {
+                        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                        "value": {
+                          "case": "message",
+                          "value": {
+                            "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                            "name": "spec.Scalar",
+                            "fields": [
+                              {
+                                "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                                "name": "fields",
+                                "jsonName": "",
+                                "type": {
+                                  "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                  "value": {
+                                    "case": "message",
+                                    "value": {
+                                      "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                                      "name": "spec.ScalarFields",
+                                      "fields": [
+                                        {
+                                          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                                          "name": "str",
+                                          "jsonName": "",
+                                          "type": {
+                                            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                            "value": {
+                                              "case": "scalar",
+                                              "value": 9
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`success > listen 1`] = `
+{
+  "$typeName": "buf.knit.gateway.v1alpha1.Response",
+  "method": "spec.AllService.StreamAll",
+  "body": {
+    "$typeName": "google.protobuf.Value",
+    "kind": {
+      "case": "structValue",
+      "value": {
+        "$typeName": "google.protobuf.Struct",
+        "fields": {
+          "scalars": {
+            "$typeName": "google.protobuf.Value",
+            "kind": {
+              "case": "structValue",
+              "value": {
+                "$typeName": "google.protobuf.Struct",
+                "fields": {
+                  "fields": {
+                    "$typeName": "google.protobuf.Value",
+                    "kind": {
+                      "case": "structValue",
+                      "value": {
+                        "$typeName": "google.protobuf.Struct",
+                        "fields": {
+                          "str": {
+                            "$typeName": "google.protobuf.Value",
+                            "kind": {
+                              "case": "stringValue",
+                              "value": "foo"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "relSelfParam": {
+            "$typeName": "google.protobuf.Value",
+            "kind": {
+              "case": "structValue",
+              "value": {
+                "$typeName": "google.protobuf.Struct",
+                "fields": {
+                  "scalars": {
+                    "$typeName": "google.protobuf.Value",
+                    "kind": {
+                      "case": "structValue",
+                      "value": {
+                        "$typeName": "google.protobuf.Struct",
+                        "fields": {
+                          "fields": {
+                            "$typeName": "google.protobuf.Value",
+                            "kind": {
+                              "case": "structValue",
+                              "value": {
+                                "$typeName": "google.protobuf.Struct",
+                                "fields": {
+                                  "str": {
+                                    "$typeName": "google.protobuf.Value",
+                                    "kind": {
+                                      "case": "stringValue",
+                                      "value": "foo"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "schema": {
+    "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+    "name": "spec.All",
+    "fields": [
+      {
+        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+        "name": "scalars",
+        "jsonName": "",
+        "type": {
+          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+          "value": {
+            "case": "message",
+            "value": {
+              "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+              "name": "spec.Scalar",
+              "fields": [
+                {
+                  "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                  "name": "fields",
+                  "jsonName": "",
+                  "type": {
+                    "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                    "value": {
+                      "case": "message",
+                      "value": {
+                        "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                        "name": "spec.ScalarFields",
+                        "fields": [
+                          {
+                            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                            "name": "str",
+                            "jsonName": "",
+                            "type": {
+                              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                              "value": {
+                                "case": "scalar",
+                                "value": 9
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+        "name": "relSelfParam",
+        "jsonName": "",
+        "type": {
+          "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+          "value": {
+            "case": "message",
+            "value": {
+              "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+              "name": "spec.All",
+              "fields": [
+                {
+                  "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                  "name": "scalars",
+                  "jsonName": "",
+                  "type": {
+                    "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                    "value": {
+                      "case": "message",
+                      "value": {
+                        "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                        "name": "spec.Scalar",
+                        "fields": [
+                          {
+                            "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                            "name": "fields",
+                            "jsonName": "",
+                            "type": {
+                              "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                              "value": {
+                                "case": "message",
+                                "value": {
+                                  "$typeName": "buf.knit.gateway.v1alpha1.Schema",
+                                  "name": "spec.ScalarFields",
+                                  "fields": [
+                                    {
+                                      "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field",
+                                      "name": "str",
+                                      "jsonName": "",
+                                      "type": {
+                                        "$typeName": "buf.knit.gateway.v1alpha1.Schema.Field.Type",
+                                        "value": {
+                                          "case": "scalar",
+                                          "value": 9
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}
+`;

@@ -17,6 +17,6 @@ import config from "eslint-config-custom";
 export default [
   ...config,
   {
-    ignores: ["src/jest/*.ts", "tsup.config.ts", "gateway.js"],
+    ignores: ["src/testing/*.ts", "tsup.config.ts", "gateway.js"],
   },
 ];

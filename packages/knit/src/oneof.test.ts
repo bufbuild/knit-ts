@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { describe, test } from "@jest/globals";
+import { describe, test } from "node:test";
 import type { Oneof } from "./oneof.js";
 type Cases = { a: string; b: number };
 

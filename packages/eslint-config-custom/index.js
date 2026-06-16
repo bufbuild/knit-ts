@@ -37,12 +37,7 @@ const licenseHeaderTemplate = readFileSync(
 const config = tseslint.config(
   // Global ignores (applied to all configs in the array).
   {
-    ignores: [
-      "dist/**",
-      "node_modules/**",
-      "src/**/*.test.ts",
-      "jest.config.js",
-    ],
+    ignores: ["dist/**", "node_modules/**", "src/**/*.test.ts"],
   },
 
   // Base JS rules — applied to all files.

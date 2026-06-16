@@ -1,4 +1,5 @@
-import { expect, test } from "@jest/globals";
+import { test } from "node:test";
+import assert from "node:assert/strict";
 import { stitch } from "./stitch.js";
 import type { Patch } from "./json.js";
 import { AllSchema } from "@bufbuild/knit-test-spec/spec/all_pb.js";
@@ -14,7 +15,7 @@ test("stitch", async () => {
     GetAllRelSelfParamResponse_AllParamResultSchema.fields.find(
       (f) => f.number === 1,
     )!;
-  expect(relationFieldInfo).toBeDefined();
+  assert.ok(relationFieldInfo !== undefined);
   const target = {};
   const params = { scalars: { fields: { str: "param" } } };
   const relation = {
@@ -22,9 +23,10 @@ test("stitch", async () => {
     base: AllSchema,
     method: "",
     resolver: async (bases, gotParams) => {
-      expect(
+      assert.deepStrictEqual(
         toJson(AllSchema, gotParams as MessageShape<typeof AllSchema>),
-      ).toEqual(params);
+        params,
+      );
       return Array(bases.length).fill(create(AllSchema, {}));
     },
   } satisfies Relation;
@@ -74,7 +76,7 @@ test("stitch", async () => {
     },
   } satisfies Patch;
   await stitch([patch], false, undefined, {});
-  expect(target).toEqual({
+  assert.deepStrictEqual(target, {
     [localName]: {
       [localName]: {},
     },

@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { describe, expect, test } from "@jest/globals";
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
 import { computeSchema } from "./schema.js";
 import type {
   GatewaySchema,
@@ -344,7 +345,7 @@ describe("valid mask", () => {
   ];
   for (const testCase of testCases) {
     test(testCase.name, () => {
-      expect(
+      assert.deepStrictEqual(
         create(
           SchemaSchema,
           computeSchema(
@@ -356,7 +357,8 @@ describe("valid mask", () => {
             [],
           ),
         ),
-      ).toEqual(create(SchemaSchema, testCase.schema));
+        create(SchemaSchema, testCase.schema),
+      );
     });
   }
 });
@@ -380,7 +382,7 @@ describe("invalid mask", () => {
   ];
   for (const testCase of testCases) {
     test(testCase.name, () => {
-      expect(() =>
+      assert.throws(() =>
         computeSchema(
           testCase.message,
           testCase.mask.map((m) => create(MaskFieldSchema, m)),
@@ -389,7 +391,7 @@ describe("invalid mask", () => {
           new Map(),
           [],
         ),
-      ).toThrow();
+      );
     });
   }
 });
