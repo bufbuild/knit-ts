@@ -23,9 +23,6 @@
     "typecheck": {
       "outputs": []
     },
-    "lint": {
-      "outputs": []
-    },
     "clean": {
       "cache": false,
       "outputs": []
@@ -35,8 +32,5 @@
       "persistent": true
     }
   },
-  "globalDependencies": [
-    "packages/eslint-config-custom/index.js",
-    "packages/tsconfig/*.json"
-  ]
+  "globalDependencies": ["packages/tsconfig/*.json"]
 }

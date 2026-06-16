@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* eslint-disable @typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-explicit-any */
+// biome-ignore-all lint/suspicious/noExplicitAny: the scoped-client plumbing relies on `any` to remap the dynamic service-name prefixes.
+
 import type { Schema } from "./schema.js";
 import type { Client } from "./client.js";
 import type { AnyQuery } from "./protocol.js";
@@ -110,11 +111,7 @@ function scopeResult(result: { [k: string]: unknown }, scope: string) {
  * result is "com" | "com.example" | "com.example.foo" | "com.example.foo.v1"
  */
 // prettier-ignore
-type Split<
-  S extends string,
-  C extends string,
-  P extends string = ""
-> =
+type Split<S extends string, C extends string, P extends string = ""> =
   // Check to see if S has at least one `C` somewhere.
   // This always matches the first `C`.
   //
@@ -122,19 +119,19 @@ type Split<
   // L -> com
   // R -> example.foo.v1.FooService
   S extends `${infer L}${C}${infer R}`
-  // Prefix `L` with `P`, for the first run P is always ''.
-  //
-  // For com.example.foo.v1.FooService
-  // 
-  // First iteration:
-  // "com" | Split<"example.foo.v1.FooService", ".", "com.">
-  //
-  // Second iteration:
-  // "com.example" | Split<"foo.v1.FooService", ".", "com.example.">    
-  ? `${P}${L}` | Split<R, C, `${P}${L}${C}`>
-  // Last iteration:
-  // `never`. `|` with never is a noop.
-  : never;
+    ? // Prefix `L` with `P`, for the first run P is always ''.
+      //
+      // For com.example.foo.v1.FooService
+      //
+      // First iteration:
+      // "com" | Split<"example.foo.v1.FooService", ".", "com.">
+      //
+      // Second iteration:
+      // "com.example" | Split<"foo.v1.FooService", ".", "com.example.">
+      `${P}${L}` | Split<R, C, `${P}${L}${C}`>
+    : // Last iteration:
+      // `never`. `|` with never is a noop.
+      never;
 
 /**
  * Scope a Schema to only include services that have the prefix `P` and

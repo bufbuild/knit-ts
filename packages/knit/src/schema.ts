@@ -74,30 +74,29 @@ export type ErrorStrategyCatch = { "@catch": Record<never, never> };
 //prettier-ignore
 export type Query<T> =
   T extends OneofMarker<infer OT>
-  ? OneofQuery<Query<OT>>
-  : T extends (infer E)[]
-  ? Query<E>
-  : T extends MapMarker<infer _ extends { [k: string | number]: infer E }> // eslint-disable-line @typescript-eslint/no-unused-vars
-  ? Query<E>
-  : T extends EnumMarker<unknown>
-  ? ScalarQuery
-  : T extends AliasMarker<string, infer V>
-  ? Query<V>
-  : T extends keyof WktTypeTable
-  ? ScalarQuery
-  : T extends Uint8Array
-  ? ScalarQuery
-  : T extends RelationMarker<infer P, infer V>
-  ? (
-    P extends undefined
-    ? Query<V>
-    : { $: Parameter<P> } & Query<V>
-  ) & ErrorStrategy
-  : T extends AnyRecord
-  ? { [P in keyof T]?: Query<T[P]> }
-  : T extends undefined
-  ? never
-  : ScalarQuery;
+    ? OneofQuery<Query<OT>>
+    : T extends (infer E)[]
+      ? Query<E>
+      : T extends MapMarker<infer _ extends { [k: string | number]: infer E }>
+        ? Query<E>
+        : T extends EnumMarker<unknown>
+          ? ScalarQuery
+          : T extends AliasMarker<string, infer V>
+            ? Query<V>
+            : T extends keyof WktTypeTable
+              ? ScalarQuery
+              : T extends Uint8Array
+                ? ScalarQuery
+                : T extends RelationMarker<infer P, infer V>
+                  ? (P extends undefined
+                      ? Query<V>
+                      : { $: Parameter<P> } & Query<V>) &
+                      ErrorStrategy
+                  : T extends AnyRecord
+                    ? { [P in keyof T]?: Query<T[P]> }
+                    : T extends undefined
+                      ? never
+                      : ScalarQuery;
 
 /**
  * Parameter converts the generated schemas into their parameter variants that
@@ -119,25 +118,29 @@ export type Query<T> =
 //prettier-ignore
 export type Parameter<T> =
   T extends OneofMarker<infer OT>
-  ? Oneof<Parameter<OT>>
-  : T extends (infer E)[]
-  ? Array<Parameter<E>>
-  : T extends MapMarker<infer M>
-  ? { [P in keyof M]: Parameter<M[P]> }
-  : T extends EnumMarker<infer E>
-  ? E
-  : T extends AliasMarker<infer K, infer V>
-  ? Alias<K, Parameter<V>>
-  : T extends keyof WktTypeTable
-  ? WktTypeTable[T]
-  : T extends Uint8Array
-  ? Uint8Array
-  : T extends AnyRecord
-  ? {
-    // Exclude the Knit relation fields
-    [K in keyof T as T[K] extends RelationMarker<unknown, unknown> | undefined ? never : K]?: Parameter<T[K]>;
-  }
-  : T;
+    ? Oneof<Parameter<OT>>
+    : T extends (infer E)[]
+      ? Array<Parameter<E>>
+      : T extends MapMarker<infer M>
+        ? { [P in keyof M]: Parameter<M[P]> }
+        : T extends EnumMarker<infer E>
+          ? E
+          : T extends AliasMarker<infer K, infer V>
+            ? Alias<K, Parameter<V>>
+            : T extends keyof WktTypeTable
+              ? WktTypeTable[T]
+              : T extends Uint8Array
+                ? Uint8Array
+                : T extends AnyRecord
+                  ? {
+                      // Exclude the Knit relation fields
+                      [K in keyof T as T[K] extends
+                        | RelationMarker<unknown, unknown>
+                        | undefined
+                        ? never
+                        : K]?: Parameter<T[K]>;
+                    }
+                  : T;
 
 /**
  * Mask returns the masked result based on a {@link Query}. Useful for getting the results based on
@@ -166,28 +169,32 @@ export type Parameter<T> =
 //prettier-ignore
 export type Mask<Q, R, ES extends ErrorStrategy = ErrorStrategyThrow> =
   R extends OneofMarker<infer OR>
-  ? Q extends OneofQuery<infer OQ> ? Oneof<Mask<OQ, OR, ES>> : never
-  : R extends (infer E)[]
-  ? Array<Mask<Q, E, ES>>
-  : R extends MapMarker<infer M>
-  ? { [K in keyof M]: Mask<Q, M[K], ES> }
-  : R extends EnumMarker<infer E>
-  ? E
-  : R extends AliasMarker<string, infer V>
-  ? Mask<Q, V, ES>
-  : R extends keyof WktTypeTable
-  ? WktTypeTable[R]
-  : R extends Uint8Array
-  ? R
-  : R extends RelationMarker<unknown, infer V>
-  ? Mask<Q, V, ES> | ErrorMask<Q, ES>
-  : R extends AnyRecord
-  ? {
-    [K in keyof R as K extends keyof Q ? K : never]: K extends keyof Q
-    ? Mask<Q[K], R[K], ES>
-    : never;
-  }
-  : R;
+    ? Q extends OneofQuery<infer OQ>
+      ? Oneof<Mask<OQ, OR, ES>>
+      : never
+    : R extends (infer E)[]
+      ? Array<Mask<Q, E, ES>>
+      : R extends MapMarker<infer M>
+        ? { [K in keyof M]: Mask<Q, M[K], ES> }
+        : R extends EnumMarker<infer E>
+          ? E
+          : R extends AliasMarker<string, infer V>
+            ? Mask<Q, V, ES>
+            : R extends keyof WktTypeTable
+              ? WktTypeTable[R]
+              : R extends Uint8Array
+                ? R
+                : R extends RelationMarker<unknown, infer V>
+                  ? Mask<Q, V, ES> | ErrorMask<Q, ES>
+                  : R extends AnyRecord
+                    ? {
+                        [K in keyof R as K extends keyof Q
+                          ? K
+                          : never]: K extends keyof Q
+                          ? Mask<Q[K], R[K], ES>
+                          : never;
+                      }
+                    : R;
 
 /**
  * Markers used to identify type that needs special handling.
@@ -223,14 +230,13 @@ type WktTypeTable = {
 };
 
 //prettier-ignore
-type ErrorMask<Q, ES extends ErrorStrategy> =
-  Q extends ErrorStrategyCatch
+type ErrorMask<Q, ES extends ErrorStrategy> = Q extends ErrorStrategyCatch
   ? KnitError
   : Q extends ErrorStrategyThrow
-  ? never
-  : ES extends ErrorStrategyCatch
-  ? KnitError
-  : never;
+    ? never
+    : ES extends ErrorStrategyCatch
+      ? KnitError
+      : never;
 
 /**
  * The base type for all Knit schemas.

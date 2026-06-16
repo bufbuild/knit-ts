@@ -12,7 +12,6 @@
   "type": "module",
   "scripts": {
     "clean": "rm -rf ./dist/* .turbo/*",
-    "lint": "eslint .",
     "attw": "attw --pack",
     "typecheck": "tsc --noEmit -p tsconfig.test.json",
     "test": "tsx --test $(find src -type f -path '*.test.ts')",
@@ -60,7 +59,6 @@
   "devDependencies": {
     "@buf/bufbuild_knit.bufbuild_es": "2.12.0-20250213130123-9561c696fd69.1",
     "@bufbuild/knit-test-spec": "workspace:*",
-    "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*",
     "tsup": "^8.5.1",
     "tsx": "^4.22.4"

@@ -18,7 +18,7 @@ import type { Equal } from "../utils/types.js";
  * Useful to test types: `expectType<Equal<L, R>>(true)`
  * @param _
  */
-export function expectType<T extends true | false>(_expectedValue: T) {} // eslint-disable-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
+export function expectType<T extends true | false>(_expectedValue: T) {}
 
 /**
  * The equality check is accurate, the diff may not cover all cases, only used for debugging type tests.

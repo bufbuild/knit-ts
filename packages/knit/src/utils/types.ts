@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// biome-ignore-all lint/suspicious/noExplicitAny: these structural type helpers intentionally use `any`.
+
 /**
  * A type that requires exactly one of the properties of an object to be set.
  */
 export type ExactlyOne<T extends AnyRecord> = {
-  [K in keyof T]-?: Required<Pick<T, K>> & Partial<Record<Exclude<keyof T, K>, never>>; //prettier-ignore
+  [K in keyof T]-?: Required<Pick<T, K>> &
+    Partial<Record<Exclude<keyof T, K>, never>>; //prettier-ignore
 }[keyof T];
 
 /**
@@ -24,7 +27,8 @@ export type ExactlyOne<T extends AnyRecord> = {
  *
  */
 export type OneOrMore<T extends AnyRecord> = {
-  [K in keyof T]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<keyof T, K>>>; //prettier-ignore
+  [K in keyof T]-?: Required<Pick<T, K>> &
+    Partial<Pick<T, Exclude<keyof T, K>>>; //prettier-ignore
 }[keyof T];
 
 /**
@@ -37,7 +41,7 @@ export type ZeroOrOne<T extends AnyRecord> =
 /**
  * Allows anything object type ({}).
  */
-export type AnyRecord = { [K in string]: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type AnyRecord = { [K in string]: any };
 
 /**
  *
@@ -47,9 +51,9 @@ export type AnyRecord = { [K in string]: any }; // eslint-disable-line @typescri
  */
 //prettier-ignore
 export type Equal<L, R> =
-  (<T>() => T extends L ? 1 : 2) extends (<T>() => T extends R ? 1 : 2)
-  ? true
-  : false;
+  (<T>() => T extends L ? 1 : 2) extends <T>() => T extends R ? 1 : 2
+    ? true
+    : false;
 
 /**
  * @link https://www.typescriptlang.org/docs/handbook/2/conditional-types.html#distributive-conditional-types
@@ -62,16 +66,16 @@ export type DistributiveKeyOf<T> = T extends T ? keyof T : never;
 //prettier-ignore
 export type Subset<I, T> =
   Equal<T, I> extends true
-  ? T
-  : T extends any[] // eslint-disable-line @typescript-eslint/no-explicit-any
-  ? Array<Subset<Element<I>, Element<T>>>
-  : T extends AnyRecord
-  ? SubsetRecord<I, T>
-  : T;
+    ? T
+    : T extends any[]
+      ? Array<Subset<Element<I>, Element<T>>>
+      : T extends AnyRecord
+        ? SubsetRecord<I, T>
+        : T;
 
 //prettier-ignore
-type SubsetRecord<I, T> =
-  & { [P in keyof T]: Subset<P extends keyof I ? I[P] : never, T[P]>; }
-  & Record<Exclude<keyof I, DistributiveKeyOf<T>>, never>;
+type SubsetRecord<I, T> = {
+  [P in keyof T]: Subset<P extends keyof I ? I[P] : never, T[P]>;
+} & Record<Exclude<keyof I, DistributiveKeyOf<T>>, never>;
 
 type Element<T> = T extends (infer E)[] ? E : never;

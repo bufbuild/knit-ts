@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Code, ConnectError } from "@connectrpc/connect";
-import type { Client } from "./client.js"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import { type Code, ConnectError } from "@connectrpc/connect";
+import type { Client } from "./client.js";
 import { create, toBinary, toJson } from "@bufbuild/protobuf";
 import type { JsonValue } from "@bufbuild/protobuf";
 

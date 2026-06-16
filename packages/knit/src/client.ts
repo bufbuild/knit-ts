@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// biome-ignore-all lint/suspicious/noExplicitAny: the decoded result is reconstructed at runtime and cast to the typed Mask result.
+
 import { createConnectTransport } from "@connectrpc/connect-web";
 import {
   createClient as createConnectRpcClient,
@@ -224,14 +226,13 @@ function createFetch<S extends Schema>(
   client: KnitServiceClient,
   options: OptionalOptions,
 ): Client<S>["fetch"] {
-  return async function <Q extends Subset<Q, FetchQuery<S>>>(query: Q) {
+  return async <Q extends Subset<Q, FetchQuery<S>>>(query: Q) => {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     try {
       const { responses } = await client.fetch(
         { requests },
         { headers: options.headers },
       );
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return
       return makeResult(oneofs, responses) as any;
     } catch (reason) {
       throw knitErrorFromReason(reason);
@@ -243,14 +244,13 @@ function createDo<S extends Schema>(
   client: KnitServiceClient,
   options: OptionalOptions,
 ): Client<S>["do"] {
-  return async function <Q extends Subset<Q, DoQuery<S>>>(query: Q) {
+  return async <Q extends Subset<Q, DoQuery<S>>>(query: Q) => {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     try {
       const { responses } = await client.do(
         { requests },
         { headers: options.headers },
       );
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return
       return makeResult(oneofs, responses) as any;
     } catch (reason) {
       throw knitErrorFromReason(reason);
@@ -262,7 +262,7 @@ function createListen<S extends Schema>(
   client: KnitServiceClient,
   options: OptionalOptions,
 ): Client<S>["listen"] {
-  return function <Q extends Subset<Q, ListenQuery<S>>>(query: Q) {
+  return <Q extends Subset<Q, ListenQuery<S>>>(query: Q) => {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     if (requests.length !== 1) {
       throw new Error(
@@ -277,7 +277,7 @@ function createListen<S extends Schema>(
       return makeResultIterable(
         oneofs[0],
         responseIterable,
-      ) as AsyncIterable<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+      ) as AsyncIterable<any>;
     } catch (reason) {
       throw knitErrorFromReason(reason);
     }
