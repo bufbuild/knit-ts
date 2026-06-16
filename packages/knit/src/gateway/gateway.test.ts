@@ -46,6 +46,18 @@ describe("service", () => {
       ["spec.AllService.GetAll"],
     );
   });
+  test("methods option rejects unsupported method kinds", () => {
+    const gateway = createGateway({ transport: {} as any });
+    // The methods option only accepts unary and server-streaming method names.
+    // These @ts-expect-error directives fail the typecheck (tsconfig.test.json)
+    // if the option type ever loosens to accept client-streaming or
+    // bidi-streaming method names. (AllService.clientAll is client-streaming and
+    // AllService.biDiAll is bidi-streaming.)
+    // @ts-expect-error - clientAll is a client-streaming method
+    gateway.service(AllService, { methods: ["clientAll"] });
+    // @ts-expect-error - biDiAll is a bidi-streaming method
+    gateway.service(AllService, { methods: ["biDiAll"] });
+  });
   test("respects transport override", () => {
     const gateway = createGateway({ transport: { kind: "base" } as any });
     gateway.service(AllService, { transport: { kind: "override" } as any });
