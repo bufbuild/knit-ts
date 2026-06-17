@@ -16,6 +16,7 @@
   },
   "scripts": {
     "clean": "rm -rf ./dist/cjs/*",
+    "typecheck": "tsc --noEmit",
     "build": "esbuild src/index.ts --bundle --platform=node --target=node18 --outdir=./dist/cjs --external:@bufbuild/protoplugin --external:@bufbuild/protobuf --external:@bufbuild/protobuf/* && echo >./dist/cjs/package.json '{\"type\":\"commonjs\"}'"
   },
   "preferUnplugged": true,
