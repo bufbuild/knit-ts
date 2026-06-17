@@ -110,8 +110,12 @@ function scopeResult(result: { [k: string]: unknown }, scope: string) {
  * For the string `com.example.foo.v1.FooService` as S and `.` as C, the expected
  * result is "com" | "com.example" | "com.example.foo" | "com.example.foo.v1"
  */
-// prettier-ignore
-type Split<S extends string, C extends string, P extends string = ""> =
+// biome-ignore format: hand-formatted recursive type for readability
+type Split<
+  S extends string,
+  C extends string,
+  P extends string = ""
+> =
   // Check to see if S has at least one `C` somewhere.
   // This always matches the first `C`.
   //
@@ -119,19 +123,19 @@ type Split<S extends string, C extends string, P extends string = ""> =
   // L -> com
   // R -> example.foo.v1.FooService
   S extends `${infer L}${C}${infer R}`
-    ? // Prefix `L` with `P`, for the first run P is always ''.
-      //
-      // For com.example.foo.v1.FooService
-      //
-      // First iteration:
-      // "com" | Split<"example.foo.v1.FooService", ".", "com.">
-      //
-      // Second iteration:
-      // "com.example" | Split<"foo.v1.FooService", ".", "com.example.">
-      `${P}${L}` | Split<R, C, `${P}${L}${C}`>
-    : // Last iteration:
-      // `never`. `|` with never is a noop.
-      never;
+  // Prefix `L` with `P`, for the first run P is always ''.
+  //
+  // For com.example.foo.v1.FooService
+  // 
+  // First iteration:
+  // "com" | Split<"example.foo.v1.FooService", ".", "com.">
+  //
+  // Second iteration:
+  // "com.example" | Split<"foo.v1.FooService", ".", "com.example.">    
+  ? `${P}${L}` | Split<R, C, `${P}${L}${C}`>
+  // Last iteration:
+  // `never`. `|` with never is a noop.
+  : never;
 
 /**
  * Scope a Schema to only include services that have the prefix `P` and
