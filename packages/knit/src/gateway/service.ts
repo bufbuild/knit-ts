@@ -25,7 +25,7 @@ import {
   FetchResponseSchema,
   KnitService,
   ListenResponseSchema,
-  ResponseSchema,
+  type ResponseSchema,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import type { Request } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import {
@@ -309,7 +309,6 @@ async function handleStream(
     context.signal,
     min(context.timeoutMs(), entryPoint.timeoutMs),
     headers,
-    // eslint-disable-next-line @typescript-eslint/require-await
     (async function* () {
       yield fromJson(
         method.input,
@@ -350,7 +349,7 @@ async function makeResponse(
   context: ResolverContext,
 ): Promise<ResponseInit> {
   const target: { body?: JsonValue } = {};
-  let errorPatch: ErrorPatch | undefined = undefined;
+  let errorPatch: ErrorPatch | undefined;
   if (shouldCatch(request.onError, fallbackCatch)) {
     errorPatch = {
       target: target,

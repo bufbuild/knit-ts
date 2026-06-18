@@ -1,4 +1,19 @@
-import { describe, expect, test } from "@jest/globals";
+// Copyright 2023-2024 Buf Technologies, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
 import { createClientWithTransport } from "./client.js";
 import {
   type HandlerContext,
@@ -75,9 +90,9 @@ describe("client", () => {
     { requests }: { requests: KnitRequest[] },
     { requestHeader }: HandlerContext,
   ): MessageInitShape<typeof FetchResponseSchema> => {
-    expect(requests).toHaveLength(1);
-    expect(toJson(ValueSchema, requests[0].body!)).toEqual(request);
-    expect(requestHeader.get(headerKey)).toEqual(headerValue);
+    assert.strictEqual(requests.length, 1);
+    assert.deepStrictEqual(toJson(ValueSchema, requests[0].body!), request);
+    assert.deepStrictEqual(requestHeader.get(headerKey), headerValue);
     return {
       responses: [
         {
@@ -91,18 +106,19 @@ describe("client", () => {
   const client = createClientWithTransport<AllService>(
     createRouterTransport(({ service }) => {
       service(KnitService, {
-        fetch: unary as any, // eslint-disable-line @typescript-eslint/no-explicit-any
-        do: unary as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+        fetch: unary as any,
+        do: unary as any,
         async *listen(
           { request: actualRequest }: ListenRequest,
           { requestHeader }: HandlerContext,
         ) {
-          expect(requestHeader.get(headerKey)).toEqual(headerValue);
-          expect(
+          assert.deepStrictEqual(requestHeader.get(headerKey), headerValue);
+          assert.deepStrictEqual(
             actualRequest?.body !== undefined
               ? toJson(ValueSchema, actualRequest.body)
               : undefined,
-          ).toEqual(request);
+            request,
+          );
           for (let i = 0; i < 5; i++) {
             yield {
               response: {
@@ -133,7 +149,7 @@ describe("client", () => {
         },
       },
     });
-    expect(fetchResponse["spec.AllService"].getAll).toEqual(response);
+    assert.deepStrictEqual(fetchResponse["spec.AllService"].getAll, response);
   });
   test("do", async () => {
     const fetchResponse = await client.do({
@@ -144,7 +160,10 @@ describe("client", () => {
         },
       },
     });
-    expect(fetchResponse["spec.AllService"].createAll).toEqual(response);
+    assert.deepStrictEqual(
+      fetchResponse["spec.AllService"].createAll,
+      response,
+    );
   });
   test("listen", async () => {
     const listenResponse = client.listen({
@@ -157,9 +176,9 @@ describe("client", () => {
     });
     let count = 0;
     for await (const next of listenResponse) {
-      expect(next["spec.AllService"].streamAll).toEqual(response);
+      assert.deepStrictEqual(next["spec.AllService"].streamAll, response);
       count++;
     }
-    expect(count).toBe(5);
+    assert.strictEqual(count, 5);
   });
 });

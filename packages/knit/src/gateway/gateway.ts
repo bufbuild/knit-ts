@@ -316,9 +316,7 @@ export function createGateway({
               },
             );
             return (
-              (response.message as Record<string, unknown>)[
-                "values"
-              ] as Message[]
+              (response.message as Record<string, unknown>).values as Message[]
             ).map((v) => (v as Record<string, unknown>)[field.localName]);
           },
         });

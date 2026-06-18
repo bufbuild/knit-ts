@@ -81,5 +81,5 @@ export function getAlias(
   if (!(aliasSymbol in v && "value" in v)) {
     return undefined;
   }
-  return { alias: v[aliasSymbol] as string, value: v["value"] };
+  return { alias: v[aliasSymbol] as string, value: v.value };
 }

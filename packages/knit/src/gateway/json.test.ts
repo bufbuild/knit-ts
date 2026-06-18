@@ -49,7 +49,8 @@ import {
 } from "@bufbuild/protobuf";
 import { anyPack } from "@bufbuild/protobuf/wkt";
 import { base64Encode } from "@bufbuild/protobuf/wire";
-import { test, expect, describe } from "@jest/globals";
+import { test, describe } from "node:test";
+import assert from "node:assert/strict";
 
 import { formatMessage } from "./json.js";
 import type {
@@ -505,7 +506,7 @@ describe("valid", () => {
   const typeRegistry = createRegistry(BoolValueSchema);
   for (const testCase of testCases) {
     test(testCase.name, () => {
-      expect(
+      assert.deepStrictEqual(
         formatMessage(
           testCase.i,
           testCase.desc,
@@ -514,7 +515,8 @@ describe("valid", () => {
           false,
           typeRegistry,
         )[0],
-      ).toEqual(testCase.o);
+        testCase.o,
+      );
     });
   }
 });

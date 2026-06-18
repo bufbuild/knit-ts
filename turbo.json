@@ -18,10 +18,9 @@
       "outputs": []
     },
     "test": {
-      "dependsOn": ["build"],
       "outputs": []
     },
-    "lint": {
+    "typecheck": {
       "outputs": []
     },
     "clean": {
@@ -29,12 +28,9 @@
       "outputs": []
     },
     "test:watch": {
-      "dependsOn": ["clean", "buf:generate"],
+      "cache": false,
       "persistent": true
     }
   },
-  "globalDependencies": [
-    "packages/eslint-config-custom/index.js",
-    "packages/tsconfig/*.json"
-  ]
+  "globalDependencies": ["packages/tsconfig/*.json"]
 }

@@ -14,6 +14,10 @@ jobs:
         uses: ./.github/actions/setup
       - name: lint
         run: pnpm run lint
+      - name: typecheck
+        run: pnpm run typecheck
+      - name: license-header
+        run: pnpm run license-header -- --check
   test:
     runs-on: ubuntu-latest
     steps:

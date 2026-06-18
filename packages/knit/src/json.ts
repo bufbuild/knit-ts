@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 // Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +36,7 @@ import {
   TimestampSchema,
   ValueSchema,
 } from "@bufbuild/protobuf/wkt";
-import { Code } from "@connectrpc/connect";
+import type { Code } from "@connectrpc/connect";
 import { KnitError } from "./error.js";
 
 /**
@@ -53,7 +52,7 @@ export function format(data: unknown): JsonValue {
     case "string":
       return data;
     case "number":
-      if (isNaN(data)) {
+      if (Number.isNaN(data)) {
         return "NaN";
       }
       if (data === Number.POSITIVE_INFINITY) {
@@ -90,20 +89,18 @@ export function format(data: unknown): JsonValue {
       if (data instanceof Uint8Array) {
         return base64Encode(data);
       }
-      if (data instanceof Array) {
+      if (Array.isArray(data)) {
         return data.map((element) => format(element));
       }
       const entries = Object.entries(data);
       const fields: JsonObject = {};
       for (let [key, value] of entries) {
         if (typeof value === "object" && value !== null) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           const alias = getAlias(value);
           if (alias !== undefined) {
             key = alias.alias;
             value = alias.value;
           } else {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             const oneof = getOneof(value);
             if (oneof !== undefined) {
               key = oneof["@case"];
@@ -162,7 +159,6 @@ export function decodeMessage(
     }
     const oneOfField = oneofTable[fieldPath];
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (oneOfField !== undefined) {
       result[oneOfField] = {
         "@case": field.name,
@@ -355,7 +351,7 @@ function decodeInt(data: JsonValue, path: string) {
     case "number":
       return data;
     case "string":
-      return parseInt(data);
+      return parseInt(data, 10);
     default:
       throw parseError("string | number", typeof data, "int", path);
   }
@@ -445,7 +441,7 @@ function assertJsonObject(
     default:
       break;
   }
-  if (data instanceof Array) {
+  if (Array.isArray(data)) {
     throw parseError("object", "Array", "message", path);
   }
 }
@@ -454,7 +450,7 @@ function assertJsonArray(
   data: JsonValue,
   path: string,
 ): asserts data is JsonValue[] {
-  if (!(data instanceof Array)) {
+  if (!Array.isArray(data)) {
     throw parseError("Array", typeof data, "ListValue", path);
   }
 }

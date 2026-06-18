@@ -1,0 +1,49 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!**/dist",
+      "!packages/knit-test-spec/spec",
+      "!packages/knit-test-spec/buf",
+      "!**/tsconfig*.json"
+    ]
+  },
+  "formatter": {
+    "indentStyle": "space"
+  },
+  "linter": {
+    "rules": {
+      "preset": "recommended",
+      "style": {
+        "useTemplate": "off",
+        "useConst": "off",
+        "noParameterAssign": "off",
+        "useSingleVarDeclarator": "off",
+        "useNumberNamespace": "off",
+        "noUnusedTemplateLiteral": "off"
+      },
+      "correctness": {
+        "noSwitchDeclarations": "off"
+      },
+      "suspicious": {
+        "noDoubleEquals": "off",
+        "noFallthroughSwitchClause": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.test.ts", "**/src/testing/**", "**/tsup.config.ts"],
+      "linter": {
+        "enabled": false
+      }
+    }
+  ]
+}

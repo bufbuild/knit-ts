@@ -15,7 +15,8 @@
 import type { AllService } from "@bufbuild/knit-test-spec/spec/all_knit.js";
 import type { WktService } from "@bufbuild/knit-test-spec/spec/wkt_knit.js";
 import type { SubService } from "@bufbuild/knit-test-spec/spec/sub/sub_knit.js";
-import { describe, expect, test } from "@jest/globals";
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
 import type { Client } from "./client.js";
 
 import { makeScopedClient } from "./scope.js";
@@ -44,7 +45,7 @@ describe("scope", () => {
         },
       },
     });
-    expect(res).toStrictEqual({
+    assert.deepStrictEqual(res, {
       SubService: {
         subMethod: {
           $: {},
@@ -66,7 +67,7 @@ describe("scope", () => {
         },
       },
     });
-    expect(res).toStrictEqual({
+    assert.deepStrictEqual(res, {
       AllService: {
         createAll: {
           $: {},

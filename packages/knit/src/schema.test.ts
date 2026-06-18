@@ -18,8 +18,8 @@ import type {
   WktService,
 } from "@bufbuild/knit-test-spec/spec/wkt_knit.js";
 import type { Map, MapEnum } from "@bufbuild/knit-test-spec/spec/map_knit.js";
-import { describe, test } from "@jest/globals";
-import { type DeepDiff, expectType } from "./jest/util.js";
+import { describe, test } from "node:test";
+import { type DeepDiff, expectType } from "./testing/util.js";
 import { type Oneof } from "./oneof";
 import type { Mask, Parameter, Query } from "./schema.js";
 import type { Equal } from "./utils/types.js";

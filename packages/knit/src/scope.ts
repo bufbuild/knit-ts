@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* eslint-disable @typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-explicit-any */
+// biome-ignore-all lint/suspicious/noExplicitAny: the scoped-client plumbing relies on `any` to remap the dynamic service-name prefixes.
+
 import type { Schema } from "./schema.js";
 import type { Client } from "./client.js";
 import type { AnyQuery } from "./protocol.js";
@@ -109,7 +110,7 @@ function scopeResult(result: { [k: string]: unknown }, scope: string) {
  * For the string `com.example.foo.v1.FooService` as S and `.` as C, the expected
  * result is "com" | "com.example" | "com.example.foo" | "com.example.foo.v1"
  */
-// prettier-ignore
+// biome-ignore format: hand-formatted recursive type for readability
 type Split<
   S extends string,
   C extends string,

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* eslint-disable no-case-declarations,@typescript-eslint/unbound-method */
 import {
   createEcmaScriptPlugin,
   type Schema,

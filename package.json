@@ -8,19 +8,24 @@
   "scripts": {
     "clean": "turbo run clean --no-daemon --cache-dir=.turbo",
     "build": "turbo run build --no-daemon --cache-dir=.turbo",
-    "lint": "turbo run lint --no-daemon --cache-dir=.turbo",
     "attw": "turbo run attw --no-daemon --cache-dir=.turbo",
     "test": "turbo run test --no-daemon --cache-dir=.turbo",
     "test:watch": "turbo run test:watch --no-daemon --cache-dir=.turbo",
+    "typecheck": "turbo run typecheck --no-daemon --cache-dir=.turbo",
     "buf:generate": "turbo run buf:generate --no-daemon --cache-dir=.turbo",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "lint": "biome lint --error-on-warnings",
+    "format": "biome format --write",
+    "license-header": "license-header --ignore 'packages/*/dist/**' --ignore 'packages/knit-test-spec/spec/**' --ignore 'packages/knit-test-spec/buf/**' --ignore 'packages/knit-test-spec/proto/**'"
+  },
+  "licenseHeader": {
+    "licenseType": "apache",
+    "yearRange": "2023-2024",
+    "copyrightHolder": "Buf Technologies, Inc."
   },
   "devDependencies": {
     "@types/node": "^25.9.3",
-    "eslint-config-custom": "workspace:*",
-    "jest": "^30.4.2",
-    "prettier": "^3.8.4",
-    "ts-jest": "^29.4.11",
+    "@biomejs/biome": "^2.5.0",
+    "@bufbuild/license-header": "^0.0.4",
     "turbo": "^2.9.18",
     "typescript": "^6.0.3",
     "@arethetypeswrong/cli": "^0.18.3"

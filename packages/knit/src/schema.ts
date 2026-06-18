@@ -71,13 +71,13 @@ export type ErrorStrategyCatch = { "@catch": Record<never, never> };
  * This can be used to create reusable sub-queries that can be expanded in other queries.
  *
  */
-//prettier-ignore
+// biome-ignore format: hand-formatted conditional type for readability
 export type Query<T> =
   T extends OneofMarker<infer OT>
   ? OneofQuery<Query<OT>>
   : T extends (infer E)[]
   ? Query<E>
-  : T extends MapMarker<infer _ extends { [k: string | number]: infer E }> // eslint-disable-line @typescript-eslint/no-unused-vars
+  : T extends MapMarker<infer _ extends { [k: string | number]: infer E }>
   ? Query<E>
   : T extends EnumMarker<unknown>
   ? ScalarQuery
@@ -116,7 +116,7 @@ export type Query<T> =
  * }
  * ```
  */
-//prettier-ignore
+// biome-ignore format: hand-formatted conditional type for readability
 export type Parameter<T> =
   T extends OneofMarker<infer OT>
   ? Oneof<Parameter<OT>>
@@ -163,7 +163,7 @@ export type Parameter<T> =
  * // Since the query only has name field, the result also only has the name field.
  * ```
  */
-//prettier-ignore
+// biome-ignore format: hand-formatted conditional type for readability
 export type Mask<Q, R, ES extends ErrorStrategy = ErrorStrategyThrow> =
   R extends OneofMarker<infer OR>
   ? Q extends OneofQuery<infer OQ> ? Oneof<Mask<OQ, OR, ES>> : never
@@ -222,15 +222,13 @@ type WktTypeTable = {
   "@wkt/BytesValue": Uint8Array;
 };
 
-//prettier-ignore
-type ErrorMask<Q, ES extends ErrorStrategy> =
-  Q extends ErrorStrategyCatch
+type ErrorMask<Q, ES extends ErrorStrategy> = Q extends ErrorStrategyCatch
   ? KnitError
   : Q extends ErrorStrategyThrow
-  ? never
-  : ES extends ErrorStrategyCatch
-  ? KnitError
-  : never;
+    ? never
+    : ES extends ErrorStrategyCatch
+      ? KnitError
+      : never;
 
 /**
  * The base type for all Knit schemas.

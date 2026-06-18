@@ -16,7 +16,7 @@ import { fromJson, toJson } from "@bufbuild/protobuf";
 import type { MessageInitShape } from "@bufbuild/protobuf";
 import { ValueSchema } from "@bufbuild/protobuf/wkt";
 import type { Value } from "@bufbuild/protobuf/wkt";
-import {
+import type {
   MaskFieldSchema,
   RequestSchema,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
@@ -71,8 +71,8 @@ function makeMaskField(
   value: AnyQuery,
   path: string,
 ): [MaskFieldInit, Record<string, string>] {
-  let params: Value | undefined = undefined;
-  let onError: MaskFieldInit["onError"] = undefined;
+  let params: Value | undefined;
+  let onError: MaskFieldInit["onError"];
   const mask: MaskFieldInit[] = [];
   let oneofTable: Record<string, string> = {};
   for (const [k, v] of Object.entries(value)) {
@@ -126,7 +126,6 @@ export function makeResult(
     const method = uncapitalize(serviceParts.pop() as string);
     const service = serviceParts.join(".");
     let serviceResult = result[service];
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (serviceResult === undefined) {
       result[service] = serviceResult = {};
     }
@@ -150,7 +149,7 @@ export async function* makeResultIterable(
   oneofs: Record<string, string>,
   response: AsyncIterable<ListenResponse>,
 ) {
-  let schema: Schema | undefined = undefined;
+  let schema: Schema | undefined;
   try {
     for await (const next of response) {
       if (next.response === undefined) {
