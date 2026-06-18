@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Code, ConnectError } from "@connectrpc/connect";
-import type { Client } from "./client.js"; // eslint-disable-line @typescript-eslint/no-unused-vars
-import { type JsonValue, Message } from "@bufbuild/protobuf";
+import { type Code, ConnectError } from "@connectrpc/connect";
+import type { Client } from "./client.js";
+import { create, toBinary, toJson } from "@bufbuild/protobuf";
+import type { JsonValue } from "@bufbuild/protobuf";
 
 interface ErrorDetail {
   type: string;
@@ -39,7 +40,7 @@ export class KnitError {
     public message: string,
     public details: ErrorDetail[],
     public path: string,
-  ) { }
+  ) {}
 }
 
 /**
@@ -56,11 +57,13 @@ export function knitErrorFromReason(reason: unknown) {
   const connectErr = ConnectError.from(reason);
   const details: ErrorDetail[] = [];
   for (const detail of connectErr.details) {
-    if (detail instanceof Message) {
+    if ("desc" in detail) {
+      // An outgoing detail: a message paired with its schema.
+      const message = create(detail.desc, detail.value);
       details.push({
-        type: detail.getType().typeName,
-        value: detail.toBinary(),
-        debug: detail.toJson(),
+        type: detail.desc.typeName,
+        value: toBinary(detail.desc, message),
+        debug: toJson(detail.desc, message),
       });
       continue;
     }
@@ -70,10 +73,5 @@ export function knitErrorFromReason(reason: unknown) {
       value: detail.value,
     });
   }
-  return new KnitError(
-    connectErr.code as unknown as Code,
-    connectErr.message,
-    details,
-    "",
-  );
+  return new KnitError(connectErr.code, connectErr.message, details, "");
 }

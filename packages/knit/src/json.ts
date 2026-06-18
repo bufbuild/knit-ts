@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 // Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,30 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {
-  type JsonObject,
-  type JsonValue,
-  protoBase64,
-} from "@bufbuild/protobuf";
+import { create, fromJson, toJson } from "@bufbuild/protobuf";
+import type { JsonObject, JsonValue } from "@bufbuild/protobuf";
+import { base64Decode, base64Encode } from "@bufbuild/protobuf/wire";
 import { getAlias } from "./alias.js";
 import {
-  type Schema,
-  type Schema_Field_Type,
-  type Schema_Field_Type_MapType,
   Schema_Field_Type_ScalarType,
-  type Schema_Field_Type_RepeatedType,
-  Error as PBError,
+  ErrorSchema,
+} from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import type {
+  Schema,
+  Schema_Field_Type,
+  Schema_Field_Type_MapType,
+  Schema_Field_Type_RepeatedType,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import { getOneof } from "./oneof.js";
 import { Duration } from "./wkt/duration.js";
 import { Timestamp } from "./wkt/timestamp.js";
 import { FieldMask } from "./wkt/field_mask.js";
 import {
-  Duration as DurationPb,
-  Timestamp as TimestampPb,
-  FieldMask as FieldMaskPb,
-} from "@bufbuild/protobuf";
-import { Code } from "@connectrpc/connect";
+  DurationSchema,
+  FieldMaskSchema,
+  TimestampSchema,
+  ValueSchema,
+} from "@bufbuild/protobuf/wkt";
+import type { Code } from "@connectrpc/connect";
 import { KnitError } from "./error.js";
 
 /**
@@ -52,7 +52,7 @@ export function format(data: unknown): JsonValue {
     case "string":
       return data;
     case "number":
-      if (isNaN(data)) {
+      if (Number.isNaN(data)) {
         return "NaN";
       }
       if (data === Number.POSITIVE_INFINITY) {
@@ -69,31 +69,38 @@ export function format(data: unknown): JsonValue {
         return null;
       }
       if (data instanceof Timestamp) {
-        return new TimestampPb(data).toJson();
+        return toJson(
+          TimestampSchema,
+          create(TimestampSchema, { seconds: data.seconds, nanos: data.nanos }),
+        );
       }
       if (data instanceof Duration) {
-        return new DurationPb(data).toJson();
+        return toJson(
+          DurationSchema,
+          create(DurationSchema, { seconds: data.seconds, nanos: data.nanos }),
+        );
       }
       if (data instanceof FieldMask) {
-        return new FieldMaskPb(data).toJson();
+        return toJson(
+          FieldMaskSchema,
+          create(FieldMaskSchema, { paths: data.paths }),
+        );
       }
       if (data instanceof Uint8Array) {
-        return protoBase64.enc(data);
+        return base64Encode(data);
       }
-      if (data instanceof Array) {
+      if (Array.isArray(data)) {
         return data.map((element) => format(element));
       }
       const entries = Object.entries(data);
       const fields: JsonObject = {};
       for (let [key, value] of entries) {
         if (typeof value === "object" && value !== null) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           const alias = getAlias(value);
           if (alias !== undefined) {
             key = alias.alias;
             value = alias.value;
           } else {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             const oneof = getOneof(value);
             if (oneof !== undefined) {
               key = oneof["@case"];
@@ -152,7 +159,6 @@ export function decodeMessage(
     }
     const oneOfField = oneofTable[fieldPath];
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (oneOfField !== undefined) {
       result[oneOfField] = {
         "@case": field.name,
@@ -345,7 +351,7 @@ function decodeInt(data: JsonValue, path: string) {
     case "number":
       return data;
     case "string":
-      return parseInt(data);
+      return parseInt(data, 10);
     default:
       throw parseError("string | number", typeof data, "int", path);
   }
@@ -379,7 +385,7 @@ function decodeBytes(data: JsonValue, path: string) {
   if (typeof data !== "string") {
     throw parseError("string", typeof data, "bytes", path);
   }
-  return protoBase64.dec(data);
+  return base64Decode(data);
 }
 
 function decodeListValue(data: JsonValue, path: string) {
@@ -388,26 +394,29 @@ function decodeListValue(data: JsonValue, path: string) {
 }
 
 function decodeTimestamp(data: JsonValue) {
-  return new Timestamp(TimestampPb.fromJson(data));
+  return new Timestamp(fromJson(TimestampSchema, data));
 }
 
 function decodeDuration(data: JsonValue) {
-  return new Duration(DurationPb.fromJson(data));
+  return new Duration(fromJson(DurationSchema, data));
 }
 
 function decodeFieldMask(data: JsonValue) {
-  return new FieldMask(FieldMaskPb.fromJson(data));
+  return new FieldMask(fromJson(FieldMaskSchema, data));
 }
 
 function decodeError(data: JsonObject) {
-  const error = PBError.fromJson(data, { ignoreUnknownFields: true });
+  const error = fromJson(ErrorSchema, data, { ignoreUnknownFields: true });
   return new KnitError(
     error.code as unknown as Code,
     error.message,
     error.details.map((detail) => ({
       type: detail.type,
       value: detail.value,
-      debug: detail.debug?.toJson(),
+      debug:
+        detail.debug === undefined
+          ? undefined
+          : toJson(ValueSchema, detail.debug),
     })),
     error.path,
   );
@@ -432,7 +441,7 @@ function assertJsonObject(
     default:
       break;
   }
-  if (data instanceof Array) {
+  if (Array.isArray(data)) {
     throw parseError("object", "Array", "message", path);
   }
 }
@@ -441,7 +450,7 @@ function assertJsonArray(
   data: JsonValue,
   path: string,
 ): asserts data is JsonValue[] {
-  if (!(data instanceof Array)) {
+  if (!Array.isArray(data)) {
     throw parseError("Array", typeof data, "ListValue", path);
   }
 }

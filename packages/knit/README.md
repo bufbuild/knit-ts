@@ -60,7 +60,7 @@ const filmsResult = await client.fetch({
 });
 
 // The result is a strongly typed object that matches the query.
-console.log(JSON.strigify(filmsResult, null, 2));
+console.log(JSON.stringify(filmsResult, null, 2));
 /**
  * This will print:
  * {
@@ -335,4 +335,4 @@ Knit is undergoing initial development and is not yet stable.
 
 Offered under the [Apache 2 license][license].
 
-[license]: https://github.com/bufbuild/knit-web/blob/main/LICENSE
+[license]: https://github.com/bufbuild/knit-ts/blob/main/LICENSE

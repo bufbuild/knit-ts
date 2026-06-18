@@ -46,7 +46,11 @@ import type { AnyRecord, OneOrMore } from "./utils/types.js";
  * We use the '@case' to identify oneofs at runtime. This is needed for parameter types, to make the result and parameter
  * types interoperable we also return the result with these same field keys.
  */
-export type Oneof<T extends AnyRecord> = {
+// The constraint is intentionally loose (no `extends AnyRecord`): callers pass
+// deferred conditional types (e.g. `Parameter<OT>`) that TypeScript cannot
+// eagerly prove satisfy `AnyRecord`. The mapped type below is well-defined for
+// any `T`.
+export type Oneof<T> = {
   [K in keyof T]-?: {
     "@case": K;
     value: T[K];

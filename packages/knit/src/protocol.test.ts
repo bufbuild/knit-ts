@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { type PartialMessage, Value } from "@bufbuild/protobuf";
-import { describe, expect, test } from "@jest/globals";
-import type { Request } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import { fromJson } from "@bufbuild/protobuf";
+import type { MessageInitShape } from "@bufbuild/protobuf";
+import { ValueSchema } from "@bufbuild/protobuf/wkt";
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
+import { RequestSchema } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import { makeRequests } from "./protocol.js";
 
 describe("makeRequests", () => {
@@ -28,7 +31,7 @@ describe("makeRequests", () => {
         },
       },
     });
-    expect(requests).toStrictEqual([
+    assert.deepStrictEqual(requests, [
       {
         method: "foo.v1.FooService.GetFoo",
         body: undefined,
@@ -44,8 +47,8 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
-    expect(oneofs).toStrictEqual([{}]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
+    assert.deepStrictEqual(oneofs, [{}]);
   });
   test("single query with catch", () => {
     const [requests, oneofs] = makeRequests({
@@ -59,7 +62,7 @@ describe("makeRequests", () => {
         },
       },
     });
-    expect(requests).toStrictEqual([
+    assert.deepStrictEqual(requests, [
       {
         method: "foo.v1.FooService.GetFoo",
         body: undefined,
@@ -75,8 +78,8 @@ describe("makeRequests", () => {
         ],
         onError: { case: "catch", value: {} },
       },
-    ] satisfies PartialMessage<Request>[]);
-    expect(oneofs).toStrictEqual([{}]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
+    assert.deepStrictEqual(oneofs, [{}]);
   });
   test("single query with throw", () => {
     const [requests, oneofs] = makeRequests({
@@ -90,7 +93,7 @@ describe("makeRequests", () => {
         },
       },
     });
-    expect(requests).toStrictEqual([
+    assert.deepStrictEqual(requests, [
       {
         method: "foo.v1.FooService.GetFoo",
         body: undefined,
@@ -106,8 +109,8 @@ describe("makeRequests", () => {
         ],
         onError: { case: "throw", value: {} },
       },
-    ] satisfies PartialMessage<Request>[]);
-    expect(oneofs).toStrictEqual([{}]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
+    assert.deepStrictEqual(oneofs, [{}]);
   });
   test("single query skip params", () => {
     const [requests, oneofs] = makeRequests({
@@ -120,10 +123,10 @@ describe("makeRequests", () => {
         },
       },
     });
-    expect(requests).toStrictEqual([
+    assert.deepStrictEqual(requests, [
       {
         method: "foo.v1.FooService.GetFoo",
-        body: Value.fromJson({}),
+        body: fromJson(ValueSchema, {}),
         onError: undefined,
         mask: [
           {
@@ -136,8 +139,8 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
-    expect(oneofs).toStrictEqual([{}]);
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
+    assert.deepStrictEqual(oneofs, [{}]);
   });
   test("single query with scalar oneof", () => {
     const [requests, oneofs] = makeRequests({
@@ -154,7 +157,7 @@ describe("makeRequests", () => {
         },
       },
     });
-    expect(requests).toStrictEqual([
+    assert.deepStrictEqual(requests, [
       {
         method: "foo.v1.FooService.GetFoo",
         body: undefined,
@@ -171,8 +174,8 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
-    expect(oneofs).toStrictEqual([
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
+    assert.deepStrictEqual(oneofs, [
       {
         "foo.v1.FooService.getFoo.foo.a": "oneofField",
         "foo.v1.FooService.getFoo.foo.b": "oneofField",
@@ -196,7 +199,7 @@ describe("makeRequests", () => {
         },
       },
     });
-    expect(requests).toStrictEqual([
+    assert.deepStrictEqual(requests, [
       {
         method: "foo.v1.FooService.GetFoo",
         body: undefined,
@@ -225,8 +228,8 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
-    expect(oneofs).toStrictEqual([
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
+    assert.deepStrictEqual(oneofs, [
       {
         "foo.v1.FooService.getFoo.foo.a": "oneofField",
         "foo.v1.FooService.getFoo.foo.b": "oneofField",
@@ -255,7 +258,7 @@ describe("makeRequests", () => {
         },
       },
     });
-    expect(requests).toStrictEqual([
+    assert.deepStrictEqual(requests, [
       {
         method: "foo.v1.FooService.GetFoo",
         body: undefined,
@@ -290,8 +293,8 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
-    expect(oneofs).toStrictEqual([
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
+    assert.deepStrictEqual(oneofs, [
       {
         "foo.v1.FooService.getFoo.foo.a": "oneofField",
         "foo.v1.FooService.getFoo.foo.a.p": "subOneof",
@@ -322,7 +325,7 @@ describe("makeRequests", () => {
         },
       },
     });
-    expect(requests).toStrictEqual([
+    assert.deepStrictEqual(requests, [
       {
         method: "foo.v1.FooService.GetFoo",
         body: undefined,
@@ -355,8 +358,8 @@ describe("makeRequests", () => {
           },
         ],
       },
-    ] satisfies PartialMessage<Request>[]);
-    expect(oneofs).toStrictEqual([
+    ] satisfies MessageInitShape<typeof RequestSchema>[]);
+    assert.deepStrictEqual(oneofs, [
       {
         "foo.v1.FooService.getFoo.foo.a": "fooOneof",
         "foo.v1.FooService.getFoo.foo.b": "fooOneof",

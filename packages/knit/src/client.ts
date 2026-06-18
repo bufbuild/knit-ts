@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// biome-ignore-all lint/suspicious/noExplicitAny: the decoded result is reconstructed at runtime and cast to the typed Mask result.
+
 import { createConnectTransport } from "@connectrpc/connect-web";
 import {
-  createPromiseClient,
-  type PromiseClient,
+  createClient as createConnectRpcClient,
+  type Client as ConnectClient,
   type Transport,
 } from "@connectrpc/connect";
 import type {
@@ -32,7 +34,7 @@ import type {
 } from "./schema.js";
 
 import type { Subset } from "./utils/types.js";
-import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
+import { KnitService } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 import {
   makeRequests,
   makeResult,
@@ -187,10 +189,15 @@ export interface Options {
  * @returns The Knit client see {@link Client}
  */
 export function createClient<S extends Schema>(options: Options): Client<S> {
+  const { baseUrl, credentials } = options;
   return createClientWithTransport(
     createConnectTransport({
-      baseUrl: options.baseUrl,
-      credentials: options.credentials,
+      baseUrl,
+      // connect-web v2 dropped the `credentials` option; emulate it with a
+      // fetch override that sets the credentials mode on each request.
+      fetch: credentials
+        ? (input, init) => fetch(input, { ...init, credentials })
+        : undefined,
     }),
     options,
   );
@@ -207,7 +214,7 @@ export function createClientWithTransport<S extends Schema>(
   transport: Transport,
   options: OptionalOptions,
 ): Client<S> {
-  const client = createPromiseClient(KnitService, transport);
+  const client = createConnectRpcClient(KnitService, transport);
   return {
     fetch: createFetch(client, options),
     do: createDo(client, options),
@@ -219,14 +226,13 @@ function createFetch<S extends Schema>(
   client: KnitServiceClient,
   options: OptionalOptions,
 ): Client<S>["fetch"] {
-  return async function <Q extends Subset<Q, FetchQuery<S>>>(query: Q) {
+  return async <Q extends Subset<Q, FetchQuery<S>>>(query: Q) => {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     try {
       const { responses } = await client.fetch(
         { requests },
         { headers: options.headers },
       );
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return
       return makeResult(oneofs, responses) as any;
     } catch (reason) {
       throw knitErrorFromReason(reason);
@@ -238,14 +244,13 @@ function createDo<S extends Schema>(
   client: KnitServiceClient,
   options: OptionalOptions,
 ): Client<S>["do"] {
-  return async function <Q extends Subset<Q, DoQuery<S>>>(query: Q) {
+  return async <Q extends Subset<Q, DoQuery<S>>>(query: Q) => {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     try {
       const { responses } = await client.do(
         { requests },
         { headers: options.headers },
       );
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return
       return makeResult(oneofs, responses) as any;
     } catch (reason) {
       throw knitErrorFromReason(reason);
@@ -257,7 +262,7 @@ function createListen<S extends Schema>(
   client: KnitServiceClient,
   options: OptionalOptions,
 ): Client<S>["listen"] {
-  return function <Q extends Subset<Q, ListenQuery<S>>>(query: Q) {
+  return <Q extends Subset<Q, ListenQuery<S>>>(query: Q) => {
     const [requests, oneofs] = makeRequests(query as AnyQuery);
     if (requests.length !== 1) {
       throw new Error(
@@ -272,12 +277,12 @@ function createListen<S extends Schema>(
       return makeResultIterable(
         oneofs[0],
         responseIterable,
-      ) as AsyncIterable<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+      ) as AsyncIterable<any>;
     } catch (reason) {
       throw knitErrorFromReason(reason);
     }
   };
 }
 
-type KnitServiceClient = PromiseClient<typeof KnitService>;
+type KnitServiceClient = ConnectClient<typeof KnitService>;
 type OptionalOptions = Omit<Options, "baseUrl" | "credentials">;

@@ -12,30 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { describe, test, expect } from "@jest/globals";
-import { expectType } from "../jest/util.js";
-import type { Equal } from "../utils/types.js";
-import { createGateway, type UnaryAndServerStreamMethods } from "./gateway.js";
-import type { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
-import { AllService } from "@bufbuild/knit-test-spec/spec/all_connect.js";
-import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_connect.js";
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
+import { isDeepStrictEqual } from "node:util";
+import { createGateway } from "./gateway.js";
+import {
+  AllService,
+  AllSchema,
+  type All,
+} from "@bufbuild/knit-test-spec/spec/all_pb.js";
+import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_pb.js";
 import { createRouterTransport } from "@connectrpc/connect";
-import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
-import type { AnyMessage } from "@bufbuild/protobuf";
-
-describe("types", () => {
-  test("UnaryAndServerStreamMethods", () => {
-    type ExpectedType = "do" | "fetch" | "listen";
-    type ActualType = UnaryAndServerStreamMethods<typeof KnitService>;
-    expectType<Equal<ExpectedType, ActualType>>(true);
-  });
-});
+import { create, toJson } from "@bufbuild/protobuf";
 
 describe("service", () => {
   test("defaults to all supported methods", () => {
     const gateway = createGateway({ transport: {} as any });
     gateway.service(AllService);
-    expect([...gateway.entryPoints.keys()].sort()).toEqual(
+    assert.deepStrictEqual(
+      [...gateway.entryPoints.keys()].sort(),
       [
         "spec.AllService.GetAll",
         "spec.AllService.CreateAll",
@@ -46,16 +41,31 @@ describe("service", () => {
   test("respects methods option", () => {
     const gateway = createGateway({ transport: {} as any });
     gateway.service(AllService, { methods: ["getAll"] });
-    expect([...gateway.entryPoints.keys()]).toEqual(["spec.AllService.GetAll"]);
+    assert.deepStrictEqual(
+      [...gateway.entryPoints.keys()],
+      ["spec.AllService.GetAll"],
+    );
+  });
+  test("methods option rejects unsupported method kinds", () => {
+    const gateway = createGateway({ transport: {} as any });
+    // The methods option only accepts unary and server-streaming method names.
+    // These @ts-expect-error directives fail the typecheck (tsconfig.test.json)
+    // if the option type ever loosens to accept client-streaming or
+    // bidi-streaming method names. (AllService.clientAll is client-streaming and
+    // AllService.biDiAll is bidi-streaming.)
+    // @ts-expect-error - clientAll is a client-streaming method
+    gateway.service(AllService, { methods: ["clientAll"] });
+    // @ts-expect-error - biDiAll is a bidi-streaming method
+    gateway.service(AllService, { methods: ["biDiAll"] });
   });
   test("respects transport override", () => {
     const gateway = createGateway({ transport: { kind: "base" } as any });
     gateway.service(AllService, { transport: { kind: "override" } as any });
-    expect(
-      [...gateway.entryPoints.values()].map((v) => v.transport),
-    ).toContainEqual({
-      kind: "override",
-    });
+    assert.ok(
+      [...gateway.entryPoints.values()]
+        .map((v) => v.transport)
+        .some((e) => isDeepStrictEqual(e, { kind: "override" })),
+    );
   });
 });
 
@@ -79,7 +89,7 @@ describe("relation", () => {
         name: "rel_self",
       },
     });
-    const base = new All({
+    const base = create(AllSchema, {
       scalars: {
         fields: {
           str: "foo",
@@ -87,10 +97,13 @@ describe("relation", () => {
       },
     });
     const response = await gateway.relations
-      .get(All.typeName)
+      .get(AllSchema.typeName)
       ?.get("rel_self")
       ?.resolver([base], undefined, {});
-    expect(response).toHaveLength(1);
-    expect((response?.[0]! as AnyMessage).toJson()).toEqual(base.toJson());
+    assert.strictEqual(response?.length, 1);
+    assert.deepStrictEqual(
+      toJson(AllSchema, response?.[0]! as All),
+      toJson(AllSchema, base),
+    );
   });
 });

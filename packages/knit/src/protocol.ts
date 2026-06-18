@@ -12,14 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { type PartialMessage, Value } from "@bufbuild/protobuf";
-import {
-  type ListenResponse,
-  type MaskField,
-  type Request,
-  type Response,
-  type Schema,
+import { fromJson, toJson } from "@bufbuild/protobuf";
+import type { MessageInitShape } from "@bufbuild/protobuf";
+import { ValueSchema } from "@bufbuild/protobuf/wkt";
+import type { Value } from "@bufbuild/protobuf/wkt";
+import type {
+  MaskFieldSchema,
+  RequestSchema,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import type {
+  ListenResponse,
+  Response,
+  Schema,
+} from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+
+type RequestInit = MessageInitShape<typeof RequestSchema>;
+type MaskFieldInit = MessageInitShape<typeof MaskFieldSchema>;
 import { decodeMessage, format } from "./json.js";
 import { isOneofQuery } from "./oneof.js";
 import { KnitError, knitErrorFromReason } from "./error.js";
@@ -38,8 +46,8 @@ export type AnyQuery = {
  */
 export function makeRequests(
   query: AnyQuery,
-): [PartialMessage<Request>[], Record<string, string>[]] {
-  const requests: PartialMessage<Request>[] = [];
+): [RequestInit[], Record<string, string>[]] {
+  const requests: RequestInit[] = [];
   const oneofs: Record<string, string>[] = [];
   for (const [service, methods] of Object.entries(query)) {
     for (const [method, request] of Object.entries(methods)) {
@@ -62,14 +70,14 @@ export function makeRequests(
 function makeMaskField(
   value: AnyQuery,
   path: string,
-): [PartialMessage<MaskField>, Record<string, string>] {
-  let params: PartialMessage<Value> | undefined = undefined;
-  let onError: PartialMessage<MaskField>["onError"] = undefined;
-  const mask: PartialMessage<MaskField>[] = [];
+): [MaskFieldInit, Record<string, string>] {
+  let params: Value | undefined;
+  let onError: MaskFieldInit["onError"];
+  const mask: MaskFieldInit[] = [];
   let oneofTable: Record<string, string> = {};
   for (const [k, v] of Object.entries(value)) {
     if (k === "$") {
-      params = Value.fromJson(format(v));
+      params = fromJson(ValueSchema, format(v));
       continue;
     }
     if (k === "@throw") {
@@ -118,13 +126,14 @@ export function makeResult(
     const method = uncapitalize(serviceParts.pop() as string);
     const service = serviceParts.join(".");
     let serviceResult = result[service];
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (serviceResult === undefined) {
       result[service] = serviceResult = {};
     }
     serviceResult[method] = decodeMessage(
       oneofs[i],
-      response.body?.toJson(),
+      response.body === undefined
+        ? undefined
+        : toJson(ValueSchema, response.body),
       response.schema,
       service + "." + method,
     );
@@ -140,7 +149,7 @@ export async function* makeResultIterable(
   oneofs: Record<string, string>,
   response: AsyncIterable<ListenResponse>,
 ) {
-  let schema: Schema | undefined = undefined;
+  let schema: Schema | undefined;
   try {
     for await (const next of response) {
       if (next.response === undefined) {

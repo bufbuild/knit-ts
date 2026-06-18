@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { expect } from "@jest/globals";
-import { test, describe } from "@jest/globals";
+import { test, describe } from "node:test";
+import assert from "node:assert/strict";
 import { makeOutboundHeader } from "./headers.js";
 
 describe("well known headers", () => {
@@ -34,9 +34,9 @@ describe("well known headers", () => {
   ];
   for (const header of headers) {
     test(header, () => {
-      expect(
-        makeOutboundHeader(new Headers({ [header]: "foo" })).has(header),
-      ).toBeFalsy();
+      assert.ok(
+        !makeOutboundHeader(new Headers({ [header]: "foo" })).has(header),
+      );
     });
   }
 });
@@ -46,17 +46,18 @@ describe("well known prefix", () => {
   for (const prefix of prefixes) {
     test(prefix, () => {
       const header = prefix + "-FOO";
-      expect(
-        makeOutboundHeader(new Headers({ [header]: "foo" })).has(header),
-      ).toBeFalsy();
+      assert.ok(
+        !makeOutboundHeader(new Headers({ [header]: "foo" })).has(header),
+      );
     });
   }
 });
 
 test("Allow", () => {
-  expect(
+  assert.deepStrictEqual(
     makeOutboundHeader(new Headers({ Authorization: "foo" })).get(
       "Authorization",
     ),
-  ).toEqual("foo");
+    "foo",
+  );
 });

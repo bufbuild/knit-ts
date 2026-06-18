@@ -16,27 +16,34 @@ import {
   Code,
   ConnectError,
   type Transport,
-  createPromiseClient,
+  createClient,
   createRouterTransport,
 } from "@connectrpc/connect";
-import { describe, expect, test } from "@jest/globals";
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
 import { createKnitService } from "./service.js";
-import { AllService } from "@bufbuild/knit-test-spec/spec/all_connect.js";
-import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_connect.js";
-import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
-import { Value } from "@bufbuild/protobuf";
-import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
-import { ListenResponse } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import { AllService, AllSchema } from "@bufbuild/knit-test-spec/spec/all_pb.js";
+import { AllResolverService } from "@bufbuild/knit-test-spec/spec/relations_pb.js";
+import { create, fromJson, toJson } from "@bufbuild/protobuf";
+import { ValueSchema } from "@bufbuild/protobuf/wkt";
+import {
+  KnitService,
+  type ListenResponse,
+} from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
 
 const sharedRequest = {
-  body: Value.fromJson(
-    new All({
-      scalars: {
-        fields: {
-          str: "foo",
+  body: fromJson(
+    ValueSchema,
+    toJson(
+      AllSchema,
+      create(AllSchema, {
+        scalars: {
+          fields: {
+            str: "foo",
+          },
         },
-      },
-    }).toJson(),
+      }),
+    ),
   ),
   mask: [
     {
@@ -45,7 +52,7 @@ const sharedRequest = {
     },
     {
       name: "relSelfParam",
-      params: Value.fromJson({ id: "foo" }),
+      params: fromJson(ValueSchema, { id: "foo" }),
       mask: [
         {
           name: "scalars",
@@ -80,7 +87,7 @@ describe("success", () => {
           expectCustomHeader(requestHeader);
           expectOperation(
             requestHeader,
-            `${AllResolverService.typeName}.${AllResolverService.methods.getAllRelSelfParam.name}`,
+            `${AllResolverService.typeName}.${AllResolverService.method.getAllRelSelfParam.name}`,
           );
           return {
             values: request.bases.map((base) => ({
@@ -91,224 +98,32 @@ describe("success", () => {
       });
     }),
   );
-  test("fetch", async () => {
+  test("fetch", async (t) => {
     const response = await knitClient.fetch({
       requests: [
         {
-          method: `${AllService.typeName}.${AllService.methods.getAll.name}`,
+          method: `${AllService.typeName}.${AllService.method.getAll.name}`,
           ...sharedRequest,
         },
       ],
     });
-    expect(response).toMatchInlineSnapshot(`
-      {
-        "responses": [
-          {
-            "body": {
-              "relSelfParam": {
-                "scalars": {
-                  "fields": {
-                    "str": "foo",
-                  },
-                },
-              },
-              "scalars": {
-                "fields": {
-                  "str": "foo",
-                },
-              },
-            },
-            "method": "spec.AllService.GetAll",
-            "schema": {
-              "fields": [
-                {
-                  "jsonName": "",
-                  "name": "scalars",
-                  "type": {
-                    "message": {
-                      "fields": [
-                        {
-                          "jsonName": "",
-                          "name": "fields",
-                          "type": {
-                            "message": {
-                              "fields": [
-                                {
-                                  "jsonName": "",
-                                  "name": "str",
-                                  "type": {
-                                    "scalar": "SCALAR_TYPE_STRING",
-                                  },
-                                },
-                              ],
-                              "name": "spec.ScalarFields",
-                            },
-                          },
-                        },
-                      ],
-                      "name": "spec.Scalar",
-                    },
-                  },
-                },
-                {
-                  "jsonName": "",
-                  "name": "relSelfParam",
-                  "type": {
-                    "message": {
-                      "fields": [
-                        {
-                          "jsonName": "",
-                          "name": "scalars",
-                          "type": {
-                            "message": {
-                              "fields": [
-                                {
-                                  "jsonName": "",
-                                  "name": "fields",
-                                  "type": {
-                                    "message": {
-                                      "fields": [
-                                        {
-                                          "jsonName": "",
-                                          "name": "str",
-                                          "type": {
-                                            "scalar": "SCALAR_TYPE_STRING",
-                                          },
-                                        },
-                                      ],
-                                      "name": "spec.ScalarFields",
-                                    },
-                                  },
-                                },
-                              ],
-                              "name": "spec.Scalar",
-                            },
-                          },
-                        },
-                      ],
-                      "name": "spec.All",
-                    },
-                  },
-                },
-              ],
-              "name": "spec.All",
-            },
-          },
-        ],
-      }
-    `);
+    t.assert.snapshot(response);
   });
-  test("do", async () => {
+  test("do", async (t) => {
     const response = await knitClient.do({
       requests: [
         {
-          method: `${AllService.typeName}.${AllService.methods.createAll.name}`,
+          method: `${AllService.typeName}.${AllService.method.createAll.name}`,
           ...sharedRequest,
         },
       ],
     });
-    expect(response).toMatchInlineSnapshot(`
-      {
-        "responses": [
-          {
-            "body": {
-              "relSelfParam": {
-                "scalars": {
-                  "fields": {
-                    "str": "foo",
-                  },
-                },
-              },
-              "scalars": {
-                "fields": {
-                  "str": "foo",
-                },
-              },
-            },
-            "method": "spec.AllService.CreateAll",
-            "schema": {
-              "fields": [
-                {
-                  "jsonName": "",
-                  "name": "scalars",
-                  "type": {
-                    "message": {
-                      "fields": [
-                        {
-                          "jsonName": "",
-                          "name": "fields",
-                          "type": {
-                            "message": {
-                              "fields": [
-                                {
-                                  "jsonName": "",
-                                  "name": "str",
-                                  "type": {
-                                    "scalar": "SCALAR_TYPE_STRING",
-                                  },
-                                },
-                              ],
-                              "name": "spec.ScalarFields",
-                            },
-                          },
-                        },
-                      ],
-                      "name": "spec.Scalar",
-                    },
-                  },
-                },
-                {
-                  "jsonName": "",
-                  "name": "relSelfParam",
-                  "type": {
-                    "message": {
-                      "fields": [
-                        {
-                          "jsonName": "",
-                          "name": "scalars",
-                          "type": {
-                            "message": {
-                              "fields": [
-                                {
-                                  "jsonName": "",
-                                  "name": "fields",
-                                  "type": {
-                                    "message": {
-                                      "fields": [
-                                        {
-                                          "jsonName": "",
-                                          "name": "str",
-                                          "type": {
-                                            "scalar": "SCALAR_TYPE_STRING",
-                                          },
-                                        },
-                                      ],
-                                      "name": "spec.ScalarFields",
-                                    },
-                                  },
-                                },
-                              ],
-                              "name": "spec.Scalar",
-                            },
-                          },
-                        },
-                      ],
-                      "name": "spec.All",
-                    },
-                  },
-                },
-              ],
-              "name": "spec.All",
-            },
-          },
-        ],
-      }
-    `);
+    t.assert.snapshot(response);
   });
-  test("listen", async () => {
+  test("listen", async (t) => {
     const listenResponse = knitClient.listen({
       request: {
-        method: `${AllService.typeName}.${AllService.methods.streamAll.name}`,
+        method: `${AllService.typeName}.${AllService.method.streamAll.name}`,
         ...sharedRequest,
       },
     });
@@ -316,107 +131,15 @@ describe("success", () => {
     let lastResponse: ListenResponse["response"];
     for await (const response of listenResponse) {
       if (count == 0) {
-        expect(response.response).toMatchInlineSnapshot(`
-          {
-            "body": {
-              "relSelfParam": {
-                "scalars": {
-                  "fields": {
-                    "str": "foo",
-                  },
-                },
-              },
-              "scalars": {
-                "fields": {
-                  "str": "foo",
-                },
-              },
-            },
-            "method": "spec.AllService.StreamAll",
-            "schema": {
-              "fields": [
-                {
-                  "jsonName": "",
-                  "name": "scalars",
-                  "type": {
-                    "message": {
-                      "fields": [
-                        {
-                          "jsonName": "",
-                          "name": "fields",
-                          "type": {
-                            "message": {
-                              "fields": [
-                                {
-                                  "jsonName": "",
-                                  "name": "str",
-                                  "type": {
-                                    "scalar": "SCALAR_TYPE_STRING",
-                                  },
-                                },
-                              ],
-                              "name": "spec.ScalarFields",
-                            },
-                          },
-                        },
-                      ],
-                      "name": "spec.Scalar",
-                    },
-                  },
-                },
-                {
-                  "jsonName": "",
-                  "name": "relSelfParam",
-                  "type": {
-                    "message": {
-                      "fields": [
-                        {
-                          "jsonName": "",
-                          "name": "scalars",
-                          "type": {
-                            "message": {
-                              "fields": [
-                                {
-                                  "jsonName": "",
-                                  "name": "fields",
-                                  "type": {
-                                    "message": {
-                                      "fields": [
-                                        {
-                                          "jsonName": "",
-                                          "name": "str",
-                                          "type": {
-                                            "scalar": "SCALAR_TYPE_STRING",
-                                          },
-                                        },
-                                      ],
-                                      "name": "spec.ScalarFields",
-                                    },
-                                  },
-                                },
-                              ],
-                              "name": "spec.Scalar",
-                            },
-                          },
-                        },
-                      ],
-                      "name": "spec.All",
-                    },
-                  },
-                },
-              ],
-              "name": "spec.All",
-            },
-          }
-        `);
+        t.assert.snapshot(response.response);
         delete response.response?.schema;
         lastResponse = response.response;
       } else {
-        expect(response.response).toEqual(lastResponse);
+        assert.deepStrictEqual(response.response, lastResponse);
       }
       count++;
     }
-    expect(count).toBe(5);
+    assert.strictEqual(count, 5);
   });
 });
 
@@ -444,331 +167,91 @@ describe("errors", () => {
     }),
   );
   describe("fetch", () => {
-    test("default", async () => {
-      await expect(
+    test("default", async (t) => {
+      await assert.rejects(
         knitClient.fetch({
           requests: [
             {
-              method: `${AllService.typeName}.${AllService.methods.getAll.name}`,
+              method: `${AllService.typeName}.${AllService.method.getAll.name}`,
               ...sharedRequest,
             },
           ],
         }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"[failed_precondition] Relation error"`,
+        { message: "[failed_precondition] Relation error" },
       );
     });
-    test("catch-source", async () => {
+    test("catch-source", async (t) => {
       const response = await knitClient.fetch({
         requests: [
           {
-            method: `${AllService.typeName}.${AllService.methods.getAll.name}`,
+            method: `${AllService.typeName}.${AllService.method.getAll.name}`,
             ...sharedRequest,
             mask: [
               {
                 name: "relSelfParam",
-                params: Value.fromJson({ id: "foo" }),
+                params: fromJson(ValueSchema, { id: "foo" }),
                 onError: { case: "catch", value: {} },
               },
             ],
           },
         ],
       });
-      expect(response.responses).toMatchInlineSnapshot(`
-        [
-          {
-            "body": {
-              "relSelfParam": {
-                "[@error]": {},
-                "code": "FAILED_PRECONDITION",
-                "details": [],
-                "message": "[failed_precondition] Relation error",
-                "path": "",
-              },
-            },
-            "method": "spec.AllService.GetAll",
-            "schema": {
-              "fields": [
-                {
-                  "jsonName": "",
-                  "name": "relSelfParam",
-                  "type": {
-                    "message": {
-                      "fields": [],
-                      "name": "spec.All",
-                    },
-                  },
-                },
-              ],
-              "name": "spec.All",
-            },
-          },
-        ]
-      `);
+      t.assert.snapshot(response.responses);
     });
-    test("catch-entrypoint", async () => {
+    test("catch-entrypoint", async (t) => {
       const response = await knitClient.fetch({
         requests: [
           {
-            method: `${AllService.typeName}.${AllService.methods.getAll.name}`,
+            method: `${AllService.typeName}.${AllService.method.getAll.name}`,
             ...sharedRequest,
             onError: { case: "catch", value: {} },
           },
         ],
       });
-      expect(response.responses).toMatchInlineSnapshot(`
-        [
-          {
-            "body": {
-              "[@error]": {},
-              "code": "FAILED_PRECONDITION",
-              "details": [],
-              "message": "[failed_precondition] Relation error",
-              "path": "",
-            },
-            "method": "spec.AllService.GetAll",
-            "schema": {
-              "fields": [
-                {
-                  "jsonName": "",
-                  "name": "scalars",
-                  "type": {
-                    "message": {
-                      "fields": [
-                        {
-                          "jsonName": "",
-                          "name": "fields",
-                          "type": {
-                            "message": {
-                              "fields": [
-                                {
-                                  "jsonName": "",
-                                  "name": "str",
-                                  "type": {
-                                    "scalar": "SCALAR_TYPE_STRING",
-                                  },
-                                },
-                              ],
-                              "name": "spec.ScalarFields",
-                            },
-                          },
-                        },
-                      ],
-                      "name": "spec.Scalar",
-                    },
-                  },
-                },
-                {
-                  "jsonName": "",
-                  "name": "relSelfParam",
-                  "type": {
-                    "message": {
-                      "fields": [
-                        {
-                          "jsonName": "",
-                          "name": "scalars",
-                          "type": {
-                            "message": {
-                              "fields": [
-                                {
-                                  "jsonName": "",
-                                  "name": "fields",
-                                  "type": {
-                                    "message": {
-                                      "fields": [
-                                        {
-                                          "jsonName": "",
-                                          "name": "str",
-                                          "type": {
-                                            "scalar": "SCALAR_TYPE_STRING",
-                                          },
-                                        },
-                                      ],
-                                      "name": "spec.ScalarFields",
-                                    },
-                                  },
-                                },
-                              ],
-                              "name": "spec.Scalar",
-                            },
-                          },
-                        },
-                      ],
-                      "name": "spec.All",
-                    },
-                  },
-                },
-              ],
-              "name": "spec.All",
-            },
-          },
-        ]
-      `);
+      t.assert.snapshot(response.responses);
     });
   });
   describe("do", () => {
-    test("default", async () => {
+    test("default", async (t) => {
       const response = await knitClient.do({
         requests: [
           {
-            method: `${AllService.typeName}.${AllService.methods.createAll.name}`,
+            method: `${AllService.typeName}.${AllService.method.createAll.name}`,
             ...sharedRequest,
           },
         ],
       });
-      expect(response.responses).toMatchInlineSnapshot(`
-        [
-          {
-            "body": {
-              "relSelfParam": {
-                "[@error]": {},
-                "code": "FAILED_PRECONDITION",
-                "details": [],
-                "message": "[failed_precondition] Relation error",
-                "path": "",
-              },
-              "scalars": {
-                "fields": {
-                  "str": "foo",
-                },
-              },
-            },
-            "method": "spec.AllService.CreateAll",
-            "schema": {
-              "fields": [
-                {
-                  "jsonName": "",
-                  "name": "scalars",
-                  "type": {
-                    "message": {
-                      "fields": [
-                        {
-                          "jsonName": "",
-                          "name": "fields",
-                          "type": {
-                            "message": {
-                              "fields": [
-                                {
-                                  "jsonName": "",
-                                  "name": "str",
-                                  "type": {
-                                    "scalar": "SCALAR_TYPE_STRING",
-                                  },
-                                },
-                              ],
-                              "name": "spec.ScalarFields",
-                            },
-                          },
-                        },
-                      ],
-                      "name": "spec.Scalar",
-                    },
-                  },
-                },
-                {
-                  "jsonName": "",
-                  "name": "relSelfParam",
-                  "type": {
-                    "message": {
-                      "fields": [
-                        {
-                          "jsonName": "",
-                          "name": "scalars",
-                          "type": {
-                            "message": {
-                              "fields": [
-                                {
-                                  "jsonName": "",
-                                  "name": "fields",
-                                  "type": {
-                                    "message": {
-                                      "fields": [
-                                        {
-                                          "jsonName": "",
-                                          "name": "str",
-                                          "type": {
-                                            "scalar": "SCALAR_TYPE_STRING",
-                                          },
-                                        },
-                                      ],
-                                      "name": "spec.ScalarFields",
-                                    },
-                                  },
-                                },
-                              ],
-                              "name": "spec.Scalar",
-                            },
-                          },
-                        },
-                      ],
-                      "name": "spec.All",
-                    },
-                  },
-                },
-              ],
-              "name": "spec.All",
-            },
-          },
-        ]
-      `);
+      t.assert.snapshot(response.responses);
     });
-    test("throw-source", async () => {
+    test("throw-source", async (t) => {
       const response = await knitClient.do({
         requests: [
           {
-            method: `${AllService.typeName}.${AllService.methods.createAll.name}`,
+            method: `${AllService.typeName}.${AllService.method.createAll.name}`,
             ...sharedRequest,
             mask: [
               {
                 name: "relSelfParam",
-                params: Value.fromJson({ id: "foo" }),
+                params: fromJson(ValueSchema, { id: "foo" }),
                 onError: { case: "throw", value: {} },
               },
             ],
           },
         ],
       });
-      expect(response.responses).toMatchInlineSnapshot(`
-        [
-          {
-            "body": {
-              "[@error]": {},
-              "code": "FAILED_PRECONDITION",
-              "details": [],
-              "message": "[failed_precondition] Relation error",
-              "path": "",
-            },
-            "method": "spec.AllService.CreateAll",
-            "schema": {
-              "fields": [
-                {
-                  "jsonName": "",
-                  "name": "relSelfParam",
-                  "type": {
-                    "message": {
-                      "fields": [],
-                      "name": "spec.All",
-                    },
-                  },
-                },
-              ],
-              "name": "spec.All",
-            },
-          },
-        ]
-      `);
+      t.assert.snapshot(response.responses);
     });
-    test("throw-all", async () => {
-      await expect(
+    test("throw-all", async (t) => {
+      await assert.rejects(
         knitClient.do({
           requests: [
             {
-              method: `${AllService.typeName}.${AllService.methods.getAll.name}`,
+              method: `${AllService.typeName}.${AllService.method.getAll.name}`,
               ...sharedRequest,
               mask: [
                 {
                   name: "relSelfParam",
-                  params: Value.fromJson({ id: "foo" }),
+                  params: fromJson(ValueSchema, { id: "foo" }),
                   onError: { case: "throw", value: {} },
                 },
               ],
@@ -776,36 +259,36 @@ describe("errors", () => {
             },
           ],
         }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"[failed_precondition] Relation error"`,
+        { message: "[failed_precondition] Relation error" },
       );
     });
   });
   describe("listen", () => {
-    test("default", async () => {
-      await expect(async () => {
-        const response = knitClient.listen({
-          request: {
-            method: `${AllService.typeName}.${AllService.methods.streamAll.name}`,
-            ...sharedRequest,
-          },
-        });
-        for await (const next of response) {
-          expect(next).toBe(true); // This must never be called.
-        }
-      }).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"[failed_precondition] Relation error"`,
+    test("default", async (t) => {
+      await assert.rejects(
+        async () => {
+          const response = knitClient.listen({
+            request: {
+              method: `${AllService.typeName}.${AllService.method.streamAll.name}`,
+              ...sharedRequest,
+            },
+          });
+          for await (const next of response) {
+            assert.fail(`listen must not yield a response: ${String(next)}`);
+          }
+        },
+        { message: "[failed_precondition] Relation error" },
       );
     });
-    test("catch-source", async () => {
+    test("catch-source", async (t) => {
       const response = await knitClient.listen({
         request: {
-          method: `${AllService.typeName}.${AllService.methods.streamAll.name}`,
+          method: `${AllService.typeName}.${AllService.method.streamAll.name}`,
           ...sharedRequest,
           mask: [
             {
               name: "relSelfParam",
-              params: Value.fromJson({ id: "foo" }),
+              params: fromJson(ValueSchema, { id: "foo" }),
               onError: { case: "catch", value: {} },
             },
           ],
@@ -815,48 +298,20 @@ describe("errors", () => {
       let last: ListenResponse["response"];
       for await (const next of response) {
         if (count == 0) {
-          expect(next.response).toMatchInlineSnapshot(`
-            {
-              "body": {
-                "relSelfParam": {
-                  "[@error]": {},
-                  "code": "FAILED_PRECONDITION",
-                  "details": [],
-                  "message": "[failed_precondition] Relation error",
-                  "path": "",
-                },
-              },
-              "method": "spec.AllService.StreamAll",
-              "schema": {
-                "fields": [
-                  {
-                    "jsonName": "",
-                    "name": "relSelfParam",
-                    "type": {
-                      "message": {
-                        "fields": [],
-                        "name": "spec.All",
-                      },
-                    },
-                  },
-                ],
-                "name": "spec.All",
-              },
-            }
-          `);
+          t.assert.snapshot(next.response);
           delete next.response?.schema;
           last = next.response;
         } else {
-          expect(next.response).toEqual(last);
+          assert.deepStrictEqual(next.response, last);
         }
         count++;
       }
-      expect(count).toEqual(5);
+      assert.strictEqual(count, 5);
     });
-    test("catch-entrypoint", async () => {
+    test("catch-entrypoint", async (t) => {
       const response = await knitClient.listen({
         request: {
-          method: `${AllService.typeName}.${AllService.methods.streamAll.name}`,
+          method: `${AllService.typeName}.${AllService.method.streamAll.name}`,
           ...sharedRequest,
           onError: { case: "catch", value: {} },
         },
@@ -865,100 +320,15 @@ describe("errors", () => {
       let last: ListenResponse["response"];
       for await (const next of response) {
         if (count == 0) {
-          expect(next.response).toMatchInlineSnapshot(`
-            {
-              "body": {
-                "[@error]": {},
-                "code": "FAILED_PRECONDITION",
-                "details": [],
-                "message": "[failed_precondition] Relation error",
-                "path": "",
-              },
-              "method": "spec.AllService.StreamAll",
-              "schema": {
-                "fields": [
-                  {
-                    "jsonName": "",
-                    "name": "scalars",
-                    "type": {
-                      "message": {
-                        "fields": [
-                          {
-                            "jsonName": "",
-                            "name": "fields",
-                            "type": {
-                              "message": {
-                                "fields": [
-                                  {
-                                    "jsonName": "",
-                                    "name": "str",
-                                    "type": {
-                                      "scalar": "SCALAR_TYPE_STRING",
-                                    },
-                                  },
-                                ],
-                                "name": "spec.ScalarFields",
-                              },
-                            },
-                          },
-                        ],
-                        "name": "spec.Scalar",
-                      },
-                    },
-                  },
-                  {
-                    "jsonName": "",
-                    "name": "relSelfParam",
-                    "type": {
-                      "message": {
-                        "fields": [
-                          {
-                            "jsonName": "",
-                            "name": "scalars",
-                            "type": {
-                              "message": {
-                                "fields": [
-                                  {
-                                    "jsonName": "",
-                                    "name": "fields",
-                                    "type": {
-                                      "message": {
-                                        "fields": [
-                                          {
-                                            "jsonName": "",
-                                            "name": "str",
-                                            "type": {
-                                              "scalar": "SCALAR_TYPE_STRING",
-                                            },
-                                          },
-                                        ],
-                                        "name": "spec.ScalarFields",
-                                      },
-                                    },
-                                  },
-                                ],
-                                "name": "spec.Scalar",
-                              },
-                            },
-                          },
-                        ],
-                        "name": "spec.All",
-                      },
-                    },
-                  },
-                ],
-                "name": "spec.All",
-              },
-            }
-          `);
+          t.assert.snapshot(next.response);
           delete next.response?.schema;
           last = next.response;
         } else {
-          expect(next.response).toEqual(last);
+          assert.deepStrictEqual(next.response, last);
         }
         count++;
       }
-      expect(count).toEqual(5);
+      assert.strictEqual(count, 5);
     });
   });
 });
@@ -992,19 +362,20 @@ function createKnitClient(transport: Transport) {
       },
     },
   );
-  return createPromiseClient(KnitService, knitTransport);
+  return createClient(KnitService, knitTransport);
 }
 
 function expectCustomHeader(headers: Headers) {
-  expect(headers.get("Custom-Header")).toEqual("Custom-Value");
+  assert.strictEqual(headers.get("Custom-Header"), "Custom-Value");
 }
 
 function expectOperation(headers: Headers, operation: string) {
   // Multiple headers with same key are combined into one by joining them using `, `
   const operations = headers.get("Knit-Operations")?.split(", ");
   try {
-    expect(operations?.[operations?.length - 1]).toEqual(operation);
-    expect(operations?.[0]).toMatch(
+    assert.strictEqual(operations?.[operations?.length - 1], operation);
+    assert.match(
+      operations?.[0] ?? "",
       /buf\.knit\.gateway\.v1alpha1\.KnitService\.(Fetch)|(Do)|(Listen)/,
     );
   } catch (err) {

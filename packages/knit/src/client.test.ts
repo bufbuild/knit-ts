@@ -1,28 +1,45 @@
-import { describe, expect, test } from "@jest/globals";
+// Copyright 2023-2024 Buf Technologies, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
 import { createClientWithTransport } from "./client.js";
 import {
   type HandlerContext,
   createRouterTransport,
 } from "@connectrpc/connect";
 import type { AllService } from "@bufbuild/knit-test-spec/spec/all_knit.js";
-import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
-import { KnitService } from "@buf/bufbuild_knit.connectrpc_es/buf/knit/gateway/v1alpha1/knit_connect.js";
-import { type PartialMessage, Value } from "@bufbuild/protobuf";
+import { AllSchema, type All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
 import {
-  FetchRequest,
-  FetchResponse,
-  Schema,
+  KnitService,
+  FetchResponseSchema,
+  SchemaSchema,
   Schema_Field_Type_ScalarType,
+  type ListenRequest,
+  type Request as KnitRequest,
 } from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
+import { type MessageInitShape, fromJson, toJson } from "@bufbuild/protobuf";
+import { ValueSchema } from "@bufbuild/protobuf/wkt";
 import {
-  Scalar,
-  ScalarFields,
+  ScalarSchema,
+  ScalarFieldsSchema,
 } from "@bufbuild/knit-test-spec/spec/scalars_pb.js";
 import type { Query } from "./schema.js";
 
 describe("client", () => {
-  const schema: PartialMessage<Schema> = {
-    name: All.typeName,
+  const schema: MessageInitShape<typeof SchemaSchema> = {
+    name: AllSchema.typeName,
     fields: [
       {
         name: "scalars",
@@ -30,7 +47,7 @@ describe("client", () => {
           value: {
             case: "message",
             value: {
-              name: Scalar.typeName,
+              name: ScalarSchema.typeName,
               fields: [
                 {
                   name: "fields",
@@ -38,7 +55,7 @@ describe("client", () => {
                     value: {
                       case: "message",
                       value: {
-                        name: ScalarFields.typeName,
+                        name: ScalarFieldsSchema.typeName,
                         fields: [
                           {
                             name: "str",
@@ -70,16 +87,16 @@ describe("client", () => {
   const headerKey = "Authorization";
   const headerValue = "some-token";
   const unary = (
-    { requests }: FetchRequest,
+    { requests }: { requests: KnitRequest[] },
     { requestHeader }: HandlerContext,
-  ): PartialMessage<FetchResponse> => {
-    expect(requests).toHaveLength(1);
-    expect(requests[0].body?.toJson()).toEqual(request);
-    expect(requestHeader.get(headerKey)).toEqual(headerValue);
+  ): MessageInitShape<typeof FetchResponseSchema> => {
+    assert.strictEqual(requests.length, 1);
+    assert.deepStrictEqual(toJson(ValueSchema, requests[0].body!), request);
+    assert.deepStrictEqual(requestHeader.get(headerKey), headerValue);
     return {
       responses: [
         {
-          body: Value.fromJson(response),
+          body: fromJson(ValueSchema, response),
           schema: schema,
           method: requests[0].method,
         },
@@ -89,18 +106,23 @@ describe("client", () => {
   const client = createClientWithTransport<AllService>(
     createRouterTransport(({ service }) => {
       service(KnitService, {
-        fetch: unary,
-        do: unary,
+        fetch: unary as any,
+        do: unary as any,
         async *listen(
-          { request: actualRequest },
+          { request: actualRequest }: ListenRequest,
           { requestHeader }: HandlerContext,
         ) {
-          expect(requestHeader.get(headerKey)).toEqual(headerValue);
-          expect(actualRequest?.body?.toJson()).toEqual(request);
+          assert.deepStrictEqual(requestHeader.get(headerKey), headerValue);
+          assert.deepStrictEqual(
+            actualRequest?.body !== undefined
+              ? toJson(ValueSchema, actualRequest.body)
+              : undefined,
+            request,
+          );
           for (let i = 0; i < 5; i++) {
             yield {
               response: {
-                body: Value.fromJson(response),
+                body: fromJson(ValueSchema, response),
                 schema: schema,
                 method: actualRequest?.method,
               },
@@ -127,7 +149,7 @@ describe("client", () => {
         },
       },
     });
-    expect(fetchResponse["spec.AllService"].getAll).toEqual(response);
+    assert.deepStrictEqual(fetchResponse["spec.AllService"].getAll, response);
   });
   test("do", async () => {
     const fetchResponse = await client.do({
@@ -138,7 +160,10 @@ describe("client", () => {
         },
       },
     });
-    expect(fetchResponse["spec.AllService"].createAll).toEqual(response);
+    assert.deepStrictEqual(
+      fetchResponse["spec.AllService"].createAll,
+      response,
+    );
   });
   test("listen", async () => {
     const listenResponse = client.listen({
@@ -151,9 +176,9 @@ describe("client", () => {
     });
     let count = 0;
     for await (const next of listenResponse) {
-      expect(next["spec.AllService"].streamAll).toEqual(response);
+      assert.deepStrictEqual(next["spec.AllService"].streamAll, response);
       count++;
     }
-    expect(count).toBe(5);
+    assert.strictEqual(count, 5);
   });
 });

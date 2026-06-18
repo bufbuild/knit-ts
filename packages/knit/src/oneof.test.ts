@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { describe, test } from "@jest/globals";
+import { describe, test } from "node:test";
 import type { Oneof } from "./oneof.js";
 type Cases = { a: string; b: number };
 
 describe("Oneof", () => {
-  const f = (_: Oneof<Cases>) => { };
+  const f = (_: Oneof<Cases>) => {};
   test("works for correct cases", () => {
     f({ "@case": "a", value: "str" });
     f({ "@case": "b", value: 123 });

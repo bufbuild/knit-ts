@@ -1,31 +1,47 @@
-import { expect, test } from "@jest/globals";
+// Copyright 2023-2024 Buf Technologies, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import { test } from "node:test";
+import assert from "node:assert/strict";
 import { stitch } from "./stitch.js";
 import type { Patch } from "./json.js";
-import { All } from "@bufbuild/knit-test-spec/spec/all_pb.js";
-import { type AnyMessage, type PlainMessage, proto3 } from "@bufbuild/protobuf";
-import { GetAllRelSelfParamResponse_AllParamResult } from "@bufbuild/knit-test-spec/spec/relations_pb.js";
+import { AllSchema } from "@bufbuild/knit-test-spec/spec/all_pb.js";
+import { create, toJson } from "@bufbuild/protobuf";
+import type { MessageShape } from "@bufbuild/protobuf";
+import { GetAllRelSelfParamResponse_AllParamResultSchema } from "@bufbuild/knit-test-spec/spec/relations_pb.js";
 import type { Relation } from "./gateway.js";
-import {
-  Schema_Field,
-  Schema_Field_Type,
-} from "@buf/bufbuild_knit.bufbuild_es/buf/knit/gateway/v1alpha1/knit_pb.js";
-import type {} from "./schema.js";
+import type { GatewaySchemaField, GatewaySchemaFieldType } from "./schema.js";
 
 test("stitch", async () => {
-  const base = new All();
+  const base = create(AllSchema, {});
   const relationFieldInfo =
-    GetAllRelSelfParamResponse_AllParamResult.fields.find(1)!;
-  expect(relationFieldInfo).toBeDefined();
+    GetAllRelSelfParamResponse_AllParamResultSchema.fields.find(
+      (f) => f.number === 1,
+    )!;
+  assert.ok(relationFieldInfo !== undefined);
   const target = {};
   const params = { scalars: { fields: { str: "param" } } };
   const relation = {
     field: relationFieldInfo,
-    base: All,
-    runtime: proto3,
+    base: AllSchema,
     method: "",
     resolver: async (bases, gotParams) => {
-      expect((gotParams as AnyMessage).toJson()).toEqual(params);
-      return Array(bases.length).fill(new All({}));
+      assert.deepStrictEqual(
+        toJson(AllSchema, gotParams as MessageShape<typeof AllSchema>),
+        params,
+      );
+      return Array(bases.length).fill(create(AllSchema, {}));
     },
   } satisfies Relation;
   const localName = relationFieldInfo.localName;
@@ -35,29 +51,29 @@ test("stitch", async () => {
     jsonName: "",
     relation: relation,
     operations: [],
-    params: new All(params),
+    params: create(AllSchema, params),
     onError: { case: undefined },
     type: {
       value: {
         case: "message",
         value: {
           localNameTable: new Map(),
-          name: All.typeName,
+          name: AllSchema.typeName,
           fields: [],
         },
       },
     },
-  } satisfies PlainMessage<Schema_Field>;
+  } satisfies GatewaySchemaField;
   const type = {
     value: {
       case: "message",
       value: {
         localNameTable: new Map([[localName, terminalField]]),
-        name: All.typeName,
+        name: AllSchema.typeName,
         fields: [terminalField],
       },
     },
-  } satisfies PlainMessage<Schema_Field_Type>;
+  } satisfies GatewaySchemaFieldType;
   const patch = {
     base: base,
     target: target,
@@ -70,11 +86,11 @@ test("stitch", async () => {
       type: type,
       operations: [],
       onError: { case: undefined },
-      params: new All(params),
+      params: create(AllSchema, params),
     },
   } satisfies Patch;
   await stitch([patch], false, undefined, {});
-  expect(target).toEqual({
+  assert.deepStrictEqual(target, {
     [localName]: {
       [localName]: {},
     },
