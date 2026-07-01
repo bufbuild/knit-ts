@@ -28,7 +28,7 @@
     "@bufbuild/license-header": "^0.0.4",
     "turbo": "^2.9.18",
     "typescript": "^6.0.3",
-    "@arethetypeswrong/cli": "^0.18.3"
+    "@arethetypeswrong/cli": "^0.18.4"
   },
   "engines": {
     "node": ">=18.16.0",
