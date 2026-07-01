@@ -24,7 +24,7 @@
     "@bufbuild/protoplugin": "^2.12.1"
   },
   "peerDependencies": {
-    "@bufbuild/protobuf": "^2.12.0"
+    "@bufbuild/protobuf": "^2.12.1"
   },
   "peerDependenciesMeta": {
     "@bufbuild/protobuf": {
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@buf/bufbuild_knit.bufbuild_es": "2.12.0-20250213130123-9561c696fd69.1",
-    "@bufbuild/protobuf": "^2.12.0",
+    "@bufbuild/protobuf": "^2.12.1",
     "esbuild": "^0.28.1",
     "tsconfig": "workspace:*"
   }
