@@ -60,8 +60,8 @@ importers:
         specifier: ^2.12.1
         version: 2.12.1
       '@bufbuild/protoc-gen-es':
-        specifier: ^2.12.0
-        version: 2.12.0(@bufbuild/protobuf@2.12.1)
+        specifier: ^2.12.1
+        version: 2.12.1(@bufbuild/protobuf@2.12.1)
       '@bufbuild/protoc-gen-knit-ts':
         specifier: workspace:*
         version: link:../protoc-gen-knit-ts
@@ -305,35 +305,21 @@ packages:
       picomatch: 2.3.2
     dev: true
 
-  /@bufbuild/protobuf@2.12.0:
-    resolution: {integrity: sha512-B/XlCaFIP8LOwzo+bz5uFzATYokcwCKQcghqnlfwSmM5eX/qTkvDBnDPs+gXtX/RyjxJ4DRikECcPJbyALA8FA==}
-    dev: true
-
   /@bufbuild/protobuf@2.12.1:
     resolution: {integrity: sha512-BvAMfS6LrgZiryOAZ4pBYucu4wG/Ei/9o9DZ9akbREnMLbPJiom2i8b9C8IsKErQoiKqVhrerzt3kOT/RrzLHg==}
 
-  /@bufbuild/protoc-gen-es@2.12.0(@bufbuild/protobuf@2.12.1):
-    resolution: {integrity: sha512-d9htF6jEkSwPbp9d/vSmZOBF7eeG18AvTMKmVg4I23afnrQOxL2w3WOXa9TaufMCyu24QakEUb4vux8apI5e7A==}
+  /@bufbuild/protoc-gen-es@2.12.1(@bufbuild/protobuf@2.12.1):
+    resolution: {integrity: sha512-SWa7XvRYRouMo+vBQmpNFZ+ZEqQ8AC0LpL4QWAo1gvstLhFh/Y7Nf/a+MK7ZxDq5LZSThwfk974L1sFxO3OaGw==}
     engines: {node: '>=20'}
     hasBin: true
     peerDependencies:
-      '@bufbuild/protobuf': 2.12.0
+      '@bufbuild/protobuf': 2.12.1
     peerDependenciesMeta:
       '@bufbuild/protobuf':
         optional: true
     dependencies:
       '@bufbuild/protobuf': 2.12.1
-      '@bufbuild/protoplugin': 2.12.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /@bufbuild/protoplugin@2.12.0:
-    resolution: {integrity: sha512-ORlDITp8AFUXzIhLRoMCG+ud+D3MPKWb5HQXBoskMMnjeyEjE1H1qLonVNPyOr8lkx3xSfYUo8a0dvOZJVAzow==}
-    dependencies:
-      '@bufbuild/protobuf': 2.12.0
-      '@typescript/vfs': 1.6.4(typescript@5.4.5)
-      typescript: 5.4.5
+      '@bufbuild/protoplugin': 2.12.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -346,7 +332,6 @@ packages:
       typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@colors/colors@1.5.0:
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
