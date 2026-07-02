@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.0.1",
-    "@biomejs/biome": "^2.5.0",
+    "@biomejs/biome": "^2.5.2",
     "@bufbuild/license-header": "^0.0.4",
     "turbo": "^2.10.0",
     "typescript": "^6.0.3",
