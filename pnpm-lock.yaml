@@ -69,8 +69,8 @@ importers:
   packages/protoc-gen-knit-ts:
     dependencies:
       '@bufbuild/protoplugin':
-        specifier: ^2.12.1
-        version: 2.12.1
+        specifier: ^2.13.0
+        version: 2.13.0
     devDependencies:
       '@buf/bufbuild_knit.bufbuild_es':
         specifier: 2.12.0-20250213130123-9561c696fd69.1
@@ -328,16 +328,6 @@ packages:
       - supports-color
     dev: true
 
-  /@bufbuild/protoplugin@2.12.1:
-    resolution: {integrity: sha512-PY58KxQVAD1BnnKtStOctsMoegEVGfBnY5AOqVQOIu711nA13oYtTqJM8df5lUQg2J1DR3XxUXptE+fWX5oLdA==}
-    dependencies:
-      '@bufbuild/protobuf': 2.12.1
-      '@typescript/vfs': 1.6.4(typescript@5.4.5)
-      typescript: 5.4.5
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /@bufbuild/protoplugin@2.13.0:
     resolution: {integrity: sha512-32eMChKaL/A8Hh5AfMmXSdnuyznN85uoEjoyWiWeRrvtQOtpqX/v1R9PDe0g9vMIgzznK9inMT3CUaal0kjLUQ==}
     dependencies:
@@ -346,7 +336,6 @@ packages:
       typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /@colors/colors@1.5.0:
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
