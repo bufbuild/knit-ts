@@ -27,7 +27,7 @@
     "@biomejs/biome": "^2.5.5",
     "@bufbuild/license-header": "^0.0.4",
     "turbo": "^2.10.7",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "@arethetypeswrong/cli": "^0.18.5"
   },
   "engines": {
