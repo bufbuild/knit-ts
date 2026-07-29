@@ -29,3 +29,20 @@ jobs:
         run: pnpm run test
       - name: attw
         run: pnpm run attw
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: generate
+        run: pnpm run buf:generate
+      - name: check for uncommitted changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::Generated code is out of date. Run 'pnpm run buf:generate' and commit the result."
+            git status --porcelain
+            git diff
+            exit 1
+          fi
