@@ -18,8 +18,9 @@
     "test:watch": "tsx --watch --test $(find src -type f -path '*.test.ts')",
     "test:update-snapshots": "tsx --test --test-update-snapshots $(find src -type f -path '*.test.ts')",
     "build:esm": "tsup --format esm",
-    "build:cjs": "tsup --format cjs && mv ./dist/cjs/index.d.cts ./dist/cjs/index.d.ts && mv ./dist/cjs/gateway/index.d.cts ./dist/cjs/gateway/index.d.ts",
-    "build": "pnpm run build:esm && pnpm run build:cjs"
+    "build:cjs": "tsup --format cjs",
+    "build:types": "tsc -p tsconfig.build.json && cp -R ./dist/types/. ./dist/esm/ && cp -R ./dist/types/. ./dist/cjs/ && rm -rf ./dist/types",
+    "build": "pnpm run build:esm && pnpm run build:cjs && pnpm run build:types"
   },
   "main": "./dist/cjs/index.js",
   "exports": {

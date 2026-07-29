@@ -4,7 +4,6 @@
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["ES2017", "ES2020", "DOM", "ES2018.AsyncIterable"],
-    "esModuleInterop": false,
     "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -19,8 +18,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
-    "moduleResolution": "node",
-    "ignoreDeprecations": "6.0",
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "skipLibCheck": false,
     "isolatedModules": true
   },

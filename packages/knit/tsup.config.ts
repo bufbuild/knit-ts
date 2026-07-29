@@ -26,14 +26,17 @@ const esmPackageJson = {
 
 const sharedOptions = {
   splitting: false, // Doesn't share code between entry points.
-  dts: true,
+  // Declarations are emitted separately via `tsc` (see the build:types
+  // script). tsup's dts generation relies on rollup-plugin-dts, which uses
+  // the legacy TypeScript compiler API that the native compiler no longer
+  // exposes.
+  dts: false,
   clean: true,
   treeshake: true,
   entry: ["./src/index.ts", "./src/gateway/index.ts"],
   outExtension() {
     return {
       js: ".js",
-      dts: ".d.ts",
     };
   },
 } satisfies Options;
