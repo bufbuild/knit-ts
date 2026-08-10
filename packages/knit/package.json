@@ -62,7 +62,7 @@
     "@bufbuild/knit-test-spec": "workspace:*",
     "tsconfig": "workspace:*",
     "tsup": "^8.5.1",
-    "tsx": "^4.23.1"
+    "tsx": "^4.23.11"
   },
   "files": [
     "dist/**"
