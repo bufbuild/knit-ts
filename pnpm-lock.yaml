@@ -69,8 +69,8 @@ importers:
   packages/protoc-gen-knit-ts:
     dependencies:
       '@bufbuild/protoplugin':
-        specifier: ^2.14.1
-        version: 2.14.1
+        specifier: ^2.15.0
+        version: 2.15.0
     devDependencies:
       '@buf/bufbuild_knit.bufbuild_es':
         specifier: 2.12.0-20250213130123-9561c696fd69.1
@@ -312,6 +312,10 @@ packages:
   /@bufbuild/protobuf@2.14.1:
     resolution: {integrity: sha512-agRJn3+EJDUe8AvxTx/LnHA/GErvLE62pSaSk7+MwFOtOv8eWBu/qCq2qoZjBjVZ3C2aiFJCveuSs17KMkYGOw==}
 
+  /@bufbuild/protobuf@2.15.0:
+    resolution: {integrity: sha512-DAheWUkVr/SJTWCc+lg9dhY0eN4SaWlf4+bG1KzHeXbnqt0AfB/NX0Z+VunGlM1ki1B4zVvye27MpKh/svySUA==}
+    dev: false
+
   /@bufbuild/protoc-gen-es@2.13.0(@bufbuild/protobuf@2.14.1):
     resolution: {integrity: sha512-ylI1vrLksdnXrVZRs9xGxmrQxKGhUm6pPszv26kqBvNiO3qPTktk+hgfwbLISBY4M/reShkT2dFLGT9fbydBXg==}
     engines: {node: '>=20'}
@@ -338,10 +342,10 @@ packages:
       - supports-color
     dev: true
 
-  /@bufbuild/protoplugin@2.14.1:
-    resolution: {integrity: sha512-oddqHkmUlBSo1TgswPW6hzrP/3nxMIdKUMcB6/NSY/oUkepDV7SealCZlE0ZxhLRIgmvDSuNWOb0HEKfsWPJww==}
+  /@bufbuild/protoplugin@2.15.0:
+    resolution: {integrity: sha512-vZhRoqB/jTHATqItRvJQf1zbxdrGRRhiusGty4+lKcfEFODG0PMXky2Ezv4WHHS6oSxq+5qShITuE7K1/82SuQ==}
     dependencies:
-      '@bufbuild/protobuf': 2.14.1
+      '@bufbuild/protobuf': 2.15.0
       '@typescript/vfs': 1.6.4(typescript@5.4.5)
       typescript: 5.4.5
     transitivePeerDependencies:
