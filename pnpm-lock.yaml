@@ -29,11 +29,11 @@ importers:
         specifier: ^2.14.1
         version: 2.14.1
       '@connectrpc/connect':
-        specifier: ^2.1.2
-        version: 2.1.2(@bufbuild/protobuf@2.14.1)
+        specifier: ^2.2.0
+        version: 2.2.0(@bufbuild/protobuf@2.14.1)
       '@connectrpc/connect-web':
         specifier: ^2.2.0
-        version: 2.2.0(@bufbuild/protobuf@2.14.1)(@connectrpc/connect@2.1.2)
+        version: 2.2.0(@bufbuild/protobuf@2.14.1)(@connectrpc/connect@2.2.0)
     devDependencies:
       '@buf/bufbuild_knit.bufbuild_es':
         specifier: 2.12.0-20250213130123-9561c696fd69.1
@@ -359,18 +359,18 @@ packages:
     dev: true
     optional: true
 
-  /@connectrpc/connect-web@2.2.0(@bufbuild/protobuf@2.14.1)(@connectrpc/connect@2.1.2):
+  /@connectrpc/connect-web@2.2.0(@bufbuild/protobuf@2.14.1)(@connectrpc/connect@2.2.0):
     resolution: {integrity: sha512-uuBUcBTYfb/r1o98LzCCZk1H90yx0vmZ5m21dpw/q4EUwsKwkCDGI8H0aEdjcZld+Q2jJ5A5ADvPqfb6lzQ/sg==}
     peerDependencies:
       '@bufbuild/protobuf': ^2.7.0
       '@connectrpc/connect': 2.2.0
     dependencies:
       '@bufbuild/protobuf': 2.14.1
-      '@connectrpc/connect': 2.1.2(@bufbuild/protobuf@2.14.1)
+      '@connectrpc/connect': 2.2.0(@bufbuild/protobuf@2.14.1)
     dev: false
 
-  /@connectrpc/connect@2.1.2(@bufbuild/protobuf@2.14.1):
-    resolution: {integrity: sha512-MXkBijtcX09R10Eb6sFeIetc6w6746eio6xtfuyVOH7oQAacT1X0GzMIQFux6Qy8cq3W/T5qX5Bei8YbFtmRGA==}
+  /@connectrpc/connect@2.2.0(@bufbuild/protobuf@2.14.1):
+    resolution: {integrity: sha512-M63OQ1ZFcPUm85CuewJ9G9CMV8LjzGR9935xOnXNQGSazAbwMb3x2W7vXBYM1zqrP7XFD8uxp/dUAhirclgwnQ==}
     peerDependencies:
       '@bufbuild/protobuf': ^2.7.0
     dependencies:
