@@ -60,8 +60,8 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0
       '@bufbuild/protoc-gen-es':
-        specifier: ^2.15.0
-        version: 2.15.0(@bufbuild/protobuf@2.15.0)
+        specifier: ^2.16.0
+        version: 2.16.0(@bufbuild/protobuf@2.15.0)
       '@bufbuild/protoc-gen-knit-ts':
         specifier: workspace:*
         version: link:../protoc-gen-knit-ts
@@ -308,18 +308,22 @@ packages:
   /@bufbuild/protobuf@2.15.0:
     resolution: {integrity: sha512-DAheWUkVr/SJTWCc+lg9dhY0eN4SaWlf4+bG1KzHeXbnqt0AfB/NX0Z+VunGlM1ki1B4zVvye27MpKh/svySUA==}
 
-  /@bufbuild/protoc-gen-es@2.15.0(@bufbuild/protobuf@2.15.0):
-    resolution: {integrity: sha512-FRhNTAZEXW6arWx2JxgtpuazhmewYctXugu5SfXGpXpLLCInDT1005fSKDzEM/70Es2oIn07PM4RvpwvDvR/fg==}
+  /@bufbuild/protobuf@2.16.0:
+    resolution: {integrity: sha512-FWa0sPlqYGJgpTs6OxBRcL/AW4JT0OIO+W1ajerluoTVh8CV0B7XM1qsNCRgnkSCkRCgOICKHRQlY17jrsm0+Q==}
+    dev: true
+
+  /@bufbuild/protoc-gen-es@2.16.0(@bufbuild/protobuf@2.15.0):
+    resolution: {integrity: sha512-LbPrEaGd7bOxKbJHllTR5439+PZjqd6fM7xyDZkDVtZ+Efzr7TMdMqShG9Qkf/nYVyiNS/SK5r9JhRaBTFkfZw==}
     engines: {node: '>=22'}
     hasBin: true
     peerDependencies:
-      '@bufbuild/protobuf': 2.15.0
+      '@bufbuild/protobuf': 2.16.0
     peerDependenciesMeta:
       '@bufbuild/protobuf':
         optional: true
     dependencies:
       '@bufbuild/protobuf': 2.15.0
-      '@bufbuild/protoplugin': 2.15.0
+      '@bufbuild/protoplugin': 2.16.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -332,6 +336,17 @@ packages:
       typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@bufbuild/protoplugin@2.16.0:
+    resolution: {integrity: sha512-3FdYJys34VhFnBQsjiV9wurBkX/DBACQAkAk+nCKdO1p8ROVNi7gmaRAcba+4qq8hQq8rYVukuutwvGCvd4kJA==}
+    dependencies:
+      '@bufbuild/protobuf': 2.16.0
+      '@typescript/vfs': 1.6.5(typescript@5.4.5)
+      typescript: 5.4.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /@colors/colors@1.5.0:
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -1307,6 +1322,18 @@ packages:
       typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@typescript/vfs@1.6.5(typescript@5.4.5):
+    resolution: {integrity: sha512-gobLHQLmvQGJInFk31NvgMd1uYzRXsd8qgnOssyLD055R2QPnw1ubRbBQ4+T+5qC7IQVuYXdvNDE2G7tMDVHgw==}
+    peerDependencies:
+      typescript: '*'
+    dependencies:
+      debug: 4.4.3
+      typescript: 5.4.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /acorn@8.15.0:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
