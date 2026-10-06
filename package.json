@@ -23,7 +23,7 @@
     "copyrightHolder": "Buf Technologies, Inc."
   },
   "devDependencies": {
-    "@types/node": "^26.5.1",
+    "@types/node": "^26.6.4",
     "@biomejs/biome": "^2.5.13",
     "@bufbuild/license-header": "^0.0.4",
     "turbo": "^2.11.6",
